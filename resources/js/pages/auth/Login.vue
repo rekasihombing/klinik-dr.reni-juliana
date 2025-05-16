@@ -81,4 +81,3 @@ const login = () => {
   // lanjut panggil form submission atau handle Inertia.post
 }
 </script>
-
