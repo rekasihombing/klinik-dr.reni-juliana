@@ -1,74 +1,48 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Inertia\Inertia;
-use Inertia\Response;
 use Illuminate\Support\Facades\DB;
-use App\Models\Patient;
-
+use Illuminate\Validation\Rules;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Show the registration page.
-     */
-    public function create(): Response
+    public function create()
     {
         return Inertia::render('auth/Register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
-       $request->validate([
-    'name' => 'required|string|max:100',
-    'email' => 'required|email|unique:users,email',
-    'password' => 'required|string|min:6|confirmed',
-]);
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        DB::beginTransaction();
 
         try {
-            // Simpan user
-            DB::beginTransaction();
             $user = User::create([
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'pasien', // default role pasien
-            ]);
-
-            // Simpan pasien
-            Patient::create([
-                'user_id' => $user->id,
-                'nama_lengkap' => $request->name,
-                'nik' => '', // kosong dulu jika belum ada di form
-                'tanggal_lahir' => now(), // sementara default
-                'jenis_kelamin' => 'L', // default
-                'email' => $request->email,
-                'no_hp' => '',
-                'alamat' => '',
+                'role' => 'pasien',
             ]);
 
             DB::commit();
 
-            // Login langsung (jika mau)
             auth()->login($user);
 
-            return redirect('/dashboard'); // halaman setelah login
-            
+            // Redirect ke form tambah pasien (lengkapi data pasien)
+            return redirect()->route('patients.create');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withErrors(['error' => 'Registrasi gagal: ' . $e->getMessage()]);
         }
     }
