@@ -128,11 +128,11 @@ const isMobileMenuOpen = ref(false)
     <main class="relative w-full h-screen overflow-hidden">
       <div class="relative z-10 max-w-7xl mx-auto h-full flex flex-col-reverse md:flex-row items-center px-6">
         <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left">
-          <h1 class="stroke-text text-[#2f4f8a] font-extrabold text-5xl md:text-6xl leading-tight">
+          <h1 class="stroke-text text-[#2f4f8a] font-extrabold text-5xl sm:text-4xl md:text-6xl leading-tight">
             Lorem ipsum<br />
             <span class="stroke-text font-extrabold text-[#2a5ca8]">dolor sit amet</span>
           </h1>
-          <p class="text-[#2f4f8a] text-sm md:text-base mt-4 mb-6 max-w-md">
+          <p class="text-[#2f4f8a] text-sm md:text-base mt-4 mb-6 max-w-md sm:text-bas">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum leo ut risus aliquam laoreet.
           </p>
           <div class="flex justify-center md:justify-start space-x-3">
@@ -146,12 +146,12 @@ const isMobileMenuOpen = ref(false)
             </Link>
           </div>
         </div>
-
-        <div class="absolute bottom-0 right-6 z-0">
+        <div
+          class="w-full md:w-1/2 relative flex justify-center md:justify-end items-end mt-6 md:mt-0">
           <img
             src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/vbyeepwW1F/qhbqipzv_expires_30_days.png"
             alt="Dokter"
-            class="max-h-[87vh] object-contain"
+            class="max-h-[50vh] md:max-h-[87vh] object-contain"
           />
         </div>
       </div>
