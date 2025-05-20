@@ -22,6 +22,9 @@ Route::middleware(['auth'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
+Route::middleware(['auth'])->get('/dashboardstaf', function () {
+    return Inertia::render('DashboardStaff');
+})->name('dashboardstaf');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
