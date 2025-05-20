@@ -77,7 +77,8 @@ import { useForm } from '@inertiajs/vue3'
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
-const togglePassword = () => {
+const togglePassword =
+ () => {
   showPassword.value = !showPassword.value
 }
 const toggleConfirmPassword = () => {
