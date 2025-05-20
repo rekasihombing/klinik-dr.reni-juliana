@@ -59,25 +59,19 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useForm } from '@inertiajs/vue3'
 
-// Menyimpan nilai input form
-const form = ref({
+const form = useForm({
   email: '',
-  password: ''
+  password: '',
 })
 
-// Menentukan apakah password ditampilkan atau tidak
 const showPassword = ref(false)
-
-// Fungsi untuk toggle visibilitas password
 const togglePassword = () => {
   showPassword.value = !showPassword.value
 }
 
-// Fungsi login (sementara log ke console)
 const login = () => {
-  console.log('Email:', form.value.email)
-  console.log('Password:', form.value.password)
-  // lanjut panggil form submission atau handle Inertia.post
+  form.post('/login')
 }
 </script>
