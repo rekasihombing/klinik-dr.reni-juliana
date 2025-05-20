@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -18,10 +19,7 @@ Route::get('/register', function () {
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
-Route::middleware(['auth'])->get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
-
+Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 Route::get('kontak', function () {
     return Inertia::render('Kontak');
