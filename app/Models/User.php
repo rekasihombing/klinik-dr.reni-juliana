@@ -42,4 +42,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // app/Models/Patient.php
+
+// app/Models/User.php
+
+public function patient()
+{
+    return $this->hasOne(Patient::class);  // Relasi one-to-one dengan model Patient
+}
+
 }
