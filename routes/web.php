@@ -26,6 +26,14 @@ Route::get('/kontak', function () {
     return Inertia::render('kontak');
 })->name('kontak');
 
+Route::middleware(['auth'])->get('/janjitemu', function () {
+    return Inertia::render('JanjiTemu');
+})->name('janjitemu');
+
+Route::middleware(['auth'])->get('/janjitemu2', function () {
+    return Inertia::render('JanjiTemu2');
+})->name('janjitemu2');
+
 Route::post('/contact', [FaqController::class, 'store']);   
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
