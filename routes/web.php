@@ -22,6 +22,9 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+Route::get('/kontak', function () {
+    return Inertia::render('kontak');
+})->name('kontak');
 
 Route::post('/contact', [FaqController::class, 'store']);   
 require __DIR__.'/settings.php';
