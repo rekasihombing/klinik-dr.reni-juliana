@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\AppointmentController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -35,5 +36,10 @@ Route::middleware(['auth'])->get('/janjitemu2', function () {
 })->name('janjitemu2');
 
 Route::post('/contact', [FaqController::class, 'store']);   
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+   Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+});
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

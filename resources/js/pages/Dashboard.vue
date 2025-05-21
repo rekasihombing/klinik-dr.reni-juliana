@@ -45,11 +45,12 @@
                 Lihat
               </button>
             </div>
-
-            <!-- Button Buat Janji Temu Baru -->
-            <button class="bg-[#2D4480] text-white text-xs rounded px-4 py-2 w-44 hover:bg-[#3B59A1] transition font-sans">
-              Buat Janji Temu Baru
-            </button>
+<button
+    @click="router.visit('/janjitemu')"
+    class="bg-[#2D4480] text-white text-xs rounded px-4 py-2 w-44 hover:bg-[#3B59A1] transition font-sans text-center text-sm block"
+  >
+    Buat Janji Temu Baru
+  </button>
           </div>
 
           <!-- Pilih Tanggal -->
@@ -68,6 +69,7 @@ import { defineProps, onMounted } from 'vue';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Sidebar from '../layouts/Sidebar.vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
   patientName: String,  // Properti untuk nama pasien

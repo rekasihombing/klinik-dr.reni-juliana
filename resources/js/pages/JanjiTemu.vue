@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col">
-
+    <!-- Header -->
     <header class="bg-[#B7D7E8] flex justify-between items-center px-6 py-3 text-[#1B2A4D] text-sm font-sans">
       <div>{{ clinicName }}</div>
       <div class="flex items-center space-x-1 cursor-pointer">
@@ -23,6 +23,7 @@
           </div>
 
           <div class="flex flex-col md:flex-row md:space-x-8">
+            <!-- Form -->
             <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="handleSubmit">
               <h2 class="text-blue-800 font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
                 Detail Janji Temu
@@ -48,21 +49,21 @@
               </label>
               <select
                 id="jam"
-                v-model="form.jam"
-                :class="['border rounded px-3 py-2 text-sm w-full', errors.jam ? 'border-red-500' : 'border-gray-300']"
+                v-model="form.jam_konsultasi"
+                :class="['border rounded px-3 py-2 text-sm w-full', errors.jam_konsultasi ? 'border-red-500' : 'border-gray-300']"
               >
                 <option value="" disabled>Pilih waktu</option>
-                <option>15.00</option>
-                <option>16.00</option>
-                <option>17.00</option>
+                <option>15:00</option>
+                <option>16:00</option>
+                <!-- <option>17.00</option>
                 <option>18.00</option>
                 <option>19.00</option>
                 <option>20.00</option>
                 <option>21.00</option>
                 <option>22.00</option>
-                <option>23.00</option>
+                <option>23.00</option> -->
               </select>
-              <p v-if="errors.jam" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
+              <p v-if="errors.jam_konsultasi" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
 
               <!-- Keluhan -->
               <label class="text-black text-sm" for="keluhan">
@@ -82,6 +83,7 @@
               </button>
             </form>
 
+            <!-- Jadwal Dokter -->
             <div class="mt-6 md:mt-0 md:w-1/2">
               <table class="w-full border border-gray-300 rounded-lg border-collapse">
                 <thead>
@@ -110,49 +112,73 @@ import { reactive, ref, onMounted } from 'vue'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../layouts/Sidebar.vue'
+import { useForm } from '@inertiajs/vue3'
 
+
+// Props
 const props = defineProps({
   patientName: String,
-  clinicName: String,
+  patientId: Number,
+  doctorId: Number,
 })
 
-const form = reactive({
+// Form
+const form = useForm({
   tanggal: '',
-  jam: '',
+  jam_konsultasi: '',
   keluhan: '',
+  pasien_id: props.patientId,
 })
 
-// errors object untuk validasi tiap field
+
+// Validasi Error
 const errors = reactive({
   tanggal: false,
-  jam: false,
+  jam_konsultasi: false,
   keluhan: false,
 })
 
+// Handle Submit
 const handleSubmit = () => {
-  // Reset errors
+  // Validasi manual
   errors.tanggal = !form.tanggal
-  errors.jam = !form.jam
+  errors.jam_konsultasi = !form.jam_konsultasi
   errors.keluhan = !form.keluhan
 
-  // Jika ada error jangan lanjut
-  if (errors.tanggal || errors.jam || errors.keluhan) return
+  if (errors.tanggal || errors.jam_konsultasi || errors.keluhan) {
+    console.log('Validasi gagal, form tidak dikirim')
+    return
+  }
 
-  console.log('Form terkirim:', form)
-  // Kirim data ke backend di sini (axios/fetch)
+  // Pastikan pasien_id terisi sebelum submit
+  form.pasien_id = props.patientId
+
+  // Submit form
+  form.post(route('appointments.store'), {
+    onError: (errors) => {
+      console.log('VALIDATION ERRORS', errors)
+    },
+    onSuccess: () => {
+      console.log('SUKSES')
+    }
+  })
 }
 
+
+
+// Flatpickr
 onMounted(() => {
   flatpickr('#tanggal', {
     dateFormat: 'Y-m-d',
     minDate: 'today',
-    onChange: function(selectedDates, dateStr) {
+    onChange: (selectedDates, dateStr) => {
       form.tanggal = dateStr
-      errors.tanggal = false // Reset error kalau sudah pilih tanggal
-    }
+      errors.tanggal = false
+    },
   })
 })
 
+// Jadwal Dokter
 const jadwal = {
   Senin: '15.00 - 23.00',
   Selasa: '15.00 - 23.00',
@@ -167,7 +193,7 @@ const jadwal = {
 input::placeholder,
 textarea::placeholder,
 select:invalid {
-  color: #9CA3AF; /* Tailwind gray-400 */
+  color: #9CA3AF;
   opacity: 1;
 }
 
