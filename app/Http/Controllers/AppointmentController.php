@@ -45,7 +45,8 @@ public function store(Request $request)
 
     $appointment = Appointment::create($validated);
 
-    return redirect()->back()->with('success', 'Janji temu berhasil dibuat.');
+    
+return redirect()->route('janjitemu2');
 }
 }
 

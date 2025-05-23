@@ -53,7 +53,7 @@ class RegisteredUserController extends Controller
 
             auth()->login($user);
 
-            return redirect()->route('patients.create'); // atau redirect sesuai tujuanmu
+            return redirect()->route('patients.create'); 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Registrasi gagal: ' . $e->getMessage()]);

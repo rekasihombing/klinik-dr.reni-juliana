@@ -19,7 +19,8 @@ class Patient extends Model
         'golongan_darah',
         'email',
         'no_hp',
-        'alamat'
+        'alamat',
+    'is_owner',
     ];
 
     public $timestamps = false;

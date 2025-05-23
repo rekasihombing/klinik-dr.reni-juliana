@@ -55,13 +55,13 @@
                 <option value="" disabled>Pilih waktu</option>
                 <option>15:00</option>
                 <option>16:00</option>
-                <!-- <option>17.00</option>
-                <option>18.00</option>
-                <option>19.00</option>
-                <option>20.00</option>
-                <option>21.00</option>
-                <option>22.00</option>
-                <option>23.00</option> -->
+                <option>17:00</option>
+                <option>18:00</option>
+                <option>19:00</option>
+                <option>20:00</option>
+                <option>21:00</option>
+                <option>22:00</option>
+                <option>23:00</option>
               </select>
               <p v-if="errors.jam_konsultasi" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
 
