@@ -32,6 +32,10 @@ Route::get('/pendaftaran', function () {
     return Inertia::render('PendaftaranPasienStaff');
 })->name('pendaftaran');
 
+Route::get('/KonfirmasiPasien', function () {
+    return Inertia::render('KonfiirmasiPasienStaff');
+})->name('KonfirmasiPasien');
+
 Route::get('/kontak', function () {
     return Inertia::render('kontak');
 })->name('kontak');
