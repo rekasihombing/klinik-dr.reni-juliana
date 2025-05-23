@@ -32,6 +32,10 @@ Route::get('/pendaftaran', function () {
     return Inertia::render('PendaftaranPasienStaff');
 })->name('pendaftaran');
 
+Route::get('/KonfirmasiPasien', function () {
+    return Inertia::render('KonfiirmasiPasienStaff');
+})->name('KonfirmasiPasien');
+
 Route::get('/kontak', function () {
     return Inertia::render('kontak');
 })->name('kontak');
@@ -47,6 +51,10 @@ Route::middleware(['auth'])->get('/datapasien', function () {
 Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
     return Inertia::render('KonfirmasiJanjiTemu');
 })->name('konfirmasijanjitemu');
+
+Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
+    return Inertia::render('RiwayatJanjiTemu');
+})->name('riwayatjanjitemu');
 
 Route::post('/contact', [FaqController::class, 'store']);   
 
