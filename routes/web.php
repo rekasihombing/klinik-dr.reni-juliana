@@ -27,7 +27,18 @@ Route::get('/kontak', function () {
     return Inertia::render('kontak');
 })->name('kontak');
 
-Route::middleware(['auth'])->get('/janjitemu', [AppointmentController::class, 'create'])->name('janjitemu');    
+Route::middleware(['auth'])->get('/janjitemu', function () {
+    return Inertia::render('JanjiTemu');
+})->name('janjitemu');
+
+Route::middleware(['auth'])->get('/datapasien', function () {
+    return Inertia::render('DataPasien');
+})->name('datapasien');
+
+Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
+    return Inertia::render('KonfirmasiJanjiTemu');
+})->name('konfirmasijanjitemu');
+
 Route::post('/contact', [FaqController::class, 'store']);   
 
 require __DIR__.'/settings.php';
