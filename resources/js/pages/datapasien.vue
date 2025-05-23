@@ -15,10 +15,10 @@
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
           <h1 class="text-center text-blue-900 font-poppins font-bold text-lg flex items-center justify-center gap-2 mb-1">
             <i class="fas fa-calendar-alt text-xl"></i>
-            Buat Janji Temu
+            Data Pasien
           </h1>
           <p class="text-center text-sm mb-6 text-gray-900">
-            Silahkan isi data pribadi untuk janji temu di bawah ini.
+            Silahkan isi data pribadi anda di bawah ini.
           </p>
 
           <form class="space-y-3" @submit.prevent="handleSubmit">
@@ -37,7 +37,7 @@
                 placeholder="Masukkan nama lengkap"
                 :class="inputClass(errors.nama)"
               />
-              <p v-if="errors.nama" class="text-red-500 text-xs mt-1">Nama wajib diisi.</p>
+              <p v-if="errors.nama" class="text-red-500 text-xs mt-1">{{ errors.nama }}</p>
             </div>
 
             <div>
@@ -50,8 +50,10 @@
                 type="text"
                 placeholder="Masukkan NIK"
                 :class="inputClass(errors.nik)"
+                @input="filterNIKInput"
+                maxlength="16"
               />
-              <p v-if="errors.nik" class="text-red-500 text-xs mt-1">NIK wajib diisi.</p>
+              <p v-if="errors.nik" class="text-red-500 text-xs mt-1">{{ errors.nik }}</p>
             </div>
 
             <div>
@@ -72,7 +74,7 @@
                   aria-hidden="true"
                 ></i>
               </div>
-              <p v-if="errors.tanggalLahir" class="text-red-500 text-xs mt-1">Tanggal lahir wajib diisi.</p>
+              <p v-if="errors.tanggalLahir" class="text-red-500 text-xs mt-1">{{ errors.tanggalLahir }}</p>
             </div>
 
             <div>
@@ -88,7 +90,7 @@
                 <option>Laki-laki</option>
                 <option>Perempuan</option>
               </select>
-              <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
+              <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">{{ errors.jenisKelamin }}</p>
             </div>
 
             <div>
@@ -106,7 +108,7 @@
                 <option>AB</option>
                 <option>O</option>
               </select>
-              <p v-if="errors.golonganDarah" class="text-red-500 text-xs mt-1">Golongan darah wajib diisi.</p>
+              <p v-if="errors.golonganDarah" class="text-red-500 text-xs mt-1">{{ errors.golonganDarah }}</p>
             </div>
 
             <div>
@@ -119,7 +121,9 @@
                 type="text"
                 placeholder="08xxxxxxxxxx"
                 class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                @input="filterPhoneInput"
               />
+              <p v-if="errors.nomorHp" class="text-red-500 text-xs mt-1">{{ errors.nomorHp }}</p>
             </div>
 
             <div>
@@ -133,25 +137,6 @@
                 placeholder="Masukkan alamat lengkap"
                 class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
               />
-            </div>
-
-            <div>
-              <label class="block text-gray-900 text-xs mb-1" for="permintaan">
-                Saya mengajukan permintaan janji temu ini untuk<span class="text-red-600">*</span>
-              </label>
-              <select
-                id="permintaan"
-                v-model="form.permintaan"
-                :class="selectClass(errors.permintaan)"
-              >
-                <option value="" disabled selected>Pilih orang yang ingin janji temu</option>
-                <option>Diri Sendiri</option>
-                <option>Orang Tua</option>
-                <option>Saudara</option>
-                <option>Teman</option>
-                <option>Lainnya</option>
-              </select>
-              <p v-if="errors.permintaan" class="text-red-500 text-xs mt-1">Bagian ini wajib diisi.</p>
             </div>
 
             <p class="text-xs text-gray-700 mb-1">
@@ -210,6 +195,7 @@ const errors = reactive({
   tanggalLahir: false,
   jenisKelamin: false,
   golonganDarah: false,
+  nomorHp: false,
   permintaan: false,
 })
 
@@ -220,15 +206,50 @@ const inputClass = (hasError, extra = '') => [
 ]
 const selectClass = inputClass
 
-const handleSubmit = () => {
-  errors.nama = !form.nama.trim()
-  errors.nik = !form.nik.trim()
-  errors.tanggalLahir = !form.tanggalLahir
-  errors.jenisKelamin = !form.jenisKelamin
-  errors.golonganDarah = !form.golonganDarah
-  errors.permintaan = !form.permintaan
+const filterNIKInput = (e) => {
+  const rawValue = e.target.value
+  // Only keep digits
+  const filtered = rawValue.replace(/\D/g, '')
+  if (filtered !== rawValue) {
+    // Show error that only digits allowed and must be 16 digits
+    errors.nik = 'NIK wajib angka dan 16 digit.'
+  } else {
+    errors.nik = false
+  }
+  e.target.value = filtered
+  form.nik = filtered
+}
 
-  if (Object.values(errors).some(Boolean)) return
+const filterPhoneInput = (e) => {
+  const rawValue = e.target.value
+  const filtered = rawValue.replace(/\D/g, '')
+  if (filtered !== rawValue) {
+    errors.nomorHp = 'Nomor telepon wajib angka.'
+  } else {
+    errors.nomorHp = false
+  }
+  e.target.value = filtered
+  form.nomorHp = filtered
+}
+
+const handleSubmit = () => {
+  errors.nama = !form.nama.trim() ? 'Nama wajib diisi.' : false
+
+  if (!form.nik.trim()) {
+    errors.nik = 'NIK wajib diisi.'
+  } else if (form.nik.length !== 16) {
+    errors.nik = 'NIK harus 16 digit angka.'
+  } else {
+    errors.nik = false
+  }
+
+  errors.tanggalLahir = !form.tanggalLahir ? 'Tanggal lahir wajib diisi.' : false
+  errors.jenisKelamin = !form.jenisKelamin ? 'Jenis kelamin wajib diisi.' : false
+  errors.golonganDarah = !form.golonganDarah ? 'Golongan darah wajib diisi.' : false
+
+  if (Object.values(errors).some((val) => val !== false)) {
+    return
+  }
 
   console.log('Data pasien terkirim:', { ...form })
 }

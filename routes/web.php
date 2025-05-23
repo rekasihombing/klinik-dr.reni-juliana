@@ -31,9 +31,13 @@ Route::middleware(['auth'])->get('/janjitemu', function () {
     return Inertia::render('JanjiTemu');
 })->name('janjitemu');
 
-Route::middleware(['auth'])->get('/janjitemu2', function () {
-    return Inertia::render('JanjiTemu2');
-})->name('janjitemu2');
+Route::middleware(['auth'])->get('/datapasien', function () {
+    return Inertia::render('DataPasien');
+})->name('datapasien');
+
+Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
+    return Inertia::render('KonfirmasiJanjiTemu');
+})->name('konfirmasijanjitemu');
 
 Route::post('/contact', [FaqController::class, 'store']);   
 
