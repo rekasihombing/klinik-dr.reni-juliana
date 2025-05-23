@@ -23,6 +23,15 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+
+Route::get('/dashboardstaff', function () {
+    return Inertia::render('DashboardStaff');
+})->name('dashboardstaff');
+
+Route::get('/pendaftaran', function () {
+    return Inertia::render('PendaftaranPasienStaff');
+})->name('pendaftaran');
+
 Route::get('/kontak', function () {
     return Inertia::render('kontak');
 })->name('kontak');
