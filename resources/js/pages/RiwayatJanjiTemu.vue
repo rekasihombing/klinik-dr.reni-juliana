@@ -32,6 +32,7 @@
                   <th class="py-2 px-4 rounded-tr-md border border-blue-600">Status</th>
                 </tr>
               </thead>
+              
               <tbody class="text-sm text-gray-900">
                 <tr v-if="appointments.length === 0" class="border border-gray-300">
                   <td
