@@ -41,11 +41,5 @@ Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
 
 Route::post('/contact', [FaqController::class, 'store']);   
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-   Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-});
-
-
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

@@ -11,6 +11,7 @@
 
     <div class="flex flex-1">
       <Sidebar :patient-name="patientName" />
+      
 
       <main class="flex-grow flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl p-6">
