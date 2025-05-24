@@ -23,6 +23,19 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+
+Route::get('/dashboardstaff', function () {
+    return Inertia::render('DashboardStaff');
+})->name('dashboardstaff');
+
+Route::get('/pendaftaran', function () {
+    return Inertia::render('PendaftaranPasienStaff');
+})->name('pendaftaran');
+
+Route::get('/KonfirmasiPasien', function () {
+    return Inertia::render('KonfiirmasiPasienStaff');
+})->name('KonfirmasiPasien');
+
 Route::get('/kontak', function () {
     return Inertia::render('Kontak');
 })->name('kontak');
@@ -39,13 +52,11 @@ Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
     return Inertia::render('KonfirmasiJanjiTemu');
 })->name('konfirmasijanjitemu');
 
+Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
+    return Inertia::render('RiwayatJanjiTemu');
+})->name('riwayatjanjitemu');
+
 Route::post('/contact', [FaqController::class, 'store']);   
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-   Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-});
-
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

@@ -9,10 +9,10 @@
         <i class="fas fa-home text-sm"></i>
         <span>Dashboard Pasien</span>
       </a>
-      <a href="#" class="flex items-center space-x-2 hover:bg-[#3B59A1] rounded px-3 py-2">
-        <i class="fas fa-calendar-alt text-sm"></i>
-        <span>Buat Janji Temu</span>
-      </a>
+     <a href="#" @click.prevent="Inertia.visit('/janjitemu')" class="flex items-center space-x-2 hover:bg-[#3B59A1] rounded px-3 py-2">
+  <i class="fas fa-calendar-alt text-sm"></i>
+  <span>Buat Janji Temu</span>
+</a>
       <a href="#" class="flex items-center space-x-2 hover:bg-[#3B59A1] rounded px-3 py-2">
         <i class="fas fa-history text-sm"></i>
         <span>Riwayat Janji Temu</span>
@@ -34,12 +34,14 @@
 </template>
 
 <script setup>
+
 defineProps({
   patientName: {
     type: String,
     default: 'Nama Pasien'
   }
 })
+
 </script>
 
 <style scoped>
