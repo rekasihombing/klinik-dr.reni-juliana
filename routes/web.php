@@ -24,7 +24,7 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 Route::get('/kontak', function () {
-    return Inertia::render('kontak');
+    return Inertia::render('Kontak');
 })->name('kontak');
 
 Route::middleware(['auth'])->get('/janjitemu', function () {
