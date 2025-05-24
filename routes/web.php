@@ -56,7 +56,7 @@ Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
     return Inertia::render('RiwayatJanjiTemu');
 })->name('riwayatjanjitemu');
 
-Route::post('/contact', [FaqController::class, 'store']);   
+Route::post('/kontak', [FaqController::class, 'store']);   
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
