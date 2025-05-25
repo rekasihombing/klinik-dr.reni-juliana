@@ -23,6 +23,19 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+
+Route::get('/dashboardstaff', function () {
+    return Inertia::render('DashboardStaff');
+})->name('dashboardstaff');
+
+Route::get('/pendaftaran', function () {
+    return Inertia::render('PendaftaranPasienStaff');
+})->name('pendaftaran');
+
+Route::get('/KonfirmasiPasien', function () {
+    return Inertia::render('KonfiirmasiPasienStaff');
+})->name('KonfirmasiPasien');
+
 Route::get('/kontak', function () {
     return Inertia::render('kontak');
 })->name('kontak');
@@ -39,6 +52,9 @@ Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
     return Inertia::render('KonfirmasiJanjiTemu');
 })->name('konfirmasijanjitemu');
 
+=========
+Route::middleware(['auth'])->get('/janjitemu', [AppointmentController::class, 'create'])->name('janjitemu');    
+>>>>>>>>> Temporary merge branch 2
 Route::post('/contact', [FaqController::class, 'store']);   
 
 require __DIR__.'/settings.php';

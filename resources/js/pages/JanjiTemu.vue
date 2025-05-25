@@ -11,7 +11,6 @@
 
     <div class="flex flex-1">
       <Sidebar :patient-name="patientName" />
-      
 
       <main class="flex-grow flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl p-6">
@@ -25,7 +24,7 @@
 
           <div class="flex flex-col md:flex-row md:space-x-8">
             <!-- Form -->
-            <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="handleSubmit">
+            <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="showConfirmationModal">
               <h2 class="text-blue-800 font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
                 Detail Janji Temu
               </h2>
@@ -79,8 +78,15 @@
               ></textarea>
               <p v-if="errors.keluhan" class="text-red-500 text-xs mt-0">Keluhan wajib diisi.</p>
 
+              <p class="text-xs text-gray-700 mb-1">
+                <strong>Catatan:</strong>
+                Mohon datang ke klinik pada tanggal dan sebelum jam yang ditentukan untuk
+                melakukan administrasi. Jika datang di luar tanggal dan melebihi jam tersebut, maka nomor antrian Anda
+                sudah tidak berlaku.
+              </p>
+
               <button type="submit" class="bg-blue-700 text-white text-xs px-4 py-1 rounded w-max">
-                Berikutnya
+                Simpan
               </button>
             </form>
 
@@ -105,6 +111,34 @@
         </div>
       </main>
     </div>
+
+    <!-- Confirmation Modal -->
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.15);">
+      <div class="bg-white rounded-lg max-w-sm w-full p-9 drop-shadow-lg">
+        <div class="flex justify-center mb-4">
+          <i class="far fa-clock text-blue-900 text-4xl"></i>
+        </div>
+        <h2 class="text-blue-900 font-bold text-center text-lg mb-4 leading-tight">
+          Konfirmasi Janji Temu Anda
+        </h2>
+        <p class="text-black text-sm font-semibold mb-1">Tanggal &amp; Waktu Janji Temu</p>
+        <div class="text-black text-sm mb-4 space-y-1">
+          <p><i class="far fa-calendar-alt text-blue-900 mr-2"></i>{{ form.tanggal }}</p>
+          <p><i class="far fa-clock text-blue-900 mr-2"></i>{{ form.jam_konsultasi }}</p>
+        </div>
+        <p class="text-black text-xs mb-6">
+          Pastikan anda hadir tepat waktu sesuai dengan tanggal dan jam janji temu
+        </p>
+        <div class="flex justify-end space-x-3">
+          <button @click="showModal = false" class="text-blue-900 text-xs border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition">
+            Batal
+          </button>
+          <button @click="confirmSubmit" class="bg-blue-700 text-white text-xs rounded px-3 py-1 hover:bg-blue-800 transition">
+            Selesai
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -114,7 +148,6 @@ import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../layouts/Sidebar.vue'
 import { useForm } from '@inertiajs/vue3'
-
 
 // Props
 const props = defineProps({
@@ -131,7 +164,6 @@ const form = useForm({
   pasien_id: props.patientId,
 })
 
-
 // Validasi Error
 const errors = reactive({
   tanggal: false,
@@ -139,9 +171,12 @@ const errors = reactive({
   keluhan: false,
 })
 
-// Handle Submit
-const handleSubmit = () => {
-  // Validasi manual
+// Modal state
+const showModal = ref(false)
+
+// Show confirmation modal
+const showConfirmationModal = () => {
+  // Validate form before showing modal
   errors.tanggal = !form.tanggal
   errors.jam_konsultasi = !form.jam_konsultasi
   errors.keluhan = !form.keluhan
@@ -151,9 +186,11 @@ const handleSubmit = () => {
     return
   }
 
-  // Pastikan pasien_id terisi sebelum submit
-  form.pasien_id = props.patientId
+  showModal.value = true
+}
 
+// Confirm submit
+const confirmSubmit = () => {
   // Submit form
   form.post(route('appointments.store'), {
     onError: (errors) => {
@@ -161,11 +198,10 @@ const handleSubmit = () => {
     },
     onSuccess: () => {
       console.log('SUKSES')
+      showModal.value = false // Close modal after success
     }
   })
 }
-
-
 
 // Flatpickr
 onMounted(() => {

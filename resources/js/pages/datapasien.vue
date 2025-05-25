@@ -13,8 +13,8 @@
 
       <main class="flex-grow p-4">
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
-          <h1 class="text-center text-blue-900 font-poppins font-bold text-lg flex items-center justify-center gap-2 mb-1">
-            <i class="fas fa-calendar-alt text-xl"></i>
+          <h1 class="text-blue-800 font-semibold text-xl flex items-center justify-center gap-2">
+            <i class="fas fa-calendar-alt text-blue-800 text-lg"></i>
             Data Pasien
           </h1>
           <p class="text-center text-sm mb-6 text-gray-900">
@@ -36,6 +36,7 @@
                 type="text"
                 placeholder="Masukkan nama lengkap"
                 :class="inputClass(errors.nama)"
+                @input="filterNameInput"
               />
               <p v-if="errors.nama" class="text-red-500 text-xs mt-1">{{ errors.nama }}</p>
             </div>
@@ -51,7 +52,6 @@
                 placeholder="Masukkan NIK"
                 :class="inputClass(errors.nik)"
                 @input="filterNIKInput"
-                maxlength="16"
               />
               <p v-if="errors.nik" class="text-red-500 text-xs mt-1">{{ errors.nik }}</p>
             </div>
@@ -74,7 +74,7 @@
                   aria-hidden="true"
                 ></i>
               </div>
-              <p v-if="errors.tanggalLahir" class="text-red-500 text-xs mt-1">{{ errors.tanggalLahir }}</p>
+              <p v-if="errors.tanggalLahir" class="text-red-500 text-xs mt-1">Tanggal lahir wajib diisi.</p>
             </div>
 
             <div>
@@ -90,7 +90,7 @@
                 <option>Laki-laki</option>
                 <option>Perempuan</option>
               </select>
-              <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">{{ errors.jenisKelamin }}</p>
+              <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
             </div>
 
             <div>
@@ -108,7 +108,7 @@
                 <option>AB</option>
                 <option>O</option>
               </select>
-              <p v-if="errors.golonganDarah" class="text-red-500 text-xs mt-1">{{ errors.golonganDarah }}</p>
+              <p v-if="errors.golonganDarah" class="text-red-500 text-xs mt-1">Golongan darah wajib diisi.</p>
             </div>
 
             <div>
@@ -141,16 +141,14 @@
 
             <p class="text-xs text-gray-700 mb-1">
               <strong>Catatan:</strong>
-              Mohon datang ke klinik pada tanggal {{ appointmentDate }} sebelum jam {{ appointmentTime }} untuk
-              melakukan administrasi. Jika datang di luar tanggal dan melebihi jam tersebut, maka nomor antrian Anda
-              sudah tidak berlaku.
+              Mohon untuk mengisi data diri anda dengan benar.
             </p>
 
             <button
               type="submit"
               class="bg-blue-600 text-white text-xs rounded px-3 py-1 hover:bg-blue-700 transition"
             >
-              Buat Janji Temu
+              Simpan
             </button>
           </form>
         </div>
@@ -206,12 +204,24 @@ const inputClass = (hasError, extra = '') => [
 ]
 const selectClass = inputClass
 
+const filterNameInput = (e) => {
+  const rawValue = e.target.value
+  // Only keep letters
+  const filtered = rawValue.replace(/[^a-zA-Z\s]/g, '')
+  if (filtered !== rawValue) {
+    errors.nama = 'Nama lengkap wajib huruf.'
+  } else {
+    errors.nama = false
+  }
+  e.target.value = filtered
+  form.nama = filtered
+}
+
 const filterNIKInput = (e) => {
   const rawValue = e.target.value
   // Only keep digits
   const filtered = rawValue.replace(/\D/g, '')
   if (filtered !== rawValue) {
-    // Show error that only digits allowed and must be 16 digits
     errors.nik = 'NIK wajib angka dan 16 digit.'
   } else {
     errors.nik = false
@@ -265,8 +275,6 @@ onMounted(() => {
   })
 })
 
-const appointmentDate = computed(() => props.appointmentDate)
-const appointmentTime = computed(() => props.appointmentTime)
 </script>
 
 <style scoped>

@@ -47,6 +47,10 @@
                 <td class="text-sm px-3 py-2 text-black">{{ form.jenisKelamin }}</td>
               </tr>
               <tr class="border-t border-gray-300">
+                <td class="text-sm font-medium px-3 py-2 text-black">Golongan Darah</td>
+                <td class="text-sm px-3 py-2 text-black">{{ form.golonganDarah }}</td>
+              </tr>
+              <tr class="border-t border-gray-300">
                 <td class="text-sm font-medium px-3 py-2 text-black">Nomor HP / Whatsapp</td>
                 <td class="text-sm px-3 py-2 text-black">{{ form.nomorHp }}</td>
               </tr>
@@ -127,6 +131,7 @@ const props = defineProps({
       nik: '',
       tanggalLahir: '',
       jenisKelamin: '',
+      golonganDarah: '', // Add this line for blood type
       nomorHp: '',
       alamat: '',
       permintaan: '',
