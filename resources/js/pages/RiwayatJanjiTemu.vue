@@ -9,6 +9,7 @@
     </header>
 
     <div class="flex flex-1">
+      <!-- Sidebar -->
       <Sidebar :patient-name="patientName" />
 
       <main class="flex-grow p-4">

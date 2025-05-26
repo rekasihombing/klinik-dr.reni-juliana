@@ -86,9 +86,9 @@
                 v-model="form.jenisKelamin"
                 :class="selectClass(errors.jenisKelamin)"
               >
-                <option value="" disabled selected>Pilih jenis kelamin</option>
-                <option>Laki-laki</option>
-                <option>Perempuan</option>
+                <option value="" disabled>Pilih jenis kelamin</option>
+                <option value="L">Laki-laki</option>
+                <option value="P">Perempuan</option>
               </select>
               <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
             </div>
@@ -102,7 +102,7 @@
                 v-model="form.golonganDarah"
                 :class="selectClass(errors.golonganDarah)"
               >
-                <option value="" disabled selected>Pilih golongan darah</option>
+                <option value="" disabled>Pilih golongan darah</option>
                 <option>A</option>
                 <option>B</option>
                 <option>AB</option>
@@ -158,7 +158,8 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from 'vue'
+import { onMounted, reactive } from 'vue'
+import { useForm } from '@inertiajs/vue3'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../layouts/Sidebar.vue'
@@ -166,25 +167,18 @@ import Sidebar from '../layouts/Sidebar.vue'
 const props = defineProps({
   patientName: String,
   clinicName: String,
-  appointmentDate: {
-    type: String,
-    default: 'tanggal',
-  },
-  appointmentTime: {
-    type: String,
-    default: 'jam',
-  },
+  patient: Object, // Data pasien lama yang dikirim dari backend
 })
 
-const form = reactive({
-  nama: '',
-  nik: '',
-  tanggalLahir: '',
-  jenisKelamin: '',
-  golonganDarah: '',
-  nomorHp: '',
-  alamat: '',
-  permintaan: '',
+// Inisialisasi form dengan data pasien lama jika ada, supaya form sudah terisi saat dibuka
+const form = useForm({
+  nama: props.patient?.nama_lengkap || '',
+  nik: props.patient?.nik || '',
+  tanggalLahir: props.patient?.tanggal_lahir || '',
+  jenisKelamin: props.patient?.jenis_kelamin || '',
+  golonganDarah: props.patient?.golongan_darah || '',
+  nomorHp: props.patient?.no_hp || '',
+  alamat: props.patient?.alamat || '',
 })
 
 const errors = reactive({
@@ -194,19 +188,10 @@ const errors = reactive({
   jenisKelamin: false,
   golonganDarah: false,
   nomorHp: false,
-  permintaan: false,
 })
-
-const inputClass = (hasError, extra = '') => [
-  'w-full border rounded px-2 py-1 text-sm',
-  extra,
-  hasError ? 'border-red-500' : 'border-gray-300',
-]
-const selectClass = inputClass
 
 const filterNameInput = (e) => {
   const rawValue = e.target.value
-  // Only keep letters
   const filtered = rawValue.replace(/[^a-zA-Z\s]/g, '')
   if (filtered !== rawValue) {
     errors.nama = 'Nama lengkap wajib huruf.'
@@ -219,7 +204,6 @@ const filterNameInput = (e) => {
 
 const filterNIKInput = (e) => {
   const rawValue = e.target.value
-  // Only keep digits
   const filtered = rawValue.replace(/\D/g, '')
   if (filtered !== rawValue) {
     errors.nik = 'NIK wajib angka dan 16 digit.'
@@ -257,41 +241,42 @@ const handleSubmit = () => {
   errors.jenisKelamin = !form.jenisKelamin ? 'Jenis kelamin wajib diisi.' : false
   errors.golonganDarah = !form.golonganDarah ? 'Golongan darah wajib diisi.' : false
 
-  if (Object.values(errors).some((val) => val !== false)) {
+  if (errors.nama || errors.nik || errors.tanggalLahir || errors.jenisKelamin || errors.golonganDarah) {
     return
   }
 
-  console.log('Data pasien terkirim:', { ...form })
+  // Kirim data update ke backend pakai PUT
+  form.put(route('patients.update', props.patient.id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      alert('Data berhasil disimpan!')
+    },
+    onError: () => {
+      alert('Ada kesalahan, periksa kembali data Anda.')
+    },
+  })
 }
 
+// Flatpickr untuk input tanggal lahir
 onMounted(() => {
   flatpickr('#tanggal-lahir', {
     dateFormat: 'Y-m-d',
-    maxDate: 'today',
-    onChange: (selected, dateStr) => {
+    defaultDate: form.tanggalLahir || null,
+    onChange: (selectedDates, dateStr) => {
       form.tanggalLahir = dateStr
       errors.tanggalLahir = false
     },
   })
 })
 
+// Utility styling untuk input dan select error
+const inputClass = (error, extraClass = '') =>
+  `w-full border px-2 py-1 text-sm rounded ${error ? 'border-red-500' : 'border-gray-300'} ${extraClass}`
+
+const selectClass = (error) =>
+  `w-full border px-2 py-1 text-sm rounded ${error ? 'border-red-500' : 'border-gray-300'}`
 </script>
 
 <style scoped>
-input::placeholder,
-textarea::placeholder,
-select:invalid {
-  color: #9ca3af;
-  opacity: 1;
-}
-
-input,
-textarea,
-select {
-  color: #000;
-}
-
-.border-red-500 {
-  border-color: #f87171;
-}
+/* Tambahan styling bila perlu */
 </style>
