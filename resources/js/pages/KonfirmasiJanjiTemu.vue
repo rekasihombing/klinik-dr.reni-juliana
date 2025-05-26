@@ -15,7 +15,7 @@
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
           <div class="flex items-center justify-center mb-2">
             <i class="fas fa-check-circle text-green-500 text-lg mr-2"></i>
-            <h1 class="font-semibold text-blue-900 text-lg sm:text-xl">Konfirmasi Janji Temu</h1>
+            <h1 class="font-semibold text-[#2A4482] text-lg sm:text-xl">Konfirmasi Janji Temu</h1>
           </div>
           <p class="text-center text-sm mb-6 text-black">Nomor Antrian: <span class="font-semibold">{{ queueNumber }}</span></p>
 
@@ -25,7 +25,7 @@
               <col style="width: 60%" />
             </colgroup>
             <thead>
-              <tr class="bg-blue-600 rounded-t-md">
+              <tr class="bg-[#3674B5] rounded-t-md">
                 <th colspan="2" class="text-white text-left text-sm font-semibold px-3 py-2 rounded-t-md">Data Pasien</th>
               </tr>
             </thead>
@@ -67,7 +67,7 @@
               <col style="width: 60%" />
             </colgroup>
             <thead>
-              <tr class="bg-blue-600 rounded-t-md">
+              <tr class="bg-[#3674B5] rounded-t-md">
                 <th colspan="2" class="text-white text-left text-sm font-semibold px-3 py-2 rounded-t-md">Detail Janji Temu</th>
               </tr>
             </thead>
@@ -93,7 +93,7 @@
 
           <button
             onclick="window.location.href='#'"
-            class="bg-blue-600 text-white text-xs font-semibold px-4 py-1 rounded-md hover:bg-blue-700 transition w-max"
+            class="bg-[#3674B5] text-white text-xs font-semibold px-4 py-1 rounded-md hover:bg-blue-700 transition w-max"
             type="button"
             aria-label="Check In"
           >
@@ -114,11 +114,11 @@ const props = defineProps({
   clinicName: String,
   appointmentDate: {
     type: String,
-    default: 'tanggal',
+    default: '-',
   },
   appointmentTime: {
     type: String,
-    default: 'jam',
+    default: '-',
   },
   queueNumber: {
     type: String,

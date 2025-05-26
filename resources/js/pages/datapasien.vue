@@ -13,8 +13,8 @@
 
       <main class="flex-grow p-4">
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
-          <h1 class="text-blue-800 font-semibold text-xl flex items-center justify-center gap-2">
-            <i class="fas fa-calendar-alt text-blue-800 text-lg"></i>
+          <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
+            <i class="fas fa-calendar-alt text-[#2A4482] text-lg"></i>
             Data Pasien
           </h1>
           <p class="text-center text-sm mb-6 text-gray-900">
@@ -22,7 +22,7 @@
           </p>
 
           <form class="space-y-3" @submit.prevent="handleSubmit">
-            <h2 class="text-blue-900 font-poppins font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
+            <h2 class="text-[#2A4482] font-poppins font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
               Detail Informasi Pasien
             </h2>
 
@@ -86,9 +86,9 @@
                 v-model="form.jenisKelamin"
                 :class="selectClass(errors.jenisKelamin)"
               >
-                <option value="" disabled>Pilih jenis kelamin</option>
-                <option value="L">Laki-laki</option>
-                <option value="P">Perempuan</option>
+                <option value="" disabled selected>Pilih jenis kelamin</option>
+                <option>Laki-laki</option>
+                <option>Perempuan</option>
               </select>
               <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
             </div>
@@ -102,7 +102,7 @@
                 v-model="form.golonganDarah"
                 :class="selectClass(errors.golonganDarah)"
               >
-                <option value="" disabled>Pilih golongan darah</option>
+                <option value="" disabled selected>Pilih golongan darah</option>
                 <option>A</option>
                 <option>B</option>
                 <option>AB</option>
@@ -146,7 +146,7 @@
 
             <button
               type="submit"
-              class="bg-blue-600 text-white text-xs rounded px-3 py-1 hover:bg-blue-700 transition"
+              class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 hover:bg-blue-700 transition"
             >
               Simpan
             </button>
@@ -158,8 +158,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { reactive, ref, onMounted } from 'vue'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../layouts/Sidebar.vue'
@@ -167,18 +166,17 @@ import Sidebar from '../layouts/Sidebar.vue'
 const props = defineProps({
   patientName: String,
   clinicName: String,
-  patient: Object, // Data pasien lama yang dikirim dari backend
 })
 
-// Inisialisasi form dengan data pasien lama jika ada, supaya form sudah terisi saat dibuka
-const form = useForm({
-  nama: props.patient?.nama_lengkap || '',
-  nik: props.patient?.nik || '',
-  tanggalLahir: props.patient?.tanggal_lahir || '',
-  jenisKelamin: props.patient?.jenis_kelamin || '',
-  golonganDarah: props.patient?.golongan_darah || '',
-  nomorHp: props.patient?.no_hp || '',
-  alamat: props.patient?.alamat || '',
+const form = reactive({
+  nama: '',
+  nik: '',
+  tanggalLahir: '',
+  jenisKelamin: '',
+  golonganDarah: '',
+  nomorHp: '',
+  alamat: '',
+  permintaan: '',
 })
 
 const errors = reactive({
@@ -189,6 +187,14 @@ const errors = reactive({
   golonganDarah: false,
   nomorHp: false,
 })
+
+const inputClass = (hasError, extra = '') => [
+  'w-full border rounded px-2 py-1 text-sm',
+  extra,
+  hasError ? 'border-red-500' : 'border-gray-300',
+].join(' ')
+
+const selectClass = inputClass
 
 const filterNameInput = (e) => {
   const rawValue = e.target.value
@@ -241,42 +247,40 @@ const handleSubmit = () => {
   errors.jenisKelamin = !form.jenisKelamin ? 'Jenis kelamin wajib diisi.' : false
   errors.golonganDarah = !form.golonganDarah ? 'Golongan darah wajib diisi.' : false
 
-  if (errors.nama || errors.nik || errors.tanggalLahir || errors.jenisKelamin || errors.golonganDarah) {
+  if (Object.values(errors).some((val) => val !== false)) {
     return
   }
 
-  // Kirim data update ke backend pakai PUT
-  form.put(route('patients.update', props.patient.id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      alert('Data berhasil disimpan!')
-    },
-    onError: () => {
-      alert('Ada kesalahan, periksa kembali data Anda.')
-    },
-  })
+  console.log('Data pasien terkirim:', { ...form })
 }
 
-// Flatpickr untuk input tanggal lahir
 onMounted(() => {
   flatpickr('#tanggal-lahir', {
     dateFormat: 'Y-m-d',
-    defaultDate: form.tanggalLahir || null,
+    maxDate: 'today',
     onChange: (selectedDates, dateStr) => {
       form.tanggalLahir = dateStr
       errors.tanggalLahir = false
     },
   })
 })
-
-// Utility styling untuk input dan select error
-const inputClass = (error, extraClass = '') =>
-  `w-full border px-2 py-1 text-sm rounded ${error ? 'border-red-500' : 'border-gray-300'} ${extraClass}`
-
-const selectClass = (error) =>
-  `w-full border px-2 py-1 text-sm rounded ${error ? 'border-red-500' : 'border-gray-300'}`
 </script>
 
 <style scoped>
-/* Tambahan styling bila perlu */
+input::placeholder,
+textarea::placeholder,
+select:invalid {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+input,
+textarea,
+select {
+  color: #000;
+}
+
+.border-red-500 {
+  border-color: #f87171;
+}
 </style>

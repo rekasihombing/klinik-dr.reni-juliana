@@ -15,8 +15,8 @@
       <main class="flex-grow flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl p-6">
           <div class="text-center mb-4">
-            <h1 class="text-blue-800 font-semibold text-xl flex items-center justify-center gap-2">
-              <i class="fas fa-calendar-alt text-blue-800 text-lg"></i>
+            <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
+              <i class="fas fa-calendar-alt text-[#2A4482] text-lg"></i>
               Buat Janji Temu
             </h1>
             <p class="text-sm text-black">Silahkan isi detail untuk janji temu di bawah ini.</p>
@@ -25,7 +25,7 @@
           <div class="flex flex-col md:flex-row md:space-x-8">
             <!-- Form -->
             <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="showConfirmationModal">
-              <h2 class="text-blue-800 font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
+              <h2 class="text-[#2A4482] font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
                 Detail Janji Temu
               </h2>
 
@@ -85,7 +85,7 @@
                 sudah tidak berlaku.
               </p>
 
-              <button type="submit" class="bg-blue-700 text-white text-xs px-4 py-1 rounded w-max">
+              <button type="submit" class="bg-[#3674B5] text-white text-xs px-4 py-1 rounded w-max">
                 Simpan
               </button>
             </form>
@@ -94,7 +94,7 @@
             <div class="mt-6 md:mt-0 md:w-1/2">
               <table class="w-full border border-gray-300 rounded-lg border-collapse">
                 <thead>
-                  <tr class="bg-blue-700 text-white text-sm">
+                  <tr class="bg-[#3674B5] text-white text-sm">
                     <th class="py-2 px-4 border border-gray-300 text-left">Hari</th>
                     <th class="py-2 px-4 border border-gray-300">Waktu</th>
                   </tr>
@@ -130,10 +130,10 @@
           Pastikan anda hadir tepat waktu sesuai dengan tanggal dan jam janji temu
         </p>
         <div class="flex justify-end space-x-3">
-          <button @click="showModal = false" class="text-blue-900 text-xs border border-blue-300 rounded px-3 py-1 hover:bg-blue-50 transition">
+          <button @click="showModal = false" class="text-[#3674B5] text-xs border border-[#3674B5] rounded px-3 py-1 hover:bg-blue-50 transition">
             Batal
           </button>
-          <button @click="confirmSubmit" class="bg-blue-700 text-white text-xs rounded px-3 py-1 hover:bg-blue-800 transition">
+          <button @click="confirmSubmit" class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 hover:bg-blue-800 transition">
             Selesai
           </button>
         </div>

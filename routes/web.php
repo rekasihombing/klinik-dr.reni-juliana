@@ -67,6 +67,10 @@ Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
     return Inertia::render('RiwayatJanjiTemu');
 })->name('riwayatjanjitemu');
 
+Route::middleware(['auth'])->get('/profilpasien', function () {
+    return Inertia::render('ProfilPasien');
+})->name('profilpasien');
+
 Route::get('/dashboarddokter', function () {
     return Inertia::render('DashboardDokter');
 })->name('dashboarddokter');

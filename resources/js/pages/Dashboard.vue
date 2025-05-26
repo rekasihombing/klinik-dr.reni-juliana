@@ -18,7 +18,7 @@
 
       <!-- Main Content -->
       <main class="flex-1 p-6 bg-[#F7F8FA] overflow-auto">
-        <h1 class="text-[#2D4480] font-bold text-lg mb-4 font-sans">
+        <h1 class="text-[#2D4480] font-bold text-xl mb-4 font-sans">
           Selamat Datang, {{ patientName }}!
         </h1>
 
