@@ -16,47 +16,47 @@
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/dashboarddokter') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
-        <i class="fas fa-home text-sm"></i>
+        <i class="fas fa-home text-lg"></i>
         <span>Dashboard Dokter</span>
       </Link>
 
       <!-- Pasien -->
       <Link 
-        href="/dashboarddokter" 
+        href="/tambahrekammedis" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/janjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/tambahrekammedis') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
-        <i class="fas fa-user-injured"></i>
+        <i class="fas fa-user-injured text-lg"></i>
         <span>Pasien</span>
       </Link>
 
       <!-- Janji Temu -->
       <Link 
-        href="/riwayatjanjitemu" 
+        href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/riwayatjanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
-        <i class="fas fa-calendar-alt text-sm"></i>
+        <i class="fas fa-calendar-alt text-lg"></i>
         <span>Janji Temu</span>
       </Link>
 
       <!-- Pegawai -->
       <Link 
-        href="/datapasien" 
+        href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/datapasien') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
-        <i class="fas fa-users"></i>
+        <i class="fas fa-users text-lg"></i>
         <span>Pegawai</span>
       </Link>
 
       <!-- Laporan -->
       <Link 
-        href="/konfirmasijanjitemu" 
+        href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/konfirmasijanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
-        <i class="fas fa-file-alt"></i>
+        <i class="fas fa-file-alt text-lg"></i>
         <span>Laporan</span>
       </Link>
     </nav>
@@ -66,7 +66,7 @@
       @click="handleLogout"
       class="px-4 py-3 border-t border-[#1B2A4D] flex items-center space-x-2 cursor-pointer hover:bg-[#3B59A1]"
     >
-      <i class="fas fa-sign-out-alt text-sm"></i>
+      <i class="fas fa-sign-out-alt text-lg"></i>
       <span>Logout</span>
     </div>
   </aside>
