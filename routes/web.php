@@ -44,6 +44,17 @@ Route::get('/KonfirmasiPasien', function () {
     return Inertia::render('staff/KonfiirmasiPasienStaff');
 })->name('KonfirmasiPasien');
 
+Route::get('/Pembayaran', function () {
+    return Inertia::render('staff/pembayaran');
+})->name('Pembayaran');
+
+Route::get('/invoice', function () {
+    return Inertia::render('staff/invoice');
+})->name('Invoice');
+
+Route::get('/JadwalKlinik', function () {
+    return Inertia::render('staff/Jadwal');
+})->name('JadwalKlinik');
 //Pasien
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
