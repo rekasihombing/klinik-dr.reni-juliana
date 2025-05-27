@@ -16,10 +16,10 @@
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
           <div class="flex items-center justify-center mb-4 flex-col">
             <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
-              <i class="fas fa-history text-[#2A4482] text-lg"></i>
-              Riwayat Janji Temu
+              <i class="fas fa-file-medical text-[#2A4482] text-lg"></i>
+              Riwayat Rekam Medis
             </h1>
-            <p class="text-sm text-black text-center">Anda dapat melihat riwayat janji temu anda di sini.</p>
+            <p class="text-sm text-black text-center">Anda dapat melihat riwayat rekam medis anda di sini.</p>
           </div>
 
           <div class="overflow-x-auto">
@@ -30,7 +30,7 @@
                   <th class="py-2 px-4 border border-blue-600">Tanggal</th>
                   <th class="py-2 px-4 border border-blue-600 text-center">Jam</th>
                   <th class="py-2 px-4 border border-blue-600 text-center">No. Antrian</th>
-                  <th class="py-2 px-4 rounded-tr-md border border-blue-600 text-center">Status</th>
+                  <th class="py-2 px-4 rounded-tr-md border border-blue-600 text-center">Aksi</th>
                 </tr>
               </thead>
               
@@ -40,7 +40,7 @@
                     class="py-6 px-4 border-r border-gray-300 text-center text-gray-400 italic text-lg font-medium"
                     colspan="5"
                   >
-                    Anda belum memiliki riwayat janji temu.
+                    Anda belum memiliki riwayat rekam medis.
                   </td>
                 </tr>
                 <tr v-for="(appointment, index) in appointments" :key="index" class="border border-gray-300">
@@ -49,16 +49,12 @@
                   <td class="py-2 px-4 border-r border-gray-300 text-center">{{ appointment.time }}</td>
                   <td class="py-2 px-4 border-r border-gray-300 text-center">{{ appointment.queueNumber }}</td>
                   <td class="py-2 px-4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-md font-medium"
-                      :class="{
-                        'bg-green-500 text-white': appointment.status === 'Selesai',
-                        'bg-red-600 text-white': appointment.status === 'Batal',
-                        'bg-orange-500 text-white': appointment.status === 'Menunggu',
-                      }"
+                    <button
+                      @click="viewDetail(appointment)"
+                      class="bg-[#3674B5] hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors duration-200"
                     >
-                      {{ appointment.status }}
-                    </span>
+                      Lihat Detail
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -82,12 +78,19 @@ const props = defineProps({
 // Appointments data empty initially; fill from previous page or backend later
 const appointments = ref([])
 
+// Function to handle view detail button click
+const viewDetail = (appointment) => {
+  // Add your logic here to show appointment details
+  console.log('Viewing detail for:', appointment)
+  // You can navigate to detail page or show modal here
+}
+
 // Example data for testing (comment out or remove in production)
 /*
 appointments.value = [
-  { date: '20-04-2025', time: '16.00', queueNumber: 'B01', status: 'Selesai' },
-  { date: '04-05-2025', time: '15.00', queueNumber: 'B05', status: 'Batal' },
-  { date: '13-05-2025', time: '19.00', queueNumber: 'B10', status: 'Menunggu' },
+  { date: '20-04-2025', time: '16.00', queueNumber: 'B01' },
+  { date: '04-05-2025', time: '15.00', queueNumber: 'B05' },
+  { date: '13-05-2025', time: '19.00', queueNumber: 'B10' },
 ]
 */
 </script>

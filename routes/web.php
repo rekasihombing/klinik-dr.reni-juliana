@@ -77,6 +77,13 @@ Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
     return Inertia::render('pasien/RiwayatJanjiTemu');
 })->name('riwayatjanjitemu');
 
+Route::middleware(['auth'])->get('/riwayatrekammedis', function () {
+    return Inertia::render('pasien/RiwayatRekamMedis');
+})->name('riwayatrekammedis');
+
+Route::middleware(['auth'])->get('/jadwalkonsultasi', function () {
+    return Inertia::render('pasien/JadwalKonsultasi');
+})->name('jadwalkonsultasi');
 
 Route::middleware(['auth'])->get('/profilpasien', [ProfileController::class, 'show'])->name('profilpasien');
 
