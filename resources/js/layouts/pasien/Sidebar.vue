@@ -38,9 +38,9 @@
       
       <!-- Data Pasien -->
       <Link 
-        href="/datapasien" 
+        href="/riwayatrekammedis" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/datapasien') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/riwayatrekammedis') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-file-medical text-sm"></i>
         <span>Rekam Medis</span>
@@ -48,9 +48,9 @@
       
       <!-- Konfirmasi Janji Temu -->
       <Link 
-        href="/konfirmasijanjitemu" 
+        href="/jadwalkonsultasi" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/konfirmasijanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/jadwalkonsultasi') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-calendar-check text-sm"></i>
         <span>Jadwal Konsultasi Berikutnya</span>

@@ -16,10 +16,10 @@
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
           <div class="flex items-center justify-center mb-4 flex-col">
             <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
-              <i class="fas fa-history text-[#2A4482] text-lg"></i>
-              Riwayat Janji Temu
+              <i class="fas fa-calendar-check text-[#2A4482] text-lg"></i>
+              Jadwal Konsultasi
             </h1>
-            <p class="text-sm text-black text-center">Anda dapat melihat riwayat janji temu anda di sini.</p>
+            <p class="text-sm text-black text-center">Anda dapat melihat jadwal konsultasi anda di sini.</p>
           </div>
 
           <div class="overflow-x-auto">
@@ -29,7 +29,6 @@
                   <th class="py-2 px-4 rounded-tl-md border border-blue-600">No</th>
                   <th class="py-2 px-4 border border-blue-600">Tanggal</th>
                   <th class="py-2 px-4 border border-blue-600 text-center">Jam</th>
-                  <th class="py-2 px-4 border border-blue-600 text-center">No. Antrian</th>
                   <th class="py-2 px-4 rounded-tr-md border border-blue-600 text-center">Status</th>
                 </tr>
               </thead>
@@ -38,22 +37,20 @@
                 <tr v-if="appointments.length === 0" class="border border-gray-300">
                   <td
                     class="py-6 px-4 border-r border-gray-300 text-center text-gray-400 italic text-lg font-medium"
-                    colspan="5"
+                    colspan="4"
                   >
-                    Anda belum memiliki riwayat janji temu.
+                    Anda belum memiliki jadwal konsultasi.
                   </td>
                 </tr>
                 <tr v-for="(appointment, index) in appointments" :key="index" class="border border-gray-300">
                   <td class="py-2 px-4 border-r border-gray-300">{{ index + 1 }}</td>
                   <td class="py-2 px-4 border-r border-gray-300">{{ appointment.date }}</td>
                   <td class="py-2 px-4 border-r border-gray-300 text-center">{{ appointment.time }}</td>
-                  <td class="py-2 px-4 border-r border-gray-300 text-center">{{ appointment.queueNumber }}</td>
                   <td class="py-2 px-4 text-center">
                     <span
-                      class="inline-block px-3 py-1 rounded-md font-medium"
+                      class="inline-block px-3 py-1 rounded text-sm font-medium"
                       :class="{
                         'bg-green-500 text-white': appointment.status === 'Selesai',
-                        'bg-red-600 text-white': appointment.status === 'Batal',
                         'bg-orange-500 text-white': appointment.status === 'Menunggu',
                       }"
                     >
@@ -85,9 +82,9 @@ const appointments = ref([])
 // Example data for testing (comment out or remove in production)
 /*
 appointments.value = [
-  { date: '20-04-2025', time: '16.00', queueNumber: 'B01', status: 'Selesai' },
-  { date: '04-05-2025', time: '15.00', queueNumber: 'B05', status: 'Batal' },
-  { date: '13-05-2025', time: '19.00', queueNumber: 'B10', status: 'Menunggu' },
+  { date: '20-04-2025', time: '16.00', status: 'Menunggu' },
+  { date: '04-05-2025', time: '15.00', status: 'Selesai' },
+  { date: '13-05-2025', time: '19.00', status: 'Menunggu' },
 ]
 */
 </script>
