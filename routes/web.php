@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\OnlinePatientController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -21,42 +22,49 @@ Route::get('/register', function () {
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
-Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-
-
-Route::get('/dashboardstaff', function () {
-    return Inertia::render('DashboardStaff');
-})->name('dashboardstaff');
-
-Route::get('/pendaftaran', function () {
-    return Inertia::render('PendaftaranPasienStaff');
-})->name('pendaftaran');
-
-Route::get('/KonfirmasiPasien', function () {
-    return Inertia::render('KonfiirmasiPasienStaff');
-})->name('KonfirmasiPasien');
 
 Route::get('/kontak', function () {
     return Inertia::render('Kontak');
 })->name('kontak');
 
+Route::post('/kontak', [FaqController::class, 'store']);   
+
+//Staff
+Route::get('/dashboardstaff', function () {
+    return Inertia::render('staff/DashboardStaff');
+})->name('dashboardstaff');
+
+Route::get('/pendaftaran', function () {
+    return Inertia::render('staff/PendaftaranPasienStaff');
+})->name('pendaftaran');
+
+Route::get('/KonfirmasiPasien', function () {
+    return Inertia::render('staff/KonfiirmasiPasienStaff');
+})->name('KonfirmasiPasien');
+
+//Pasien
+Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
 Route::middleware(['auth'])->get('/janjitemu', function () {
-    return Inertia::render('JanjiTemu');
+    return Inertia::render('pasien/JanjiTemu');
 })->name('janjitemu');
 
 Route::middleware(['auth'])->get('/datapasien', function () {
-    return Inertia::render('DataPasien');
+    return Inertia::render('pasien/datapasien');
 })->name('datapasien');
 
+Route::middleware(['auth'])->get('/datapasien', [OnlinePatientController::class, 'create'])->name('datapasien');
+Route::post('/pasien/daftar', [OnlinePatientController::class, 'store'])->name('simpanpasienonline');
+
+
 Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
-    return Inertia::render('KonfirmasiJanjiTemu');
+    return Inertia::render('pasien/KonfirmasiJanjiTemu');
 })->name('konfirmasijanjitemu');
 
 Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
-    return Inertia::render('RiwayatJanjiTemu');
+    return Inertia::render('pasien/RiwayatJanjiTemu');
 })->name('riwayatjanjitemu');
 
-Route::post('/kontak', [FaqController::class, 'store']);   
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

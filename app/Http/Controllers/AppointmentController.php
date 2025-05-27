@@ -18,11 +18,11 @@ public function create()
     $user = Auth::user();
     $patient = $user->patient;
 
-   return Inertia::render('JanjiTemu', [
+   return Inertia::render('pasien/JanjiTemu', [
     'patientName' => $patient ? $patient->nama_lengkap : 'Nama Tidak Ditemukan',
     'patientId' => $patient ? $patient->id : null,
 ]);
-}
+} 
 
 public function store(Request $request)
 {

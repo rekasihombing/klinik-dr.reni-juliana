@@ -7,21 +7,8 @@
     <!-- Content Wrapper -->
     <div class="flex-1 flex flex-col">
       
-      <!-- Header -->
-      <header class="bg-gradient-to-r from-[#c9e6f2] to-[#c9e6f2] p-4 flex justify-between items-center rounded-b-md shadow-sm">
-        <div class="flex items-center space-x-2 text-[#0f1f3d] text-sm">
-          <i class="fas fa-home text-sm"></i>
-          <span>Dashboard</span>
-          <span>&gt;</span>
-          <span class="font-semibold">Tambah Pasien</span>
-        </div>
-        <div class="text-right text-[#0f1f3d] text-sm leading-tight">
-          <div>Senin, 12 Mei 2025</div>
-          <div class="flex justify-end gap-1">
-            <span>12</span><span>:</span><span>55</span><span>:</span><span>20</span>
-          </div>
-        </div>
-      </header>
+
+     <HeaderStaff :breadcrumbPages="breadcrumbPages" />
       
       <!-- Main Form Container -->
       <main class="max-w-5xl mx-auto mt-6 p-6 overflow-auto flex-grow">
@@ -107,12 +94,23 @@
 </template>
 
 <script>
-import SidebarStaff from "../layouts/SidebarStaff.vue";
+import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
+import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
 export default {
   name: "PendaftaranPasienStaff",
   components: {
     SidebarStaff,
+    HeaderStaff,
   },
+  data() {
+    return {
+      breadcrumbPages: [
+        { label: "Dashboard", href: "/dashboardstaff" },
+        { label: "Pendaftaran Pasien", href: "/pendaftaran" }
+      ]
+    };
+  }
 };
+
 </script>

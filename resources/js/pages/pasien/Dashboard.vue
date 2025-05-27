@@ -68,7 +68,7 @@
 import { defineProps, onMounted } from 'vue';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import Sidebar from '../layouts/Sidebar.vue';
+import Sidebar from '../../layouts/pasien/Sidebar.vue';
 import { router } from '@inertiajs/vue3';
 
 const props = defineProps({

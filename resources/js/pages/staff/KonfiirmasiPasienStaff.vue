@@ -7,18 +7,7 @@
     <!-- Main content -->
     <main :class="{'opacity-50': isModalVisible}" class="flex-1 p-6 transition-opacity duration-300">
       <!-- Top bar -->
-      <div class="flex justify-between items-center bg-blue-200 rounded-md p-4 mb-6 select-none">
-        <div class="flex items-center space-x-2 text-sm text-blue-900 font-medium">
-          <i class="fas fa-home"></i>
-          <span>Dashboard</span>
-          <span>›</span>
-          <span>Konfirmasi Pasien Online</span>
-        </div>
-        <div class="text-right text-xs text-blue-900 font-semibold leading-tight">
-          <div>{{ tanggal }}</div>
-          <div>{{ waktu }}</div>
-        </div>
-      </div>
+            <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
       <!-- Title and search -->
       <div class="flex justify-between items-center mb-3">
@@ -118,12 +107,14 @@
 </template>
 
 <script>
-import SidebarStaff from "../layouts/SidebarStaff.vue";
+import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
+import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
 export default {
   name: "KonfirmasiPasienStaff",
   components: {
     SidebarStaff,
+    HeaderStaff,
   },
   data() {
     return {
@@ -137,7 +128,12 @@ export default {
       tanggal: "",
       isModalVisible: false,
       selectedPasien: {},
+      breadcrumbPages: [
+        { label: "Dashboard", href: "/dashboardstaff" },
+        { label: "Konfirmasi Pasien", href: "/KonfirmasiPasien" }
+      ]
     };
+
   },
   computed: {
     filteredPasien() {

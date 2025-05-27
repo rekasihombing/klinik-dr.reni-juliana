@@ -26,14 +26,20 @@
         <span>Jadwal Konsultasi Berikutnya</span>
       </a>
     </nav>
-    <div class="px-4 py-3 border-t border-[#1B2A4D] flex items-center space-x-2 cursor-pointer hover:bg-[#3B59A1]">
+    <div 
+      class="px-4 py-3 border-t border-[#1B2A4D] flex items-center space-x-2 cursor-pointer hover:bg-[#3B59A1]"
+      @click="logout"
+    >
       <i class="fas fa-sign-out-alt text-sm"></i>
       <span>Logout</span>
     </div>
+
   </aside>
 </template>
 
 <script setup>
+import { defineProps } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 
 defineProps({
   patientName: {
@@ -42,7 +48,11 @@ defineProps({
   }
 })
 
+function logout() {
+  Inertia.post('/logout')
+}
 </script>
+
 
 <style scoped>
 /* Styling tambahan jika perlu */

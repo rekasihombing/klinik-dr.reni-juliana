@@ -20,7 +20,6 @@ class Patient extends Model
         'email',
         'no_hp',
         'alamat',
-    'is_owner',
     ];
 
     public $timestamps = false;

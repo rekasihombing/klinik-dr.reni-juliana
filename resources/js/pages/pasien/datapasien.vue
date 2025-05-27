@@ -27,18 +27,18 @@
             </h2>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="nama">
+              <label class="block text-gray-900 text-xs mb-1" for="nama_lengkap">
                 Nama Lengkap<span class="text-red-600">*</span>
               </label>
               <input
-                id="nama"
-                v-model="form.nama"
+                id="nama_lengkap"
+                v-model="form.nama_lengkap"
                 type="text"
                 placeholder="Masukkan nama lengkap"
-                :class="inputClass(errors.nama)"
+                :class="inputClass(errors.nama_lengkap)"
                 @input="filterNameInput"
               />
-              <p v-if="errors.nama" class="text-red-500 text-xs mt-1">{{ errors.nama }}</p>
+              <p v-if="errors.nama_lengkap" class="text-red-500 text-xs mt-1">{{ errors.nama_lengkap }}</p>
             </div>
 
             <div>
@@ -57,16 +57,16 @@
             </div>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="tanggal-lahir">
+              <label class="block text-gray-900 text-xs mb-1" for="tanggal_lahir">
                 Tanggal Lahir<span class="text-red-600">*</span>
               </label>
               <div class="relative">
                 <input
-                  id="tanggal-lahir"
-                  v-model="form.tanggalLahir"
+                  id="tanggal_lahir"
+                  v-model="form.tanggal_lahir"
                   type="text"
                   placeholder="YYYY-MM-DD"
-                  :class="inputClass(errors.tanggalLahir, 'appearance-none')"
+                  :class="inputClass(errors.tanggal_lahir, 'appearance-none')"
                   readonly
                 />
                 <i
@@ -74,24 +74,26 @@
                   aria-hidden="true"
                 ></i>
               </div>
-              <p v-if="errors.tanggalLahir" class="text-red-500 text-xs mt-1">Tanggal lahir wajib diisi.</p>
+              <p v-if="errors.tanggal_lahir" class="text-red-500 text-xs mt-1">Tanggal lahir wajib diisi.</p>
             </div>
 
+            
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="jenis-kelamin">
+              <label class="block text-gray-900 text-xs mb-1" for="jenis_kelamin">
                 Jenis kelamin<span class="text-red-600">*</span>
               </label>
               <select
-                id="jenis-kelamin"
-                v-model="form.jenisKelamin"
-                :class="selectClass(errors.jenisKelamin)"
+                id="jenis_kelamin"
+                v-model="form.jenis_kelamin"
+                :class="selectClass(errors.jenis_kelamin)"
               >
                 <option value="" disabled selected>Pilih jenis kelamin</option>
-                <option>Laki-laki</option>
-                <option>Perempuan</option>
+                <option value="L">Laki-laki</option>
+                <option value="P">Perempuan</option>
               </select>
-              <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
+              <p v-if="errors.jenis_kelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
             </div>
+
 
             <div>
               <label class="block text-gray-900 text-xs mb-1" for="golongan-darah">
@@ -99,8 +101,8 @@
               </label>
               <select
                 id="golongan-darah"
-                v-model="form.golonganDarah"
-                :class="selectClass(errors.golonganDarah)"
+                v-model="form.golongan_darah"
+                :class="selectClass(errors.golongan_darah)"
               >
                 <option value="" disabled selected>Pilih golongan darah</option>
                 <option>A</option>
@@ -108,7 +110,7 @@
                 <option>AB</option>
                 <option>O</option>
               </select>
-              <p v-if="errors.golonganDarah" class="text-red-500 text-xs mt-1">Golongan darah wajib diisi.</p>
+              <p v-if="errors.golongan_darah" class="text-red-500 text-xs mt-1">Golongan darah wajib diisi.</p>
             </div>
 
             <div>
@@ -158,10 +160,12 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from 'vue'
+import { onMounted } from 'vue'
+import { useForm } from '@inertiajs/vue3'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
-import Sidebar from '../layouts/Sidebar.vue'
+import Sidebar from '../../layouts/pasien/Sidebar.vue'
+import { reactive, ref, computed } from 'vue'
 
 const props = defineProps({
   patientName: String,
@@ -176,23 +180,23 @@ const props = defineProps({
   },
 })
 
-const form = reactive({
-  nama: '',
+const form = useForm({
+  nama_lengkap: '',
   nik: '',
-  tanggalLahir: '',
-  jenisKelamin: '',
-  golonganDarah: '',
+  tanggal_lahir: '',
+  jenis_kelamin: '',
+  golongan_darah: '',
   nomorHp: '',
   alamat: '',
   permintaan: '',
 })
 
 const errors = reactive({
-  nama: false,
+  nama_lengkap: false,
   nik: false,
-  tanggalLahir: false,
-  jenisKelamin: false,
-  golonganDarah: false,
+  tanggal_lahir: false,
+  jenis_kelamin: false,
+  golongan_darah: false,
   nomorHp: false,
   permintaan: false,
 })
@@ -209,12 +213,12 @@ const filterNameInput = (e) => {
   // Only keep letters
   const filtered = rawValue.replace(/[^a-zA-Z\s]/g, '')
   if (filtered !== rawValue) {
-    errors.nama = 'Nama lengkap wajib huruf.'
+    errors.nama_lengkap = 'Nama lengkap wajib huruf.'
   } else {
-    errors.nama = false
+    errors.nama_lengkap = false
   }
   e.target.value = filtered
-  form.nama = filtered
+  form.nama_lengkap = filtered
 }
 
 const filterNIKInput = (e) => {
@@ -243,34 +247,51 @@ const filterPhoneInput = (e) => {
 }
 
 const handleSubmit = () => {
-  errors.nama = !form.nama.trim() ? 'Nama wajib diisi.' : false
+  // Validasi manual
+  errors.nama_lengkap = !form.nama_lengkap.trim() ? 'Nama wajib diisi.' : false
 
   if (!form.nik.trim()) {
     errors.nik = 'NIK wajib diisi.'
-  } else if (form.nik.length !== 16) {
+  } else if (form.nik.length !== 16 || isNaN(form.nik)) {
     errors.nik = 'NIK harus 16 digit angka.'
   } else {
     errors.nik = false
   }
 
-  errors.tanggalLahir = !form.tanggalLahir ? 'Tanggal lahir wajib diisi.' : false
-  errors.jenisKelamin = !form.jenisKelamin ? 'Jenis kelamin wajib diisi.' : false
-  errors.golonganDarah = !form.golonganDarah ? 'Golongan darah wajib diisi.' : false
+  errors.tanggal_lahir = !form.tanggal_lahir ? 'Tanggal lahir wajib diisi.' : false
+  errors.jenis_kelamin = !form.jenis_kelamin ? 'Jenis kelamin wajib diisi.' : false
+  errors.golongan_darah = !form.golongan_darah ? 'Golongan darah wajib diisi.' : false
 
+  // Jika ada error, jangan submit
   if (Object.values(errors).some((val) => val !== false)) {
     return
   }
 
-  console.log('Data pasien terkirim:', { ...form })
+  // Kirim data ke backend (dengan inertia)
+  form.post(route('simpanpasienonline'), {
+    preserveScroll: true, // supaya scroll tidak kembali ke atas
+    onSuccess: () => {
+      // form.reset() // <- kalau tidak ingin reset, baris ini dibiarkan saja
+      console.log('Data pasien terkirim:', { ...form })
+
+      // Contoh notifikasi pakai SweetAlert2 atau toast
+      // toast.success('Data pasien berhasil disimpan');
+    },
+    onError: (err) => {
+      // Tangani error dari server jika ada
+      console.error('Gagal menyimpan data:', err)
+    },
+  })
 }
 
+
 onMounted(() => {
-  flatpickr('#tanggal-lahir', {
+  flatpickr('#tanggal_lahir', {
     dateFormat: 'Y-m-d',
     maxDate: 'today',
     onChange: (selected, dateStr) => {
-      form.tanggalLahir = dateStr
-      errors.tanggalLahir = false
+      form.tanggal_lahir = dateStr
+      errors.tanggal_lahir = false
     },
   })
 })

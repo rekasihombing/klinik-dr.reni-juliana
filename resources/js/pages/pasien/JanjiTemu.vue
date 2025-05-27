@@ -146,7 +146,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
-import Sidebar from '../layouts/Sidebar.vue'
+import Sidebar from '../../layouts/pasien/Sidebar.vue'
 import { useForm } from '@inertiajs/vue3'
 
 // Props

@@ -107,7 +107,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import Sidebar from '../layouts/Sidebar.vue'
+import Sidebar from '../../layouts/pasien/Sidebar.vue'
 
 const props = defineProps({
   patientName: String,

@@ -1,35 +1,49 @@
 <template>
-    <div class="bg-white font-sans text-gray-800 min-h-screen flex">
+    <div class="bg-[#f0f4f8] font-sans text-gray-800 min-h-screen flex">
     <SidebarStaff />
 
     <main class="flex-1 p-6 md:p-10">
-      <div class="bg-gray-300 rounded-md flex justify-between items-center px-6 py-3 mb-6 text-xs font-light text-gray-700">
+      <div class="bg-white rounded-md shadow-md px-6 py-4 mb-8  flex justify-between items-center px-6 py-3 mb-6 text-xs font-light text-gray-700">
         <p>Selamat datang, Marvitha !</p>
         <p>Senin, 12 Mei 2025</p>
         <p>12 : 55 : 20</p>
       </div>
 
-      <div class="flex flex-col sm:flex-row sm:space-x-6 space-y-4 sm:space-y-0 mb-8">
-        <div class="flex items-center space-x-2 bg-gray-300 rounded-md px-4 py-3 w-full sm:w-1/4">
-          <button aria-label="Tambah Pasien" class="text-gray-700 text-base font-light" type="button">
-            Tambah Pasien
-          </button>
-          <i class="fas fa-user-plus text-gray-700 text-base ml-2"></i>
-        </div>
-
-        <div class="bg-gray-300 rounded-md px-4 py-3 w-full sm:w-1/4 flex flex-col items-center justify-center text-center h-32">
-          <p class="text-gray-700 text-base font-light mb-1">Pasien Hari ini</p>
-          <p class="text-gray-900 font-semibold text-xl mt-2">3</p>
-        </div>
-
-        <div class="bg-gray-300 rounded-md px-4 py-3 w-full sm:w-1/2 flex flex-col items-center">
-          <p class="text-gray-700 text-base font-light mb-1 text-center">Pasien Online Menunggu Konfirmasi</p>
-          <p class="text-gray-900 font-semibold text-xl mb-2">10</p>
-          <button class="bg-blue-800 text-white text-sm font-light rounded-md px-4 py-1 hover:bg-blue-900 transition-colors" type="button">
-            Konfirmasi Sekarang
-          </button>
-        </div>
+       <!-- Info Cards -->
+    <div class="flex flex-col sm:flex-row sm:space-x-6 space-y-6 sm:space-y-0 mb-10">
+    <div 
+      @click="goToRegistration" 
+      class="flex items-center space-x-4 bg-white rounded-xl px-8 py-6 w-full sm:w-1/4 select-none shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1 cursor-pointer"
+    >
+      <button 
+        aria-label="Tambah Pasien" 
+        class="text-gray-900 text-lg font-semibold focus:outline-none pointer-events-none" 
+        type="button"
+      >
+        Tambah Pasien
+      </button>
+      <div class="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl shadow-lg transition-colors hover:bg-blue-700 pointer-events-none">
+        <i class="fas fa-user-plus"></i>
       </div>
+    </div>
+
+
+      <div class="bg-white rounded-xl px-8 py-6 w-full sm:w-1/4 flex flex-col items-center justify-center text-center min-h-[140px] shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1">
+        <p class="text-gray-600 text-base font-medium mb-2">Pasien Hari ini</p>
+        <p class="text-gray-900 font-extrabold text-3xl">3</p>
+      </div>
+
+      <div @click="goToConfirmation" 
+      class="bg-white rounded-xl px-8 py-6 w-full sm:w-1/2 flex flex-col items-center justify-center min-h-[140px] shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1 cursor-pointer">
+        <p class="text-gray-600 text-base font-medium mb-3 text-center">Pasien Online Menunggu Konfirmasi</p>
+        <p class="text-gray-900 font-extrabold text-4xl mb-4">10</p>
+        <button 
+        @click="goToConfirmation" 
+        class="bg-blue-600 text-white text-sm font-semibold rounded-md px-5 py-2 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1" type="button">
+          Konfirmasi Sekarang
+        </button>
+      </div>
+    </div>
 
       <section class="mb-10">
         <h2 class="text-gray-800 font-normal mb-3 text-lg">Daftar Antrian Pasien Hari ini</h2>
@@ -157,7 +171,8 @@
 </template>
 
 <script>
-import SidebarStaff from '../layouts/SidebarStaff.vue'
+import { router } from '@inertiajs/vue3';
+import SidebarStaff from '../../layouts/staff/SidebarStaff.vue'
 
 export default {
   name: 'DashboardStaff',
@@ -193,7 +208,14 @@ export default {
     },
     handleEdit() {
       alert('Tombol Ubah diklik');
-    }
+    },
+      goToRegistration() {
+    // Contoh menggunakan router InertiaJS untuk pindah halaman pendaftaran
+    router.visit('/pendaftaran');  // ganti dengan path halaman pendaftaran yang sesuai
+  },
+  goToConfirmation() {
+    router.visit('/KonfirmasiPasien');
+  }
   }
 }
 </script>
