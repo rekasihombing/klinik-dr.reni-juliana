@@ -8,6 +8,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OnlinePatientController;
 
+
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
@@ -22,6 +23,7 @@ Route::get('/register', function () {
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
+Route::post('/contact', [FaqController::class, 'store']);   
 
 Route::get('/kontak', function () {
     return Inertia::render('Kontak');
@@ -61,10 +63,28 @@ Route::middleware(['auth'])->get('/konfirmasijanjitemu', function () {
     return Inertia::render('pasien/KonfirmasiJanjiTemu');
 })->name('konfirmasijanjitemu');
 
+Route::middleware(['auth'])->get('/janjitemu', [AppointmentController::class, 'create'])->name('janjitemu'); 
+Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');   
+
+Route::post('/contact', [FaqController::class, 'store']);   
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/patient/edit', [PatientController::class, 'edit'])->name('patients.edit');
+    Route::put('/patient', [PatientController::class, 'update'])->name('patients.update');
+});
+
 Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
     return Inertia::render('pasien/RiwayatJanjiTemu');
 })->name('riwayatjanjitemu');
 
+
+Route::middleware(['auth'])->get('/profilpasien', function () {
+    return Inertia::render('pasien/ProfilPasien');
+})->name('profilpasien');
+
+Route::get('/dashboarddokter', function () {
+    return Inertia::render('dokter/DashboardDokter');
+})->name('dashboarddokter');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

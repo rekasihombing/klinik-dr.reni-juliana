@@ -9,13 +9,14 @@
     </header>
 
     <div class="flex flex-1">
+      <!-- Sidebar -->
       <Sidebar :patient-name="patientName" />
 
       <main class="flex-grow p-4">
         <div class="bg-white rounded-lg shadow-md w-full max-w-4xl mx-auto p-6">
           <div class="flex items-center justify-center mb-4 flex-col">
-            <h1 class="text-blue-800 font-semibold text-xl flex items-center justify-center gap-2">
-              <i class="fas fa-history text-blue-800 text-lg"></i>
+            <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
+              <i class="fas fa-history text-[#2A4482] text-lg"></i>
               Riwayat Janji Temu
             </h1>
             <p class="text-sm text-black text-center">Anda dapat melihat riwayat janji temu anda di sini.</p>
@@ -24,7 +25,7 @@
           <div class="overflow-x-auto">
             <table class="w-full border-collapse rounded-lg overflow-hidden">
               <thead>
-                <tr class="bg-blue-600 text-white text-left text-sm">
+                <tr class="bg-[#3674B5] text-white text-left text-sm">
                   <th class="py-2 px-4 rounded-tl-md border border-blue-600">No</th>
                   <th class="py-2 px-4 border border-blue-600">Tanggal</th>
                   <th class="py-2 px-4 border border-blue-600">Jam</th>

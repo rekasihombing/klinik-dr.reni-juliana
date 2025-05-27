@@ -6,22 +6,35 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Patient;
+use App\Models\Appointment; 
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-   public function dashboard()
-{
-    // Mendapatkan pengguna yang sedang login
-    $user = Auth::user();
+    public function dashboard()
+    {
+        // Mendapatkan pengguna yang sedang login
+        $user = Auth::user();
 
-    // Mengambil nama pasien dari tabel patients menggunakan relasi
-    $patientName = $user->patient ? $user->patient->nama_lengkap : 'Pasien Tidak Ditemukan';  // Mengambil nama pasien dari tabel patients
+        // Mengambil nama pasien dari tabel patients menggunakan relasi
+        $patient = $user->patient;
+        $patientName = $patient ? $patient->nama_lengkap : 'Pasien Tidak Ditemukan';
 
-    // Mengirimkan data ke frontend menggunakan Inertia
-    return Inertia::render('pasien/Dashboard', [
-        'patientName' => $patientName,  // Kirimkan nama pasien
-        'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',  // Nama klinik
-    ]);
-}
+        // Ambil jadwal konsultasi berikutnya dari tabel appointments
+        $nextAppointment = null;
+
+        if ($patient) {
+            $nextAppointment = Appointment::where('pasien_id', $patient->id)
+                ->where('tanggal', '>=', now()->toDateString())
+                ->orderBy('tanggal')
+                ->orderBy('jam_konsultasi')
+                ->first();
+        }
+
+        return Inertia::render('pasien/Dashboard', [
+            'patientName' => $patientName,
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
+            'nextAppointment' => $nextAppointment, // Kirim data jadwal konsultasi
+        ]);
+    }
 }
