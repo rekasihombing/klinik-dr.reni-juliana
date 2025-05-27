@@ -1,111 +1,139 @@
 <template>
-  <div class="bg-[#1f2d44] min-h-screen flex items-center justify-center p-4">
-    <div class="flex w-full max-w-6xl h-[720px] shadow-lg rounded-md bg-white overflow-hidden">
+  <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
+      <div>{{ clinicName }}</div>
+      <div class="flex items-center space-x-1 cursor-pointer">
+        <span>{{ patientName }}</span>
+      </div>
+
+    <!-- Main Container -->
+    <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar -->
-      <aside class="bg-[#2f497f] w-56 flex flex-col text-white select-none">
-        <div class="px-6 py-5 flex flex-col items-center border-b border-white/20">
-          <div class="w-10 h-10 rounded-full bg-[#a0a0a0] mb-2"></div>
-          <div class="text-sm font-semibold lowercase">nama_klinik</div>
+      <Sidebar :patient-name="patientName" />
+
+   <!-- Main content -->
+    <main class="bg-[#FFFFFF] flex-1 p-6 md:p-10">
+      <div
+        class="bg-[#b9e1f5] rounded-lg p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center"
+      >
+        <p class="text font-medium text-black">Selamat datang, Dr. Reni Juliana !</p>
+        <div class="text-right text-sm text-black mt-3 md:mt-0">
+          <p>Senin, 12 Mei 2025</p>
+          <p class="mt-1">
+            12 <span class="mx-2">:</span> 55 <span class="mx-2">:</span> 20
+          </p>
         </div>
-        <div class="flex flex-col mt-6 space-y-3 px-6 text-xs font-light">
-          <div class="flex items-center space-x-2">
-            <i class="fas fa-user-md text-sm"></i>
-            <div>
-              <div class="text-[11px] font-semibold leading-none">Dr. Reni Juliana M.</div>
-              <div class="text-[9px] font-light">Dokter</div>
-            </div>
-          </div>
-          <nav class="flex flex-col space-y-1 mt-6 text-[13px] font-light">
-            <inertia-link href="/" class="flex items-center space-x-2 hover:text-white cursor-pointer">
-              <i class="fas fa-tachometer-alt text-xs"></i>
-              <span>Dashboard</span>
-            </inertia-link>
-            <inertia-link href="/pasien" class="hover:text-white cursor-pointer pl-6">Pasien</inertia-link>
-            <inertia-link href="/janji-temu" class="hover:text-white cursor-pointer pl-6">Janji Temu</inertia-link>
-            <inertia-link href="/pegawai" class="hover:text-white cursor-pointer pl-6">Pegawai</inertia-link>
-            <inertia-link href="/laporan" class="hover:text-white cursor-pointer pl-6">Laporan</inertia-link>
-            <inertia-link href="/keuangan" class="hover:text-white cursor-pointer pl-6">Keuangan</inertia-link>
-            <inertia-link href="/operasional" class="hover:text-white cursor-pointer pl-6">Operasional</inertia-link>
-          </nav>
+      </div>
+
+      <div class="flex flex-wrap gap-4 mb-6">
+        <div
+          class="bg-[#efefef] rounded-md shadow-md px-6 py-4 w-44 text-center"
+        >
+          <p class="text-[#000000] text-sm font-medium mb-1">Pasien Hari ini</p>
+          <p class="text-[#000000] text-2xl font-medium">3</p>
         </div>
         <div
-          class="mt-auto px-6 py-4 border-t border-white/20 text-xs flex items-center space-x-2 cursor-pointer hover:text-white"
+          class="bg-[#efefef] rounded-md shadow-md px-6 py-4 w-50 text-center"
         >
-          <i class="fas fa-sign-out-alt text-xs"></i>
-          <span>Logout</span>
+          <p class="text-[#000000] text-sm font-medium mb-1">Jadwal Praktek Hari Ini</p>
+          <p class="text-[#000000] text-base font-medium">15.00 - 23.00</p>
         </div>
-      </aside>
+      </div>
 
-      <!-- Main content -->
-      <main class="flex-1 p-6">
-        <div class="flex flex-col space-y-4">
-          <div class="flex justify-between bg-gray-300 rounded-md px-4 py-2 text-xs text-gray-800 font-light">
-            <div>Selamat datang, Dr. Reni Juliana !</div>
-            <div class="text-right">
-              <div>Senin, 12 Mei 2025</div>
-              <div>12 : 55 : 20</div>
-            </div>
-          </div>
+      <h2 class="text-[#000000] text-lg font-medium mb-4">Daftar Pasien Hari ini</h2>
 
-          <div class="flex space-x-4">
-            <div class="bg-gray-100 rounded-md shadow px-6 py-4 w-28 text-center">
-              <div class="text-xs font-light">Pasien Hari ini</div>
-              <div class="text-2xl font-semibold mt-1">3</div>
-            </div>
-            <div class="bg-gray-100 rounded-md shadow px-6 py-4 w-40 text-center">
-              <div class="text-xs font-light">Jadwal Praktek Hari ini</div>
-              <div class="text-lg font-semibold mt-1">15.00 - 23.00</div>
-            </div>
-          </div>
-
-          <h2 class="text-gray-900 font-normal text-sm">Daftar Pasien Hari ini</h2>
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-300 rounded-md overflow-hidden">
-              <thead>
-                <tr class="bg-[#2f497f] text-white text-xs font-light">
-                  <th class="px-3 py-2 text-left border-r border-white/30 w-20">No Antrian</th>
-                  <th class="px-3 py-2 text-left border-r border-white/30">Nama Pasien</th>
-                  <th class="px-3 py-2 text-left border-r border-white/30 w-20">Waktu</th>
-                  <th class="px-3 py-2 text-left border-r border-white/30 w-28">Status</th>
-                  <th class="px-3 py-2 text-left w-24">Detail</th>
-                </tr>
-              </thead>
-              <tbody class="text-xs font-light text-gray-900">
-                <tr class="border-b border-gray-300">
-                  <td class="px-3 py-2 border-r border-gray-300 font-semibold">A01</td>
-                  <td class="px-3 py-2 border-r border-gray-300">Zahra N Parinduri</td>
-                  <td class="px-3 py-2 border-r border-gray-300">15.00</td>
-                  <td class="px-3 py-2 border-r border-gray-300 font-semibold">Selesai</td>
-                  <td class="px-3 py-2">Lihat Detail</td>
-                </tr>
-                <tr class="border-b border-gray-300">
-                  <td class="px-3 py-2 border-r border-gray-300 font-semibold">A02</td>
-                  <td class="px-3 py-2 border-r border-gray-300">Marvitha Khairani</td>
-                  <td class="px-3 py-2 border-r border-gray-300">15.00</td>
-                  <td class="px-3 py-2 border-r border-gray-300 font-semibold">Menunggu Antrian</td>
-                  <td class="px-3 py-2">Lihat Detail</td>
-                </tr>
-                <tr>
-                  <td class="px-3 py-2 border-r border-gray-300 font-semibold">A03</td>
-                  <td class="px-3 py-2 border-r border-gray-300">Wawan Santoso</td>
-                  <td class="px-3 py-2 border-r border-gray-300">19.00</td>
-                  <td class="px-3 py-2 border-r border-gray-300 font-semibold">Menunggu Antrian</td>
-                  <td class="px-3 py-2">Lihat Detail</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
+      <div class="overflow-x-auto rounded-lg shadow-md">
+        <table class="min-w-full border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-[#3674B5] text-white text-sm">
+              <th class="border border-gray-300 px-4 py-2 text-left">No Antrian</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">Nama Pasien</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">Waktu</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">detail</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm text-black">
+            <tr>
+              <td class="border border-gray-300 px-4 py-2">A01</td>
+              <td class="border border-gray-300 px-4 py-2">Zahra N Parinduri</td>
+              <td class="border border-gray-300 px-4 py-2">15.00</td>
+              <td class="border border-gray-300 px-4 py-2">Selesai</td>
+              <td class="border border-gray-300 px-4 py-2">Lihat Detail</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
     </div>
   </div>
 </template>
 
 <script setup>
-// Tidak perlu script khusus saat ini
+import { defineProps, onMounted, ref } from "vue";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
+import { router } from "@inertiajs/vue3";
+
+const props = defineProps({
+  patientName: String,
+  clinicName: String,
+  nextAppointment: Object,
+});
+
+const showInfoModal = ref(false);
+
+onMounted(() => {
+  flatpickr("#calendar", {
+    inline: true,
+    locale: {
+      firstDayOfWeek: 1,
+      weekdays: {
+        shorthand: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
+        longhand: [
+          "Minggu",
+          "Senin",
+          "Selasa",
+          "Rabu",
+          "Kamis",
+          "Jumat",
+          "Sabtu",
+        ],
+      },
+      months: {
+        shorthand: [
+          "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+          "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
+        ],
+        longhand: [
+          "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+          "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+        ],
+      },
+    },
+  });
+});
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return new Date(dateStr).toLocaleDateString("id-ID", options);
+}
+
+function handleJanjiTemuClick() {
+  if (props.nextAppointment && props.nextAppointment.tanggal && props.nextAppointment.jam_konsultasi) {
+    showInfoModal.value = true;
+  } else {
+    router.visit("/janjitemu");
+  }
+}
 </script>
 
 <style scoped>
-/* Optional: custom style */
+/* Tambahan styling jika perlu */
 </style>
