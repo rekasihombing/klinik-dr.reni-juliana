@@ -46,7 +46,7 @@ public function store(Request $request)
     $appointment = Appointment::create($validated);
 
     
-return redirect()->route('janjitemu2');
+return redirect()->route('dashboard');
 }
 }
 

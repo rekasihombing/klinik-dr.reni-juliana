@@ -27,18 +27,18 @@
             </h2>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="nama">
+              <label class="block text-gray-900 text-xs mb-1" for="nama_lengkap">
                 Nama Lengkap<span class="text-red-600">*</span>
               </label>
               <input
-                id="nama"
-                v-model="form.nama"
+                id="nama_lengkap"
+                v-model="form.nama_lengkap"
                 type="text"
                 placeholder="Masukkan nama lengkap"
-                :class="inputClass(errors.nama)"
+                :class="inputClass(errors.nama_lengkap)"
                 @input="filterNameInput"
               />
-              <p v-if="errors.nama" class="text-red-500 text-xs mt-1">{{ errors.nama }}</p>
+              <p v-if="errors.nama_lengkap" class="text-red-500 text-xs mt-1">{{ errors.nama_lengkap }}</p>
             </div>
 
             <div>
@@ -57,16 +57,16 @@
             </div>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="tanggal-lahir">
+              <label class="block text-gray-900 text-xs mb-1" for="tanggal_lahir">
                 Tanggal Lahir<span class="text-red-600">*</span>
               </label>
               <div class="relative">
                 <input
-                  id="tanggal-lahir"
-                  v-model="form.tanggalLahir"
+                  id="tanggal_lahir"
+                  v-model="form.tanggal_lahir"
                   type="text"
                   placeholder="YYYY-MM-DD"
-                  :class="inputClass(errors.tanggalLahir, 'appearance-none')"
+                  :class="inputClass(errors.tanggal_lahir, 'appearance-none')"
                   readonly
                 />
                 <i
@@ -74,69 +74,69 @@
                   aria-hidden="true"
                 ></i>
               </div>
-              <p v-if="errors.tanggalLahir" class="text-red-500 text-xs mt-1">Tanggal lahir wajib diisi.</p>
+              <p v-if="errors.tanggal_lahir" class="text-red-500 text-xs mt-1">{{ errors.tanggal_lahir }}</p>
             </div>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="jenis-kelamin">
+              <label class="block text-gray-900 text-xs mb-1" for="jenis_kelamin">
                 Jenis kelamin<span class="text-red-600">*</span>
               </label>
               <select
-                id="jenis-kelamin"
-                v-model="form.jenisKelamin"
-                :class="selectClass(errors.jenisKelamin)"
+                id="jenis_kelamin"
+                v-model="form.jenis_kelamin"
+                :class="selectClass(errors.jenis_kelamin)"
               >
                 <option value="" disabled selected>Pilih jenis kelamin</option>
-                <option>Laki-laki</option>
-                <option>Perempuan</option>
+                <option value="L">Laki-laki</option>
+                <option value="P">Perempuan</option>
               </select>
-              <p v-if="errors.jenisKelamin" class="text-red-500 text-xs mt-1">Jenis kelamin wajib diisi.</p>
+              <p v-if="errors.jenis_kelamin" class="text-red-500 text-xs mt-1">{{ errors.jenis_kelamin }}</p>
             </div>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="golongan-darah">
-                Golongan Darah<span class="text-red-600">*</span>
+              <label class="block text-gray-900 text-xs mb-1" for="golongan_darah">
+                Golongan Darah
               </label>
               <select
-                id="golongan-darah"
-                v-model="form.golonganDarah"
-                :class="selectClass(errors.golonganDarah)"
+                id="golongan_darah"
+                v-model="form.golongan_darah"
+                :class="selectClass(errors.golongan_darah)"
               >
-                <option value="" disabled selected>Pilih golongan darah</option>
-                <option>A</option>
-                <option>B</option>
-                <option>AB</option>
-                <option>O</option>
+                <option value="">Pilih golongan darah</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
               </select>
-              <p v-if="errors.golonganDarah" class="text-red-500 text-xs mt-1">Golongan darah wajib diisi.</p>
+              <p v-if="errors.golongan_darah" class="text-red-500 text-xs mt-1">{{ errors.golongan_darah }}</p>
             </div>
 
             <div>
-              <label class="block text-gray-900 text-xs mb-1" for="nomor-hp">
+              <label class="block text-gray-900 text-xs mb-1" for="no_hp">
                 Nomor HP / Whatsapp <em class="font-normal">(optional)</em>
               </label>
               <input
-                id="nomor-hp"
-                v-model="form.nomorHp"
+                id="no_hp"
+                v-model="form.no_hp"
                 type="text"
                 placeholder="08xxxxxxxxxx"
-                class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                :class="inputClass(errors.no_hp)"
                 @input="filterPhoneInput"
               />
-              <p v-if="errors.nomorHp" class="text-red-500 text-xs mt-1">{{ errors.nomorHp }}</p>
+              <p v-if="errors.no_hp" class="text-red-500 text-xs mt-1">{{ errors.no_hp }}</p>
             </div>
 
             <div>
               <label class="block text-gray-900 text-xs mb-1" for="alamat">
                 Alamat <em class="font-normal">(optional)</em>
               </label>
-              <input
+              <textarea
                 id="alamat"
                 v-model="form.alamat"
-                type="text"
                 placeholder="Masukkan alamat lengkap"
-                class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-              />
+                class="w-full border border-gray-300 rounded px-2 py-1 text-sm min-h-[60px]"
+                rows="3"
+              ></textarea>
             </div>
 
             <p class="text-xs text-gray-700 mb-1">
@@ -144,12 +144,24 @@
               Mohon untuk mengisi data diri anda dengan benar.
             </p>
 
-            <button
-              type="submit"
-              class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 hover:bg-blue-700 transition"
-            >
-              Simpan
-            </button>
+            <div class="flex gap-2 pt-2">
+              <button
+                type="submit"
+                :disabled="processing"
+                class="bg-[#3674B5] text-white text-xs rounded px-4 py-2 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span v-if="processing">Menyimpan...</span>
+                <span v-else>Simpan</span>
+              </button>
+              
+              <button
+                type="button"
+                @click="resetForm"
+                class="bg-gray-500 text-white text-xs rounded px-4 py-2 hover:bg-gray-600 transition"
+              >
+                Reset
+              </button>
+            </div>
           </form>
         </div>
       </main>
@@ -159,6 +171,7 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
+import { router } from '@inertiajs/vue3'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../../layouts/pasien/Sidebar.vue'
@@ -166,27 +179,39 @@ import Sidebar from '../../layouts/pasien/Sidebar.vue'
 const props = defineProps({
   patientName: String,
   clinicName: String,
+  patient: Object, // For pre-filling existing data
 })
 
+const processing = ref(false)
+
 const form = reactive({
-  nama: '',
+  nama_lengkap: '',
   nik: '',
-  tanggalLahir: '',
-  jenisKelamin: '',
-  golonganDarah: '',
-  nomorHp: '',
+  tanggal_lahir: '',
+  jenis_kelamin: '',
+  golongan_darah: '',
+  no_hp: '',
   alamat: '',
-  permintaan: '',
 })
 
 const errors = reactive({
-  nama: false,
-  nik: false,
-  tanggalLahir: false,
-  jenisKelamin: false,
-  golonganDarah: false,
-  nomorHp: false,
+  nama_lengkap: '',
+  nik: '',
+  tanggal_lahir: '',
+  jenis_kelamin: '',
+  golongan_darah: '',
+  no_hp: '',
+  alamat: '',
 })
+
+// Pre-fill form if patient data exists
+if (props.patient) {
+  Object.keys(form).forEach(key => {
+    if (props.patient[key]) {
+      form[key] = props.patient[key]
+    }
+  })
+}
 
 const inputClass = (hasError, extra = '') => [
   'w-full border rounded px-2 py-1 text-sm',
@@ -196,25 +221,31 @@ const inputClass = (hasError, extra = '') => [
 
 const selectClass = inputClass
 
+const clearErrors = () => {
+  Object.keys(errors).forEach(key => {
+    errors[key] = ''
+  })
+}
+
 const filterNameInput = (e) => {
   const rawValue = e.target.value
   const filtered = rawValue.replace(/[^a-zA-Z\s]/g, '')
   if (filtered !== rawValue) {
-    errors.nama = 'Nama lengkap wajib huruf.'
+    errors.nama_lengkap = 'Nama lengkap hanya boleh berisi huruf dan spasi.'
   } else {
-    errors.nama = false
+    errors.nama_lengkap = ''
   }
   e.target.value = filtered
-  form.nama = filtered
+  form.nama_lengkap = filtered
 }
 
 const filterNIKInput = (e) => {
   const rawValue = e.target.value
-  const filtered = rawValue.replace(/\D/g, '')
-  if (filtered !== rawValue) {
-    errors.nik = 'NIK wajib angka dan 16 digit.'
+  const filtered = rawValue.replace(/\D/g, '').slice(0, 16)
+  if (filtered !== rawValue.replace(/\D/g, '')) {
+    errors.nik = 'NIK hanya boleh berisi angka.'
   } else {
-    errors.nik = false
+    errors.nik = ''
   }
   e.target.value = filtered
   form.nik = filtered
@@ -222,45 +253,115 @@ const filterNIKInput = (e) => {
 
 const filterPhoneInput = (e) => {
   const rawValue = e.target.value
-  const filtered = rawValue.replace(/\D/g, '')
-  if (filtered !== rawValue) {
-    errors.nomorHp = 'Nomor telepon wajib angka.'
+  const filtered = rawValue.replace(/\D/g, '').slice(0, 15)
+  if (filtered !== rawValue.replace(/\D/g, '')) {
+    errors.no_hp = 'Nomor telepon hanya boleh berisi angka.'
   } else {
-    errors.nomorHp = false
+    errors.no_hp = ''
   }
   e.target.value = filtered
-  form.nomorHp = filtered
+  form.no_hp = filtered
 }
 
-const handleSubmit = () => {
-  errors.nama = !form.nama.trim() ? 'Nama wajib diisi.' : false
+const validateForm = () => {
+  clearErrors()
+  let isValid = true
+
+  // Required field validations
+  if (!form.nama_lengkap.trim()) {
+    errors.nama_lengkap = 'Nama lengkap wajib diisi.'
+    isValid = false
+  } else if (form.nama_lengkap.length > 100) {
+    errors.nama_lengkap = 'Nama lengkap maksimal 100 karakter.'
+    isValid = false
+  }
 
   if (!form.nik.trim()) {
     errors.nik = 'NIK wajib diisi.'
+    isValid = false
   } else if (form.nik.length !== 16) {
     errors.nik = 'NIK harus 16 digit angka.'
-  } else {
-    errors.nik = false
+    isValid = false
   }
 
-  errors.tanggalLahir = !form.tanggalLahir ? 'Tanggal lahir wajib diisi.' : false
-  errors.jenisKelamin = !form.jenisKelamin ? 'Jenis kelamin wajib diisi.' : false
-  errors.golonganDarah = !form.golonganDarah ? 'Golongan darah wajib diisi.' : false
+  if (!form.tanggal_lahir) {
+    errors.tanggal_lahir = 'Tanggal lahir wajib diisi.'
+    isValid = false
+  }
 
-  if (Object.values(errors).some((val) => val !== false)) {
+  if (!form.jenis_kelamin) {
+    errors.jenis_kelamin = 'Jenis kelamin wajib diisi.'
+    isValid = false
+  }
+
+  // Optional field validations
+
+  if (form.no_hp && form.no_hp.length > 20) {
+    errors.no_hp = 'Nomor HP maksimal 20 digit.'
+    isValid = false
+  }
+
+  return isValid
+}
+
+const handleSubmit = () => {
+  if (!validateForm()) {
     return
   }
 
-  console.log('Data pasien terkirim:', { ...form })
+  processing.value = true
+
+  // Prepare data for submission
+  const formData = { ...form }
+  
+  // Remove empty optional fields
+  Object.keys(formData).forEach(key => {
+    if (!formData[key]) {
+      delete formData[key]
+    }
+  })
+
+  router.post(route('simpanpasienonline'), formData, {
+    onSuccess: () => {
+      processing.value = false
+      // Success message will be handled by the redirect
+    },
+    onError: (serverErrors) => {
+      processing.value = false
+      // Handle server validation errors
+      Object.keys(serverErrors).forEach(key => {
+        if (errors.hasOwnProperty(key)) {
+          errors[key] = serverErrors[key]
+        }
+      })
+    },
+    onFinish: () => {
+      processing.value = false
+    }
+  })
+}
+
+const resetForm = () => {
+  Object.keys(form).forEach(key => {
+    form[key] = ''
+  })
+  clearErrors()
+  
+  // Reset flatpickr
+  const picker = document.querySelector('#tanggal_lahir')._flatpickr
+  if (picker) {
+    picker.clear()
+  }
 }
 
 onMounted(() => {
-  flatpickr('#tanggal-lahir', {
+  flatpickr('#tanggal_lahir', {
     dateFormat: 'Y-m-d',
     maxDate: 'today',
+    defaultDate: form.tanggal_lahir || null,
     onChange: (selectedDates, dateStr) => {
-      form.tanggalLahir = dateStr
-      errors.tanggalLahir = false
+      form.tanggal_lahir = dateStr
+      errors.tanggal_lahir = ''
     },
   })
 })

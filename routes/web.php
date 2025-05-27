@@ -7,7 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OnlinePatientController;
-
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -78,9 +78,7 @@ Route::middleware(['auth'])->get('/riwayatjanjitemu', function () {
 })->name('riwayatjanjitemu');
 
 
-Route::middleware(['auth'])->get('/profilpasien', function () {
-    return Inertia::render('pasien/ProfilPasien');
-})->name('profilpasien');
+Route::middleware(['auth'])->get('/profilpasien', [ProfileController::class, 'show'])->name('profilpasien');
 
 Route::get('/dashboarddokter', function () {
     return Inertia::render('dokter/DashboardDokter');
