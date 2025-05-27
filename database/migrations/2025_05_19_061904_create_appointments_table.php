@@ -17,6 +17,7 @@ class CreateAppointmentsTable extends Migration
             $table->text('keluhan');
             $table->enum('status', ['menunggu', 'dikonfirmasi', 'selesai', 'dibatalkan'])->default('menunggu');
             $table->enum('dibuat_oleh', ['pasien', 'staff']);
+            $table->timestamp('checked_in_at')->nullable();
             $table->timestamps(); 
 
             $table->foreign('pasien_id')->references('id')->on('patients')->onDelete('cascade');

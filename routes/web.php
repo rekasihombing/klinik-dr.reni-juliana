@@ -115,5 +115,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff'); // staff
     Route::get('/dashboarddokter', [DoctorDashboardController::class, 'index'])->name('dashboarddokter'); // dokter
 });
+
+Route::post('/appointment/cancel', [AppointmentController::class, 'cancelAppointment'])
+    ->middleware(['auth'])
+    ->name('appointment.cancel');
+
+Route::post('/checkin', [AppointmentController::class, 'checkIn']);
+
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
