@@ -71,6 +71,11 @@
     <div class="text-xs font-bold text-[#1B2A4D]">
       {{ nextAppointment.jam_konsultasi }} WIB
     </div>
+    <!-- Status Check-in -->
+    <div v-if="isCheckedIn" class="mt-2 text-xs text-green-600 font-semibold">
+      <i class="fas fa-check-circle mr-1"></i>
+      Sudah Check-in
+    </div>
   </template>
 
   <template v-else-if="isAppointmentPassed && !hidePassedNotification">
@@ -184,21 +189,38 @@
 >
   <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
     <div class="text-center">
-      <i class="fas fa-calendar-check text-blue-700 text-4xl mb-4"></i>
+      <!-- Icon berubah berdasarkan status check-in -->
+      <i 
+        :class="isCheckedIn ? 'fas fa-check-circle text-green-600' : 'fas fa-calendar-check text-blue-700'" 
+        class="text-4xl mb-4"
+      ></i>
+      
+      <!-- Title berubah berdasarkan status check-in -->
       <h2 class="text-lg font-bold text-[#1B2A4D] mb-2">
-        Detail Janji Temu
+        {{ isCheckedIn ? 'Anda Sudah Check-in' : 'Detail Janji Temu' }}
       </h2>
+      
       <p class="text-sm text-gray-700 mb-2">
         Jadwal Anda:<br />
         <strong>{{ formatDate(nextAppointment.tanggal) }}</strong><br />
         pukul <strong>{{ nextAppointment.jam_konsultasi }} WIB</strong>
       </p>
+      
+      <!-- Tampilkan waktu check-in jika sudah check-in -->
+      <p v-if="isCheckedIn && nextAppointment.checked_in_at" class="text-xs text-green-600 mb-4">
+        Check-in pada: {{ formatCheckInTime(nextAppointment.checked_in_at) }}
+      </p>
+      
+      <!-- Tombol Check In hanya muncul jika belum check-in -->
       <button
+        v-if="!isCheckedIn"
         @click="handleCheckIn"
-        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm mb-4"
+        :disabled="checkInLoading"
+        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm mb-4 disabled:opacity-50"
       >
-        Check In
+        {{ checkInLoading ? 'Loading...' : 'Check In' }}
       </button>
+      
       <button
         @click="showAppointmentModal = false"
         class="bg-[#2D4480] hover:bg-[#3B59A1] text-white px-4 py-2 rounded text-sm"
@@ -227,6 +249,7 @@ const props = defineProps({
 const showInfoModal = ref(false);
 const hidePassedNotification = ref(false);
 const cancelLoading = ref(false);
+const checkInLoading = ref(false);
 
 // Format tanggal Indonesia
 function formatDate(dateStr) {
@@ -240,6 +263,21 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString("id-ID", options);
 }
 
+// Format waktu check-in
+function formatCheckInTime(checkInTime) {
+  if (!checkInTime) return "";
+  const date = new Date(checkInTime);
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  return date.toLocaleDateString("id-ID", options);
+}
+
 // Cek apakah janji temu masih di masa depan
 function isAppointmentInFuture(tanggal, jam) {
   if (!tanggal || !jam) return false;
@@ -251,6 +289,11 @@ function isAppointmentInFuture(tanggal, jam) {
   const now = new Date();
   return appointmentDate > now;
 }
+
+// Computed untuk mengecek apakah sudah check-in
+const isCheckedIn = computed(() => {
+  return props.nextAppointment && props.nextAppointment.checked_in_at;
+});
 
 const isValidAppointment = computed(() =>
   props.nextAppointment &&
@@ -354,29 +397,44 @@ function handleAppointmentClick() {
   }
 }
 
- async function handleCheckIn() {  console.log('Tombol Check In diklik');
+async function handleCheckIn() {
+  console.log('Tombol Check In diklik');
+  
+  // Cek apakah sudah check-in
+  if (isCheckedIn.value) {
+    alert('Anda sudah melakukan check-in sebelumnya.');
+    return;
+  }
+  
   if (!props.nextAppointment || !props.nextAppointment.id) {
     alert('Janji temu tidak ditemukan.');
     return;
   }
 
   try {
+    checkInLoading.value = true;
+    
     await router.post('/checkin', {
       appointment_id: props.nextAppointment.id,
-      check_in_time: new Date().toISOString(), // atau format lokal jika perlu
     }, {
-      onSuccess: () => {
+      onSuccess: (page) => {
         alert('Check-in berhasil!');
         showAppointmentModal.value = false;
+        // Refresh halaman untuk mendapatkan data terbaru
+        window.location.reload();
       },
       onError: (error) => {
         console.error('Gagal check-in:', error);
-        alert('Terjadi kesalahan saat check-in.');
+        alert(error.response?.data?.message || 'Terjadi kesalahan saat check-in.');
+      },
+      onFinish: () => {
+        checkInLoading.value = false;
       }
     });
   } catch (err) {
     console.error(err);
     alert('Terjadi error saat mencoba check-in.');
+    checkInLoading.value = false;
   }
 }
 </script>

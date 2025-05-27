@@ -107,18 +107,43 @@ public function store(Request $request)
         }
     }
 
-    public function checkIn(Request $request)
+   public function checkIn(Request $request) 
 {
-    $request->validate([
-        'appointment_id' => 'required|exists:appointments,id',
-    ]);
+    try {
+        $request->validate([
+            'appointment_id' => 'required|exists:appointments,id',
+        ]);
 
-    $appointment = Appointment::find($request->appointment_id);
+        $user = Auth::user();
+        $patient = $user->patient;
 
-    // Simpan jam check-in sekarang
-    $appointment->checked_in_at = Carbon::now();
-    $appointment->save();
+        if (!$patient) {
+            return back()->withErrors(['error' => 'Data pasien tidak ditemukan']);
+        }
 
-    return redirect()->back()->with('success', 'Check-in berhasil!');
+        // Cari appointment berdasarkan ID dan pastikan milik pasien yang login
+        $appointment = Appointment::where('id', $request->appointment_id)
+                                ->where('pasien_id', $patient->id)
+                                ->first();
+
+        if (!$appointment) {
+            return back()->withErrors(['error' => 'Janji temu tidak ditemukan']);
+        }
+
+        // Cek apakah sudah check-in sebelumnya
+        if ($appointment->checked_in_at) {
+            return back()->withErrors(['error' => 'Anda sudah melakukan check-in sebelumnya']);
+        }
+
+        // Simpan jam check-in sekarang
+        $appointment->checked_in_at = Carbon::now();
+        $appointment->save();
+
+        return redirect()->back()->with('success', 'Check-in berhasil!');
+
+    } catch (\Exception $e) {
+        \Log::error('Error during check-in: ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat check-in']);
+    }
 }
 }
