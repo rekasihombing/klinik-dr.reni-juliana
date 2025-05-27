@@ -8,6 +8,9 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OnlinePatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DoctorDashboardController;
+use App\Http\Controllers\StaffDashboardController;
+use App\Http\Controllers\PatientDashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -43,9 +46,6 @@ Route::get('/pendaftaran', function () {
 Route::get('/KonfirmasiPasien', function () {
     return Inertia::render('staff/KonfiirmasiPasienStaff');
 })->name('KonfirmasiPasien');
-
-//Pasien
-Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 Route::middleware(['auth'])->get('/janjitemu', function () {
     return Inertia::render('pasien/JanjiTemu');
@@ -84,5 +84,25 @@ Route::get('/dashboarddokter', function () {
     return Inertia::render('dokter/DashboardDokter');
 })->name('dashboarddokter');
 
+// Routes untuk dokter (gunakan middleware auth dan role dokter jika ada)
+Route::middleware(['auth'])->group(function () {
+    // Dashboard dokter
+    Route::get('/doctor/dashboard', [DoctorDashboardController::class, 'index'])
+        ->name('doctor.dashboard');
+    
+Route::middleware(['auth'])->group(function () {
+    Route::get('/appointment/{id}/detail', [DoctorDashboardController::class, 'showAppointmentDetail'])->name('appointment.detail');
+});
+    
+    // Update status appointment
+    Route::patch('/appointment/{id}/status', [DoctorDashboardController::class, 'updateStatus'])
+        ->name('appointment.update.status');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard'); // pasien
+    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff'); // staff
+    Route::get('/dashboarddokter', [DoctorDashboardController::class, 'index'])->name('dashboarddokter'); // dokter
+});
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

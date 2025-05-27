@@ -9,9 +9,9 @@ use App\Models\Patient;
 use App\Models\Appointment; 
 use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
+class PatientDashboardController extends Controller
 {
-    public function dashboard()
+    public function index()
     {
         // Mendapatkan pengguna yang sedang login
         $user = Auth::user();
