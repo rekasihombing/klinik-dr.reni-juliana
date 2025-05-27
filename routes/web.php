@@ -91,6 +91,10 @@ Route::get('/dashboarddokter', function () {
     return Inertia::render('dokter/DashboardDokter');
 })->name('dashboarddokter');
 
+Route::get('/tambahrekammedis', function () {
+    return Inertia::render('Doctor/TambahRekamMedis');
+})->name('tambahrekammedis');
+
 // Routes untuk dokter (gunakan middleware auth dan role dokter jika ada)
 Route::middleware(['auth'])->group(function () {
     // Dashboard dokter
