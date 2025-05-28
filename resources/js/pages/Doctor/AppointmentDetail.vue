@@ -1,451 +1,127 @@
 <template>
-  <div class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="bg-[#B7D7E8] flex justify-between items-center px-6 py-3 text-[#1B2A4D] text-sm font-sans">
-      <div>{{ clinicName }}</div>
-      <div class="flex items-center space-x-1 cursor-pointer">
-        <span>{{ patientName }}</span>
-        <i class="fas fa-user-circle text-lg"></i>
-      </div>
-    </header>
-
-    <div class="flex flex-1">
-      <Sidebar :patient-name="patientName" />
-
-      <main class="flex-grow flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-md w-full max-w-4xl p-6">
-          <div class="text-center mb-4">
-            <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
-              <i class="fas fa-calendar-alt text-[#2A4482] text-lg"></i>
-              Buat Janji Temu
-            </h1>
-            <p class="text-sm text-black">Silahkan isi detail untuk janji temu di bawah ini.</p>
+  <div class="bg-[#1f2d3d] font-sans min-h-screen flex flex-col">
+    <header class="text-gray-400 text-sm px-4 py-2">PDFT Pasien</header>
+    <main class="flex-grow flex justify-center items-start p-6">
+      <div class="relative bg-white w-full max-w-4xl rounded-sm shadow-md min-h-[480px]">
+        <div class="flex justify-between items-center bg-[#b9def9] rounded-sm px-6 py-3 ">
+          <div class="flex items-center space-x-1 text-sm text-[#1f2d3d] font-normal">
+            <i class="fas fa-home text-lg"></i>
+            <a href="/dashboarddokter">
+          <span>Dashboard</span>
+        </a>
+            <span>&gt;</span>
+            <span class="text-blue-700 font-semibold">Detail Appointment</span>
           </div>
+          <div class="text-[#1f2d3d] text-right text-sm font-normal leading-none">
+            <div>{{ currentDate }}</div>
+            <div class="tracking-widest" v-html="currentTime"></div>
+          </div>
+        </div>
 
-          <div class="flex flex-col md:flex-row md:space-x-8">
-            <!-- Form -->
-            <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="showConfirmationModal">
-              <h2 class="text-[#2A4482] font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
-                Detail Janji Temu
-              </h2>
+        <section class="px-10 pt-8 pb-6 text-black text-sm font-normal" v-if="appointment && appointment.pasien">
+          <p class="mb-1">{{ appointment.pasien.nama_lengkap }}</p>
+          <p class="mb-6">NIK: {{ appointment.pasien.nik }}</p>
 
-              <!-- Tanggal -->
-              <label class="text-black text-sm" for="tanggal">
-                Tanggal Janji Temu<span class="text-red-600">*</span>
-              </label>
-              <input
-                id="tanggal"
-                v-model="form.tanggal"
-                type="text"
-                placeholder="Pilih tanggal janji temu"
-                :class="['border rounded px-3 py-2 text-sm w-full', errors.tanggal ? 'border-red-500' : 'border-gray-300']"
-                readonly
-              />
-              <p v-if="errors.tanggal" class="text-red-500 text-xs mt-0">Tanggal wajib diisi.</p>
-
-              <!-- Jam -->
-              <label class="text-black text-sm" for="jam">
-                Jam Konsultasi<span class="text-red-600">*</span>
-              </label>
-              <select
-                id="jam"
-                v-model="form.jam_konsultasi"
-                :class="['border rounded px-3 py-2 text-sm w-full', errors.jam_konsultasi ? 'border-red-500' : 'border-gray-300']"
-                @change="clearTimeError"
-              >
-                <option value="" disabled>Pilih waktu</option>
-                <option 
-                  v-for="time in availableTimes" 
-                  :key="time" 
-                  :value="time"
-                  :disabled="!isTimeAvailable(time)"
-                  :class="{ 'text-gray-400': !isTimeAvailable(time) }"
-                >
-                  {{ time }} {{ getTimeStatusText(time) }}
-                </option>
-              </select>
-              <p v-if="errors.jam_konsultasi" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
-
-              <!-- Keluhan -->
-              <label class="text-black text-sm" for="keluhan">
-                Keluhan<span class="text-red-600">*</span>
-              </label>
-              <textarea
-                id="keluhan"
-                v-model="form.keluhan"
-                rows="4"
-                placeholder="Tuliskan keluhan Anda"
-                :class="['border rounded px-3 py-2 text-sm w-full resize-none', errors.keluhan ? 'border-red-500' : 'border-gray-300']"
-              ></textarea>
-              <p v-if="errors.keluhan" class="text-red-500 text-xs mt-0">Keluhan wajib diisi.</p>
-
-              <p class="text-xs text-gray-700 mb-1">
-                <strong>Catatan:</strong>
-                Mohon datang ke klinik pada tanggal dan sebelum jam yang ditentukan untuk
-                melakukan administrasi. Jika datang di luar tanggal dan melebihi jam tersebut, maka nomor antrian Anda
-                sudah tidak berlaku.
-              </p>
-
-              <button type="submit" class="bg-[#3674B5] text-white text-xs px-4 py-1 rounded w-max">
-                Simpan
-              </button>
-            </form>
-
-            <!-- Jadwal Dokter -->
-            <div class="mt-6 md:mt-0 md:w-1/2">
-              <table class="w-full border border-gray-300 rounded-lg border-collapse">
-                <thead>
-                  <tr class="bg-[#3674B5] text-white text-sm">
-                    <th class="py-2 px-4 border border-gray-300 text-left">Hari</th>
-                    <th class="py-2 px-4 border border-gray-300">Waktu</th>
-                  </tr>
-                </thead>
-                <tbody class="text-sm text-gray-900">
-                  <tr v-for="(jam, hari) in jadwal" :key="hari">
-                    <td class="py-2 px-4 border border-gray-300">{{ hari }}</td>
-                    <td class="py-2 px-4 border border-gray-300">{{ jam }}</td>
-                  </tr>
-                </tbody>
-              </table>
+          <dl class="max-w-xl space-y-3">
+            <div class="flex" v-for="(item, index) in patientDetails" :key="index">
+              <dt class="w-40 font-medium" v-html="item.label"></dt>
+              <dd class="flex-1">: &nbsp;&nbsp; {{ item.value }}</dd>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>
+          </dl>
+        </section>
 
-    <!-- Confirmation Modal -->
-    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.15);">
-      <div class="bg-white rounded-lg max-w-sm w-full p-9 drop-shadow-lg">
-        <div class="flex justify-center mb-4">
-          <i class="far fa-clock text-blue-900 text-4xl"></i>
-        </div>
-        <h2 class="text-blue-900 font-bold text-center text-lg mb-4 leading-tight">
-          Konfirmasi Janji Temu Anda
-        </h2>
-        <p class="text-black text-sm font-semibold mb-1">Tanggal &amp; Waktu Janji Temu</p>
-        <div class="text-black text-sm mb-4 space-y-1">
-          <p><i class="far fa-calendar-alt text-blue-900 mr-2"></i>{{ form.tanggal }}</p>
-          <p><i class="far fa-clock text-blue-900 mr-2"></i>{{ form.jam_konsultasi }}</p>
-        </div>
-        <p class="text-black text-xs mb-6">
-          Pastikan anda hadir tepat waktu sesuai dengan tanggal dan jam janji temu
-        </p>
-        <div class="flex justify-end space-x-3">
-          <button @click="showModal = false" class="text-[#3674B5] text-xs border border-[#3674B5] rounded px-3 py-1 hover:bg-blue-50 transition">
-            Batal
+        <section class="px-10 pb-8 flex space-x-4">
+          <button class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 flex items-center space-x-1 shadow-md hover:bg-blue-700 transition" type="button">
+            <i class="fas fa-file-alt"></i>
+            <span>Lihat Rekam Medis</span>
           </button>
-          <button @click="confirmSubmit" class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 hover:bg-blue-800 transition">
-            Selesai
+          <button  @click="handleTambahRekamMedisClick" class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+            <span>Tambah Rekam Medis</span>
           </button>
-        </div>
+          <button class="bg-[#FF9500] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+            <span>Resep Obat</span>
+          </button>
+        </section>
       </div>
-    </div>
-
-    <!-- Error Modal -->
-    <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.5);">
-      <div class="bg-white rounded-lg max-w-sm w-full p-6 mx-4 drop-shadow-lg">
-        <div class="flex justify-center mb-4">
-          <i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>
-        </div>
-        <h2 class="text-red-600 font-bold text-center text-lg mb-4">
-          Terjadi Kesalahan
-        </h2>
-        <p class="text-gray-700 text-sm text-center mb-6">
-          {{ errorMessage }}
-        </p>
-        <div class="flex justify-center">
-          <button @click="showErrorModal = false" class="bg-red-500 text-white text-sm rounded px-4 py-2 hover:bg-red-600 transition">
-            Tutup
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.5);">
-      <div class="bg-white rounded-lg max-w-sm w-full p-6 mx-4 drop-shadow-lg">
-        <div class="flex justify-center mb-4">
-          <i class="fas fa-check-circle text-green-500 text-4xl"></i>
-        </div>
-        <h2 class="text-green-600 font-bold text-center text-lg mb-4">
-          Berhasil!
-        </h2>
-        <p class="text-gray-700 text-sm text-center mb-6">
-          {{ successMessage }}
-        </p>
-        <div class="flex justify-center">
-          <button @click="showSuccessModal = false" class="bg-green-500 text-white text-sm rounded px-4 py-2 hover:bg-green-600 transition">
-            Tutup
-          </button>
-        </div>
-      </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, computed } from 'vue'
-import flatpickr from 'flatpickr'
-import 'flatpickr/dist/flatpickr.min.css'
-import Sidebar from '../../layouts/pasien/Sidebar.vue'
-import { useForm } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3';
+import { ref, onMounted, computed } from 'vue';
 
-// Props
 const props = defineProps({
-  patientName: String,
-  patientId: Number,
-  doctorId: Number,
-  existingAppointments: Array, // Tambahan: data appointment yang sudah ada
-})
+  appointment: Object
+});
 
-// Form
-const form = useForm({
-  tanggal: '',
-  jam_konsultasi: '',
-  keluhan: '',
-  pasien_id: props.patientId,
-})
+const appointment = props.appointment; // ambil appointment dari props
 
-// Validasi Error
-const errors = reactive({
-  tanggal: false,
-  jam_konsultasi: false,
-  keluhan: false,
-})
+const patientDetails = computed(() => [
+  { label: "Tanggal Lahir", value: appointment.pasien.tanggal_lahir },
+  { label: "Jenis Kelamin", value: appointment.pasien.jenis_kelamin },
+  { label: "Golongan Darah", value: appointment.pasien.golongan_darah },
+  {
+    label: 'Nomor HP / Whatsapp <br /><span class="italic text-xs">(optional)</span>',
+    value: appointment.pasien.no_hp,
+  },
+  {
+    label: 'Alamat <br /><span class="italic text-xs">(optional)</span>',
+    value: appointment.pasien.alamat,
+  },
+  { label: "Tanggal Konsultasi", value: appointment.tanggal },
+  { label: "Jam Konsultasi", value: appointment.jam_konsultasi },
+  { label: "Status", value: appointment.status },
+]);
 
-// Modal state
-const showModal = ref(false)
-const showErrorModal = ref(false)
-const errorMessage = ref('')
-const showSuccessModal = ref(false)
-const successMessage = ref('')
+const currentDate = ref("");
+const currentTime = ref("");
 
-// Available times
-const availableTimes = ['15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+function updateDateTime() {
+  const now = new Date();
+  const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const dayName = days[now.getDay()];
+  const day = now.getDate().toString().padStart(2, "0");
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const year = now.getFullYear();
 
-// Current date and time
-const currentDateTime = ref(new Date())
+  currentDate.value = `${dayName}, ${day} ${monthName(month)} ${year}`;
 
-// Update current time every minute
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+  currentTime.value = `${hours} &nbsp; : &nbsp; ${minutes} &nbsp; : &nbsp; ${seconds}`;
+}
+
+function monthName(monthNumber) {
+  const months = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+  return months[parseInt(monthNumber, 10) - 1];
+}
+
 onMounted(() => {
-  const interval = setInterval(() => {
-    currentDateTime.value = new Date()
-  }, 60000) // Update every minute
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+});
 
-  // Clean up interval on component unmount
-  return () => clearInterval(interval)
-})
-
-// Check if a time slot is available
-const isTimeAvailable = (timeString) => {
-  if (!form.tanggal) return true // If no date selected, show all times
-  
-  const selectedDate = new Date(form.tanggal)
-  const currentDate = new Date()
-  
-  // Remove time from current date for comparison
-  currentDate.setHours(0, 0, 0, 0)
-  selectedDate.setHours(0, 0, 0, 0)
-  
-  // Check if this date and time combination already exists in database
-  const isAlreadyBooked = props.existingAppointments?.some(appointment => {
-    return appointment.tanggal === form.tanggal && appointment.jam_konsultasi === timeString
-  })
-  
-  if (isAlreadyBooked) {
-    return false
-  }
-  
-  // If selected date is in the future, check only database availability
-  if (selectedDate > currentDate) {
-    return true
-  }
-  
-  // If selected date is today, check if time has passed AND database availability
-  if (selectedDate.getTime() === currentDate.getTime()) {
-    const [hours, minutes] = timeString.split(':').map(Number)
-    const timeSlot = new Date()
-    timeSlot.setHours(hours, minutes, 0, 0)
-    
-    return timeSlot > currentDateTime.value
-  }
-  
-  // If selected date is in the past, no times are available
-  return false
-}
-
-// Get status text for time options
-const getTimeStatusText = (timeString) => {
-  if (!form.tanggal) return ''
-  
-  // Check if already booked
-  const isAlreadyBooked = props.existingAppointments?.some(appointment => {
-    return appointment.tanggal === form.tanggal && appointment.jam_konsultasi === timeString
-  })
-  
-  if (isAlreadyBooked) {
-    return '(Sudah dipesan)'
-  }
-  
-  // Check if time has passed (only for today)
-  const selectedDate = new Date(form.tanggal)
-  const currentDate = new Date()
-  currentDate.setHours(0, 0, 0, 0)
-  selectedDate.setHours(0, 0, 0, 0)
-  
-  if (selectedDate.getTime() === currentDate.getTime()) {
-    const [hours, minutes] = timeString.split(':').map(Number)
-    const timeSlot = new Date()
-    timeSlot.setHours(hours, minutes, 0, 0)
-    
-    if (timeSlot <= currentDateTime.value) {
-      return '(Sudah lewat)'
-    }
-  }
-  
-  return ''
-}
-
-// Clear time error when time changes
-const clearTimeError = () => {
-  errors.jam_konsultasi = false
-}
-
-// Show confirmation modal
-const showConfirmationModal = () => {
-  // Validate form before showing modal
-  errors.tanggal = !form.tanggal
-  errors.jam_konsultasi = !form.jam_konsultasi
-  errors.keluhan = !form.keluhan
-
-  if (errors.tanggal || errors.jam_konsultasi || errors.keluhan) {
-    console.log('Validasi gagal, form tidak dikirim')
-    return
+function handleTambahRekamMedisClick() {
+    router.visit("/tambahrekammedis");
   }
 
-  // Additional validation: check if selected time is still available
-  if (!isTimeAvailable(form.jam_konsultasi)) {
-    errors.jam_konsultasi = true
-    showError('Waktu yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.')
-    return
-  }
-
-  showModal.value = true
-}
-
-// Show error message
-const showError = (message) => {
-  errorMessage.value = message
-  showErrorModal.value = true
-}
-
-// Show success message
-const showSuccess = (message) => {
-  successMessage.value = message
-  showSuccessModal.value = true
-}
-
-// Confirm submit
-const confirmSubmit = () => {
-  // Final check before submitting
-  if (!isTimeAvailable(form.jam_konsultasi)) {
-    showModal.value = false
-    errors.jam_konsultasi = true
-    showError('Waktu yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.')
-    return
-  }
-
-  // Submit form
-  form.post(route('appointments.store'), {
-    onError: (backendErrors) => {
-      console.log('VALIDATION ERRORS', backendErrors)
-      showModal.value = false // Tutup modal saat ada error
-      
-      // Handle specific errors
-      if (backendErrors.jam_konsultasi) {
-        errors.jam_konsultasi = true
-        showError(backendErrors.jam_konsultasi)
-      } else if (backendErrors.tanggal) {
-        errors.tanggal = true
-        showError(backendErrors.tanggal)
-      } else if (backendErrors.keluhan) {
-        errors.keluhan = true
-        showError(backendErrors.keluhan)
-      } else if (backendErrors.error) {
-        showError(backendErrors.error)
-      } else {
-        showError('Terjadi kesalahan saat menyimpan janji temu. Silakan coba lagi.')
-      }
-    },
-    onSuccess: () => {
-      console.log('SUKSES')
-      showModal.value = false // Close modal after success
-      showSuccess('Janji temu berhasil dibuat!')
-      
-      // Reset form after success
-      setTimeout(() => {
-        form.reset()
-        errors.tanggal = false
-        errors.jam_konsultasi = false
-        errors.keluhan = false
-      }, 2000)
-    }
-  })
-}
-
-// Flatpickr
-onMounted(() => {
-  flatpickr('#tanggal', {
-    dateFormat: 'Y-m-d',
-    minDate: 'today',
-    onChange: (selectedDates, dateStr) => {
-      form.tanggal = dateStr
-      errors.tanggal = false
-      
-      // Reset jam konsultasi if previously selected time is no longer available
-      if (form.jam_konsultasi && !isTimeAvailable(form.jam_konsultasi)) {
-        form.jam_konsultasi = ''
-      }
-    },
-  })
-})
-
-// Jadwal Dokter
-const jadwal = {
-  Senin: '15.00 - 23.00',
-  Selasa: '15.00 - 23.00',
-  Rabu: '15.00 - 23.00',
-  Kamis: '15.00 - 23.00',
-  Jumat: '15.00 - 23.00',
-  Sabtu: '15.00 - 23.00',
-}
 </script>
 
 <style scoped>
-input::placeholder,
-textarea::placeholder,
-select:invalid {
-  color: #9CA3AF;
-  opacity: 1;
-}
-
-input,
-textarea,
-select {
-  color: #000;
-}
-
-.border-red-500 {
-  border-color: #f87171;
-}
-
-/* Style for disabled options */
-option:disabled {
-  color: #9CA3AF !important;
-  background-color: #F3F4F6;
-}
-
-select option[disabled] {
-  color: #9CA3AF;
-}
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
 </style>

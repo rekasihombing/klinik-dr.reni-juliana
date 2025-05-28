@@ -11,7 +11,8 @@
       <Sidebar :patient-name="patientData.nama || patientName" />
 
       <!-- Main content -->
-      <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight">
+      <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight text-black">
+
         <!-- Top bar -->
         <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
@@ -21,11 +22,7 @@
             class="bg-white rounded-md shadow-md p-4 select-text"
             style="min-width:320px"
           >
-            <h2 class="font-bold text-[17px] mb-3">Detail Pasien</h2>
-
-            <div class="mb-3">
-              <strong class="text-[13px]">Rekam Medis</strong>
-            </div>
+            <h2 class="text-[#2A4482] font-semibold text-[15px] mb-2 border-b border-gray-400 pb-1">Rekam Medis</h2>
 
             <div class="flex justify-between text-[13px] mb-2">
               <div>{{ clinicName || 'Klinik Praktek Dr. Rena Juliana Manurung' }}</div>
@@ -36,7 +33,7 @@
               <tbody>
                 <tr>
                   <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                    class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
                     colspan="2"
                   >
                     Informasi Pasien
@@ -58,10 +55,12 @@
                   <td class="border border-gray-300 px-2 py-0.5">Golongan Darah</td>
                   <td class="border border-gray-300 px-2 py-0.5">{{ patientData.golonganDarah || '-' }}</td>
                 </tr>
-
+                <tr>
+                  <td colspan="2" class="px-2 py-0.5"></td> <!-- Baris kosong -->
+                </tr>
                 <tr>
                   <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                    class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
                     colspan="2"
                   >
                     Riwayat Kunjungan
@@ -95,10 +94,12 @@
                   <td class="border border-gray-300 px-2 py-0.5">Riwayat Obat</td>
                   <td class="border border-gray-300 px-2 py-0.5">{{ visitHistory.riwayatObat || '-' }}</td>
                 </tr>
-
+                <tr>
+                  <td colspan="2" class="px-2 py-0.5"></td> <!-- Baris kosong -->
+                </tr>
                 <tr>
                   <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                    class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
                     colspan="2"
                   >
                     Pemeriksaan Fisik
@@ -235,22 +236,14 @@
               </tbody>
             </table>
 
-            <button
-              @click="createPrescription"
-              type="button"
-              class="mt-4 flex items-center gap-2 text-[13px] font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-            >
-              <i class="far fa-file-alt text-lg"></i>
-              Buat Resep Obat
-            </button>
           </section>
 
           <button
             @click="downloadRecord"
             type="button"
-            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-[13px] px-3 py-1 rounded select-none flex items-center gap-2 transition-colors"
+            class="mt-4 bg-[#3674B5] hover:bg-blue-700 text-white text-[13px] shadow-md px-3 py-1 rounded select-none flex items-center gap-2 transition-colors"
           >
-            <i class="fas fa-download text-[13px]"></i> Unduh
+            <i class="fas fa-save text-[13px]"></i> Simpan
           </button>
         </div>
       </main>
@@ -326,10 +319,11 @@ function generateRecordNumber() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    recordNumber.value = `${year}${month}${day}${random}`;
+    recordNumber.value = `${year}${month}${day}${random}`; // ✅ Sudah benar
   }
   return recordNumber.value;
 }
+
 
 // Hitung umur dari tanggal lahir
 function calculateAge() {
@@ -354,7 +348,7 @@ function formatVisitDate() {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day} - ${month} - ${year}`;
+  return `${day} - ${month} - ${year}`; // ✅ Menggunakan backticks
 }
 
 // Format tanggal saat ini
@@ -375,7 +369,7 @@ function updateTime() {
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
-  currentTime.value = `${hours} : ${minutes} : ${seconds}`;
+  currentTime.value = `${hours} : ${minutes} : ${seconds}`; // ✅ Menggunakan backticks
 }
 
 onMounted(() => {

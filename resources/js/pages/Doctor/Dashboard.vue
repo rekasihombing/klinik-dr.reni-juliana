@@ -1,6 +1,5 @@
 <template>
   <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-      <div>{{ clinicName }}</div>
       <div class="flex items-center space-x-1 cursor-pointer">
         <span>{{ patientName }}</span>
       </div>
@@ -13,27 +12,23 @@
    <!-- Main content -->
     <main class="bg-[#FFFFFF] flex-1 p-6 md:p-10">
       <div
-        class="bg-[#b9e1f5] rounded-lg p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center"
+        class="bg-gradient-to-r from-[#C4DCFE] to-[#9BC3FC] rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center"
       >
-        <p class="text font-medium text-black">Selamat datang, Dr. Reni Juliana !</p>
-        <div class="text-right text-sm text-black mt-3 md:mt-0">
+        <p class="text-lg font-medium text-[#2A4482]">Selamat datang, Dr. Reni Juliana !</p>
+        <div class="text-right text-sm text-[#2A4482] mt-3 md:mt-0">
           <p>{{ getCurrentDate() }}</p>
           <p class="mt-1">{{ getCurrentTime() }}</p>
         </div>
       </div>
 
       <div class="flex flex-wrap gap-4 mb-6">
-        <div
-          class="bg-[#efefef] rounded-md shadow-md px-6 py-4 w-44 text-center"
-        >
-          <p class="text-[#000000] text-sm font-medium mb-1">Pasien Hari ini</p>
-          <p class="text-[#000000] text-2xl font-medium">{{ displayAppointments.length }}</p>
+        <div class="bg-gradient-to-r from-[#94C0FF] to-[#6799DF] rounded-md shadow-md px-6 py-4 w-40 text-center">
+          <p class="text-[#F5F5F5] text-sm font-semibold mb-1">Pasien Hari ini</p>
+          <p class="text-[#F5F5F5] text-2xl font-medium">{{ displayAppointments.length }}</p>
         </div>
-        <div
-          class="bg-[#efefef] rounded-md shadow-md px-6 py-4 w-50 text-center"
-        >
-          <p class="text-[#000000] text-sm font-medium mb-1">Jadwal Praktek Hari Ini</p>
-          <p class="text-[#000000] text-base font-medium">15.00 - 23.00</p>
+        <div class="bg-gradient-to-r from-[#91D8E4] to-[#42ABBD] rounded-md shadow-md px-6 py-4 w-50 text-center">
+          <p class="text-[#F5F5F5] text-sm font-semibold mb-1">Jadwal Praktek Hari Ini</p>
+          <p class="text-[#F5F5F5] text-xl font-medium">15.00 - 23.00</p>
         </div>
       </div>
       <h2 class="text-[#000000] text-lg font-medium mb-4">Daftar Pasien Hari ini</h2>

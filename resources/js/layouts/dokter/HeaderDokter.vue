@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  name: "HeaderStaff",
+  name: "HeaderDokter",
   props: {
     breadcrumbPages: {
       type: Array,
@@ -63,8 +63,8 @@ export default {
       return `${dayName}, ${dayNum} ${monthName} ${year}`;
     },
     formatTime(date) {
-      const pad = (n) => n.toString().padStart(2, '0');
-      return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`; // Tambahkan tanda petik di akhir ini
     },
     updateDateTime() {
       const now = new Date();
