@@ -34,7 +34,7 @@
             <span>Lihat Rekam Medis</span>
             <i class="fas fa-file-alt"></i>
           </button>
-          <button class="bg-blue-600 text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+          <button  @click="handleTambahRekamMedisClick" class="bg-blue-600 text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
             Tambah Rekam Medis
           </button>
           <button class="bg-blue-600 text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
@@ -47,6 +47,7 @@
 </template>
 
 <script setup>
+import { router } from '@inertiajs/vue3';
 import { ref, onMounted, computed } from 'vue';
 
 const props = defineProps({
@@ -113,8 +114,14 @@ onMounted(() => {
   updateDateTime();
   setInterval(updateDateTime, 1000);
 });
+
+function handleTambahRekamMedisClick() {
+    router.visit("/tambahrekammedis");
+  }
+
 </script>
 
 <style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
 </style>
+
