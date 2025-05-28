@@ -13,24 +13,7 @@
       <!-- Main content -->
       <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight">
         <!-- Top bar -->
-        <header class="bg-sky-200 flex justify-between items-center px-3 py-2 text-[13px] select-none">
-          <div class="flex items-center space-x-1">
-            <button
-              aria-label="Home"
-              class="p-1 rounded hover:bg-sky-300 active:bg-sky-400 transition-colors"
-              type="button"
-            >
-              <i class="fas fa-home text-sky-900"></i>
-            </button>
-            <span>Dashboard</span>
-            <i class="fas fa-chevron-right text-sky-900"></i>
-            <span>Pasien</span>
-          </div>
-          <div class="text-sky-900 text-right font-normal">
-            <div>{{ formatCurrentDate() }}</div>
-            <div class="font-mono font-semibold tracking-widest">{{ currentTime }}</div>
-          </div>
-        </header>
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
         <!-- Content -->
         <div class="max-w-4xl mx-auto p-4">
@@ -280,6 +263,7 @@ import { defineProps, onMounted, ref, computed } from "vue";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
+import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
 import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
@@ -311,6 +295,12 @@ const props = defineProps({
   }
 });
 
+// Breadcrumb data
+const breadcrumbPages = [
+  { label: "Dashboard", href: "/dashboarddokter" },
+  { label: "Tambah Rekam Medis", href: "/tambahrekammedis" }
+];
+
 const showInfoModal = ref(false);
 const currentTime = ref('');
 
@@ -336,7 +326,7 @@ function generateRecordNumber() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    recordNumber.value = `${year}${month}${day}${random}`; // ✅ Perbaikan: gunakan backticks
+    recordNumber.value = `${year}${month}${day}${random}`;
   }
   return recordNumber.value;
 }
@@ -364,7 +354,7 @@ function formatVisitDate() {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day} - ${month} - ${year}`; // ✅ Perbaikan: gunakan backticks
+  return `${day} - ${month} - ${year}`;
 }
 
 // Format tanggal saat ini
@@ -385,9 +375,8 @@ function updateTime() {
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
-  currentTime.value = `${hours} : ${minutes} : ${seconds}`; // ✅ Perbaikan: gunakan backticks
+  currentTime.value = `${hours} : ${minutes} : ${seconds}`;
 }
-
 
 onMounted(() => {
   // Initialize calendar
