@@ -18,37 +18,43 @@ class AuthenticatedSessionController extends Controller
 
 public function store(Request $request)
 {
-    // Validasi input login
+    // Validasi input
     $credentials = $request->validate([
         'email' => ['required', 'email'],
         'password' => ['required'],
     ]);
 
-    // Coba login user
-    if (Auth::attempt($credentials, $request->boolean('remember'))) {
-        $request->session()->regenerate();
+    $user = \App\Models\User::where('email', $credentials['email'])->first();
 
-        // Ambil user yang login
-        $user = Auth::user();
-
-        // Redirect sesuai role / tipe user
-            if ($user->role === 'pasien') {
-                return redirect()->route('dashboard');
-            } elseif ($user->role === 'staff') {
-                return redirect()->route('dashboardstaff');
-            } elseif ($user->role === 'dokter') {
-                return redirect()->route('dashboarddokter');
-            }
-
-
-        // Default redirect jika role tidak dikenal
-        return redirect()->intended('/dashboard');
+    // Jika email tidak ditemukan
+    if (! $user) {
+        throw ValidationException::withMessages([
+            'email' => 'Email tidak terdaftar.',
+        ]);
     }
 
-    // Jika gagal, lempar error validasi
-    throw ValidationException::withMessages([
-        'email' => __('Email atau password salah.'),
-    ]);
+    // Jika password salah
+    if (! \Hash::check($credentials['password'], $user->password)) {
+        throw ValidationException::withMessages([
+            'password' => 'Password salah.',
+        ]);
+    }
+
+    // Login user
+    Auth::login($user, $request->boolean('remember'));
+    $request->session()->regenerate();
+
+    // Redirect sesuai role
+    if ($user->role === 'pasien') {
+        return redirect()->route('dashboard');
+    } elseif ($user->role === 'staff') {
+        return redirect()->route('dashboardstaff');
+    } elseif ($user->role === 'dokter') {
+        return redirect()->route('dashboarddokter');
+    }
+
+    // Fallback
+    return redirect()->intended('/dashboard');
 }
 
 

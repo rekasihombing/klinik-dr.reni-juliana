@@ -145,7 +145,7 @@
             </p>
 
             <div class="flex gap-2 pt-2">
-              <button
+              <button style="cursor:pointer;"
                 type="submit"
                 :disabled="processing"
                 class="bg-[#3674B5] text-white text-xs rounded px-4 py-2 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
