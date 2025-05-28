@@ -6,6 +6,8 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -29,12 +31,26 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(Toast, toastOptions)
             .mount(el);
+            
     },
     progress: {
         color: '#4B5563',
     },
 });
 
+const toastOptions = {
+  // Posisi toast bisa: top-right, top-center, top-left, bottom-right, etc.
+  position: 'top-center', // <- ini ubah posisi ke tengah atas
+  timeout: 3000,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  showCloseButtonOnHover: false,
+  hideProgressBar: false,
+  closeButton: 'button',
+  icon: true,
+}
 // This will set light / dark mode on page load...
 initializeTheme();

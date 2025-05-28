@@ -51,17 +51,18 @@
                 id="jam"
                 v-model="form.jam_konsultasi"
                 :class="['border rounded px-3 py-2 text-sm w-full', errors.jam_konsultasi ? 'border-red-500' : 'border-gray-300']"
+                @change="clearTimeError"
               >
                 <option value="" disabled>Pilih waktu</option>
-                <option>15:00</option>
-                <option>16:00</option>
-                <option>17:00</option>
-                <option>18:00</option>
-                <option>19:00</option>
-                <option>20:00</option>
-                <option>21:00</option>
-                <option>22:00</option>
-                <option>23:00</option>
+                <option 
+                  v-for="time in availableTimes" 
+                  :key="time" 
+                  :value="time"
+                  :disabled="!isTimeAvailable(time)"
+                  :class="{ 'text-gray-400': !isTimeAvailable(time) }"
+                >
+                  {{ time }} {{ getTimeStatusText(time) }}
+                </option>
               </select>
               <p v-if="errors.jam_konsultasi" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
 
@@ -139,11 +140,51 @@
         </div>
       </div>
     </div>
+
+    <!-- Error Modal -->
+    <div v-if="showErrorModal" class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="bg-white rounded-lg max-w-sm w-full p-6 mx-4 drop-shadow-lg">
+        <div class="flex justify-center mb-4">
+          <i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>
+        </div>
+        <h2 class="text-red-600 font-bold text-center text-lg mb-4">
+          Terjadi Kesalahan
+        </h2>
+        <p class="text-gray-700 text-sm text-center mb-6">
+          {{ errorMessage }}
+        </p>
+        <div class="flex justify-center">
+          <button @click="showErrorModal = false" class="bg-red-500 text-white text-sm rounded px-4 py-2 hover:bg-red-600 transition">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="bg-white rounded-lg max-w-sm w-full p-6 mx-4 drop-shadow-lg">
+        <div class="flex justify-center mb-4">
+          <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+        </div>
+        <h2 class="text-green-600 font-bold text-center text-lg mb-4">
+          Berhasil!
+        </h2>
+        <p class="text-gray-700 text-sm text-center mb-6">
+          {{ successMessage }}
+        </p>
+        <div class="flex justify-center">
+          <button @click="showSuccessModal = false" class="bg-green-500 text-white text-sm rounded px-4 py-2 hover:bg-green-600 transition">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../../layouts/pasien/Sidebar.vue'
@@ -154,6 +195,7 @@ const props = defineProps({
   patientName: String,
   patientId: Number,
   doctorId: Number,
+  existingAppointments: Array, // Tambahan: data appointment yang sudah ada
 })
 
 // Form
@@ -173,6 +215,101 @@ const errors = reactive({
 
 // Modal state
 const showModal = ref(false)
+const showErrorModal = ref(false)
+const errorMessage = ref('')
+const showSuccessModal = ref(false)
+const successMessage = ref('')
+
+// Available times
+const availableTimes = ['15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+
+// Current date and time
+const currentDateTime = ref(new Date())
+
+// Update current time every minute
+onMounted(() => {
+  const interval = setInterval(() => {
+    currentDateTime.value = new Date()
+  }, 60000) // Update every minute
+
+  // Clean up interval on component unmount
+  return () => clearInterval(interval)
+})
+
+// Check if a time slot is available
+const isTimeAvailable = (timeString) => {
+  if (!form.tanggal) return true // If no date selected, show all times
+  
+  const selectedDate = new Date(form.tanggal)
+  const currentDate = new Date()
+  
+  // Remove time from current date for comparison
+  currentDate.setHours(0, 0, 0, 0)
+  selectedDate.setHours(0, 0, 0, 0)
+  
+  // Check if this date and time combination already exists in database
+  const isAlreadyBooked = props.existingAppointments?.some(appointment => {
+    return appointment.tanggal === form.tanggal && appointment.jam_konsultasi === timeString
+  })
+  
+  if (isAlreadyBooked) {
+    return false
+  }
+  
+  // If selected date is in the future, check only database availability
+  if (selectedDate > currentDate) {
+    return true
+  }
+  
+  // If selected date is today, check if time has passed AND database availability
+  if (selectedDate.getTime() === currentDate.getTime()) {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    const timeSlot = new Date()
+    timeSlot.setHours(hours, minutes, 0, 0)
+    
+    return timeSlot > currentDateTime.value
+  }
+  
+  // If selected date is in the past, no times are available
+  return false
+}
+
+// Get status text for time options
+const getTimeStatusText = (timeString) => {
+  if (!form.tanggal) return ''
+  
+  // Check if already booked
+  const isAlreadyBooked = props.existingAppointments?.some(appointment => {
+    return appointment.tanggal === form.tanggal && appointment.jam_konsultasi === timeString
+  })
+  
+  if (isAlreadyBooked) {
+    return '(Sudah dipesan)'
+  }
+  
+  // Check if time has passed (only for today)
+  const selectedDate = new Date(form.tanggal)
+  const currentDate = new Date()
+  currentDate.setHours(0, 0, 0, 0)
+  selectedDate.setHours(0, 0, 0, 0)
+  
+  if (selectedDate.getTime() === currentDate.getTime()) {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    const timeSlot = new Date()
+    timeSlot.setHours(hours, minutes, 0, 0)
+    
+    if (timeSlot <= currentDateTime.value) {
+      return '(Sudah lewat)'
+    }
+  }
+  
+  return ''
+}
+
+// Clear time error when time changes
+const clearTimeError = () => {
+  errors.jam_konsultasi = false
+}
 
 // Show confirmation modal
 const showConfirmationModal = () => {
@@ -186,19 +323,72 @@ const showConfirmationModal = () => {
     return
   }
 
+  // Additional validation: check if selected time is still available
+  if (!isTimeAvailable(form.jam_konsultasi)) {
+    errors.jam_konsultasi = true
+    showError('Waktu yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.')
+    return
+  }
+
   showModal.value = true
+}
+
+// Show error message
+const showError = (message) => {
+  errorMessage.value = message
+  showErrorModal.value = true
+}
+
+// Show success message
+const showSuccess = (message) => {
+  successMessage.value = message
+  showSuccessModal.value = true
 }
 
 // Confirm submit
 const confirmSubmit = () => {
+  // Final check before submitting
+  if (!isTimeAvailable(form.jam_konsultasi)) {
+    showModal.value = false
+    errors.jam_konsultasi = true
+    showError('Waktu yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.')
+    return
+  }
+
   // Submit form
   form.post(route('appointments.store'), {
-    onError: (errors) => {
-      console.log('VALIDATION ERRORS', errors)
+    onError: (backendErrors) => {
+      console.log('VALIDATION ERRORS', backendErrors)
+      showModal.value = false // Tutup modal saat ada error
+      
+      // Handle specific errors
+      if (backendErrors.jam_konsultasi) {
+        errors.jam_konsultasi = true
+        showError(backendErrors.jam_konsultasi)
+      } else if (backendErrors.tanggal) {
+        errors.tanggal = true
+        showError(backendErrors.tanggal)
+      } else if (backendErrors.keluhan) {
+        errors.keluhan = true
+        showError(backendErrors.keluhan)
+      } else if (backendErrors.error) {
+        showError(backendErrors.error)
+      } else {
+        showError('Terjadi kesalahan saat menyimpan janji temu. Silakan coba lagi.')
+      }
     },
     onSuccess: () => {
       console.log('SUKSES')
       showModal.value = false // Close modal after success
+      showSuccess('Janji temu berhasil dibuat!')
+      
+      // Reset form after success
+      setTimeout(() => {
+        form.reset()
+        errors.tanggal = false
+        errors.jam_konsultasi = false
+        errors.keluhan = false
+      }, 2000)
     }
   })
 }
@@ -211,6 +401,11 @@ onMounted(() => {
     onChange: (selectedDates, dateStr) => {
       form.tanggal = dateStr
       errors.tanggal = false
+      
+      // Reset jam konsultasi if previously selected time is no longer available
+      if (form.jam_konsultasi && !isTimeAvailable(form.jam_konsultasi)) {
+        form.jam_konsultasi = ''
+      }
     },
   })
 })
@@ -242,5 +437,15 @@ select {
 
 .border-red-500 {
   border-color: #f87171;
+}
+
+/* Style for disabled options */
+option:disabled {
+  color: #9CA3AF !important;
+  background-color: #F3F4F6;
+}
+
+select option[disabled] {
+  color: #9CA3AF;
 }
 </style>
