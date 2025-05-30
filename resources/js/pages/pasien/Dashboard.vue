@@ -2,12 +2,12 @@
   <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
     <!-- Header -->
     <header
-      class="bg-[#B7D7E8] flex justify-between items-center px-6 py-3 text-[#1B2A4D] text-sm font-sans"
+      class="bg-[#F5FDFF] backdrop-blur-sm shadow-lg flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-100"
     >
-      <div>{{ clinicName }}</div>
-      <div class="flex items-center space-x-1 cursor-pointer" @click.stop="router.visit('/profilpasien')">
-        <span>{{ patientName }}</span>
-        <i class="fas fa-user-circle text-lg"></i>
+      <div class="font-semibold text-[#2D4480]">{{ clinicName }}</div>
+      <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors" @click.stop="router.visit('/profilpasien')">
+        <span class="font-medium">{{ patientName }}</span>
+        <i class="fas fa-user-circle text-xl text-[#3674B5]"></i>
       </div>
     </header>
 
@@ -26,7 +26,7 @@
         <transition name="fade">
           <div
             v-if="!isProfileComplete && !hideProfileNotification"
-            class="bg-[#FFF4E6] border-l-4 border-[#FF8A00] rounded-md px-4 py-3 mb-6 flex items-center justify-between text-sm font-sans"
+            class="bg-[#FFF4E6] border-l-4 border-[#FF8A00] rounded-xl backdrop-blur-xs shadow-md px-4 py-3 mb-6 flex items-center justify-between text-sm font-sans"
           >
             <div class="flex items-center space-x-3">
               <i class="fas fa-exclamation-triangle text-[#FF8A00] text-lg"></i>
@@ -42,7 +42,7 @@
             <div class="flex items-center gap-2">
               <button
                  @click.stop="router.visit('/datapasien')" style="cursor:pointer;"
-                class="bg-[#FF8A00] hover:bg-[#E67700] text-white rounded px-4 py-2 text-xs font-medium transition"
+                class="bg-[#FF8A00] p-4 hover:bg-[#E67700] text-white rounded-lg px-4 py-2 text-xs font-medium transition shadow-md hover:shadow-lg"
               >
                 Lengkapi Disini
               </button>
@@ -61,7 +61,7 @@
         <transition name="fade">
           <div
             v-if="nextAppointment && !hidePassedNotification"
-            class="rounded-md px-4 py-2 mb-6 flex items-center justify-between text-xs font-sans"
+            class="rounded-xl backdrop-blur-xs shadow-md px-4 py-2 mb-6 flex items-center justify-between text-xs font-sans"
             :class="isValidAppointment ? 'bg-[#D4F1E4] text-[#1B2A4D]' : 'bg-[#FFE2E2] text-[#E53935]'"
           >
             <div class="flex items-center space-x-2">
@@ -88,104 +88,116 @@
         <!-- Content Grid -->
         <div class="flex flex-col md:flex-row gap-4">
           <!-- Left Column -->
-          <div class="flex flex-col space-y-4 w-[300px]">
+          <div class="flex flex-col space-y-4 w-[370px]">
          <!-- Jadwal Konsultasi -->
-<div class="bg-white rounded-md shadow p-4 font-sans" @click="handleAppointmentClick" style="cursor:pointer;">
-  <div
-    class="flex items-center space-x-2 text-[#2D4480] font-semibold text-sm mb-2"
-  >
-    <i class="fas fa-calendar-alt text-lg"></i>
-    <span>Jadwal Konsultasi Berikutnya</span>
-  </div>
-
-  <template v-if="isValidAppointment">
-    <div class="text-xs text-[#1B2A4D] font-semibold">
-      {{ formatDate(nextAppointment.tanggal) }}
-    </div>
-    <div class="text-xs font-bold text-[#1B2A4D]">
-      {{ nextAppointment.jam_konsultasi }} WIB
-    </div>
-    <div class="text-xs font-medium text-[#00BFFF]">
-      klik disini untuk check in
-    </div>
-    <!-- Status Check-in -->
-    <div v-if="isCheckedIn" class="mt-2 text-xs text-green-600 font-semibold">
-      <i class="fas fa-check-circle mr-1"></i>
-      Sudah Check-in
-    </div>
-  </template>
-
-  <template v-else-if="isAppointmentPassed && !hidePassedNotification">
-    <div class="text-xs text-[#E53935] font-semibold mb-3">
-      Anda <strong>melewatkan</strong> jadwal konsultasi pada
-      <br />
-      {{ formatDate(nextAppointment.tanggal) }},
-      pukul {{ nextAppointment.jam_konsultasi }} WIB
-    </div>
-    <div class="flex gap-2">
-      <button style="cursor:pointer;"
-        @click.stop="router.visit('/janjitemu')"
-        class="bg-[#2D4480] text-white rounded px-3 py-1 text-xs hover:bg-[#3B59A1] transition"
-      >
-        Buat Janji Temu Baru
-      </button>
-      <button style="cursor:pointer;"
-        @click.stop="handleCancelAppointment"
-        :disabled="cancelLoading"
-        class="text-[#E53935] border border-[#E53935] rounded px-3 py-1 text-xs hover:bg-[#FFEBEB] transition disabled:opacity-50"
-      >
-        {{ cancelLoading ? 'Loading...' : 'Oke' }}
-      </button>
-    </div>
-  </template>
-
-  <template v-else>
-    <div class="text-xs text-[#1B2A4D] font-semibold">
-      Tidak ada janji temu aktif
-    </div>
-  </template>
-</div>
-
-            <!-- Rekam Medis Terakhir -->
-            <div class="bg-white rounded-md shadow p-4 font-sans">
-              <div
-                class="flex items-center space-x-2 text-[#2D4480] font-semibold text-sm mb-1"
-              >
-                <i class="fas fa-file-alt text-lg"></i>
-                <span>Rekam Medis Terakhir</span>
+            <div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 hover:shadow-xl transition-all duration-300" @click="handleAppointmentClick" style="cursor:pointer;">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-calendar-alt text-[#3674B5] text-lg"></i>
+                </div>
+                <h3 class="text-[#2D4480] font-semibold text-base">Jadwal Konsultasi Berikutnya</h3>
               </div>
-              <div class="text-xs text-[#1B2A4D] font-semibold mb-3">
-                Senin, 12 Mei 2025
-              </div>
-              <button
-                class="bg-[#2D4480] text-white text-xs rounded px-4 py-1 hover:bg-[#3B59A1] transition"
-              >
-                Lihat
-              </button>
+
+              <template v-if="isValidAppointment">
+                <div class="space-y-2 mb-4">
+                  <div class="text-base font-bold text-[#1B2A4D]">
+                    {{ formatDate(nextAppointment.tanggal) }}
+                  </div>
+                  <div class="text-base font-semibold text-[#3674B5]">
+                    {{ nextAppointment.jam_konsultasi }} WIB
+                  </div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-lg p-3 mb-3">
+                  <div class="text-xs font-medium text-[#3674B5] flex items-center">
+                    <i class="fas fa-mouse-pointer mr-2"></i>
+                    Klik untuk check-in
+                  </div>
+                </div>
+
+                <!-- Status Check-in -->
+                <div v-if="isCheckedIn" class="flex items-center text-emerald-600 text-sm font-semibold">
+                  <i class="fas fa-check-circle mr-2"></i>
+                  Sudah Check-in
+                </div>
+              </template>
+
+              <template v-else-if="isAppointmentPassed && !hidePassedNotification">
+                <div class="text-xs text-[#E53935] font-semibold mb-3">
+                  Anda <strong>melewatkan</strong> jadwal konsultasi pada
+                  <br />
+                  {{ formatDate(nextAppointment.tanggal) }},
+                  pukul {{ nextAppointment.jam_konsultasi }} WIB
+                </div>
+                <div class="flex gap-2">
+                  <button style="cursor:pointer;"
+                    @click.stop="router.visit('/janjitemu')"
+                    class="bg-[#314169] hover:bg-[#26324D] text-white rounded px-3 py-1 text-xs transition"
+                  >
+                    Buat Janji Temu Baru
+                  </button>
+                  <button style="cursor:pointer;"
+                    @click.stop="handleCancelAppointment"
+                    :disabled="cancelLoading"
+                    class="text-[#E53935] border border-[#E53935] rounded px-3 py-1 text-xs hover:bg-[#FFEBEB] transition disabled:opacity-50"
+                  >
+                    {{ cancelLoading ? 'Loading...' : 'Oke' }}
+                  </button>
+                </div>
+              </template>
+
+              <template v-else>
+                <div class="text-xs text-[#1B2A4D] font-semibold">
+                  Tidak ada janji temu aktif
+                </div>
+              </template>
             </div>
 
+            <!-- Rekam Medis Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-file-medical text-green-600 text-lg"></i>
+                </div>
+                <h3 class="text-[#2D4480] font-semibold text-base">Rekam Medis</h3>
+              </div>
+              
+              <div class="space-y-2 mb-4">
+                <div class="text-base font-semibold text-[#1B2A4D]">
+                  Senin, 12 Mei 2025
+                </div>
+              </div>
+              
+              <button class="w-40 bg-gradient-to-r from-[#3674B5] to-[#437BB6] hover:from-[#3B59A1] hover:to-[#3B59A1] text-white text-sm rounded-lg px-4 py-3 font-medium transition-all duration-200 shadow-md hover:shadow-lg">
+                Lihat Rekam Medis
+              </button>
+            </div>
             <!-- Tombol Janji Temu -->
             <button
               @click="handleJanjiTemuClick" style="cursor:pointer;"
-              class="bg-[#2D4480] text-white text-xs rounded px-4 py-2 w-44 hover:bg-[#3B59A1] transition font-sans text-center text-sm block "
+              class="w-46 bg-gradient-to-r from-[#3674B5] to-[#437BB6] hover:from-[#3B59A1] hover:to-[#3B59A1] text-white text-sm rounded-lg px-4 py-3 font-medium transition-all duration-200 shadow-md hover:shadow-lg "
             >
               Buat Janji Temu Baru
             </button>
           </div>
 
-          <!-- Right Column: Kalender -->
-          <div
-            class="bg-white rounded-md shadow p-4 w-85 font-sans text-xs text-[#1B2A4D]"
-          >
-            <label
-              for="calendar"
-              class="block mb-2 font-semibold text-[#2D4480]"
-              >Pilih Tanggal</label
-            >
-            <input
-              id="calendar"
-              class="w-full border border-gray-300 rounded px-3 py-2"
-            />
+          <!-- Right Column: Calendar -->
+          <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 text-black">
+              <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-calendar text-purple-600 text-lg"></i>
+                </div>
+                <h3 class="text-[#2D4480] font-semibold text-base">Pilih Tanggal</h3>
+              </div>
+              
+              <div class="calendar-container">
+                <input
+                  id="calendar"
+                  class="w-full border-0 rounded-lg"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -196,11 +208,12 @@
   <div
     v-if="showInfoModal"
      class="fixed inset-0 flex items-center justify-center z-50"
+     style="background-color: rgba(0, 0, 0, 0.15);"
   >
     <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
       <div class="text-center">
-        <i class="fas fa-calendar-check text-blue-700 text-4xl mb-4"></i>
-        <h2 class="text-lg font-bold text-[#1B2A4D] mb-2">
+        <i class="fas fa-calendar-check text-[#2D4480] text-4xl mb-4"></i>
+        <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
           Kamu sudah memiliki janji temu!
         </h2>
         <p class="text-sm text-gray-700 mb-4">
@@ -210,7 +223,7 @@
         </p>
         <button
           @click="showInfoModal = false"
-          class="bg-[#2D4480] hover:bg-[#3B59A1] text-white px-4 py-2 rounded text-sm"
+          class="bg-[#3674B5] shadow p-4 hover:bg-[#3B59A1] text-white px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg"
         >
             Kembali
         </button>
@@ -222,17 +235,18 @@
 <div
   v-if="showAppointmentModal"
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+  style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
+  <div class="bg-white rounded-xl p-6 w-80 shadow-lg">
     <div class="text-center">
       <!-- Icon berubah berdasarkan status check-in -->
       <i 
-        :class="isCheckedIn ? 'fas fa-check-circle text-green-600' : 'fas fa-calendar-check text-blue-700'" 
+        :class="isCheckedIn ? 'fas fa-check-circle text-green-600' : 'fas fa-calendar-check text-[#2A4482]'" 
         class="text-4xl mb-4"
       ></i>
       
       <!-- Title berubah berdasarkan status check-in -->
-      <h2 class="text-lg font-bold text-[#1B2A4D] mb-2">
+      <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
         {{ isCheckedIn ? 'Anda Sudah Check-in' : 'Detail Janji Temu' }}
       </h2>
       
@@ -252,17 +266,18 @@
         v-if="!isCheckedIn"
         @click="handleCheckIn"
         :disabled="checkInLoading"
-        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm mb-4 disabled:opacity-50"
+        class="bg-[#47B536] hover:bg-[#449A37] v text-white px-4 py-2 rounded-lg text-sm mb-4 disabled:opacity-50 mr-2"
       >
         {{ checkInLoading ? 'Loading...' : 'Check In' }}
       </button>
-      
+
       <button
         @click="showAppointmentModal = false"
-        class="bg-[#2D4480] hover:bg-[#3B59A1] text-white px-4 py-2 rounded text-sm"
+        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm"
       >
         Tutup
       </button>
+
     </div>
   </div>
 </div>

@@ -1,10 +1,12 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-[#B7D7E8] flex justify-between items-center px-6 py-3 text-[#1B2A4D] text-sm font-sans">
-      <div>{{ clinicName }}</div>
-      <div class="flex items-center space-x-1 cursor-pointer">
-        <span>{{ patientName }}</span>
-        <i class="fas fa-user-circle text-lg"></i>
+    <header
+      class="bg-[#F5FDFF] backdrop-blur-sm shadow-lg flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-100"
+    >
+      <div class="font-semibold text-[#2D4480]">{{ clinicName }}</div>
+      <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors" @click.stop="router.visit('/profilpasien')">
+        <span class="font-medium">{{ patientName }}</span>
+        <i class="fas fa-user-circle text-xl text-[#3674B5]"></i>
       </div>
     </header>
 
@@ -148,7 +150,7 @@
               <button style="cursor:pointer;"
                 type="submit"
                 :disabled="processing"
-                class="bg-[#3674B5] text-white text-xs rounded px-4 py-2 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max transition"
               >
                 <span v-if="processing">Menyimpan...</span>
                 <span v-else>Simpan</span>
@@ -157,7 +159,7 @@
               <button
                 type="button"
                 @click="resetForm"
-                class="bg-gray-500 text-white text-xs rounded px-4 py-2 hover:bg-gray-600 transition"
+                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max transition"
               >
                 Reset
               </button>
@@ -242,8 +244,8 @@ const filterNameInput = (e) => {
 const filterNIKInput = (e) => {
   const rawValue = e.target.value
   const filtered = rawValue.replace(/\D/g, '').slice(0, 16)
-  if (filtered !== rawValue.replace(/\D/g, '')) {
-    errors.nik = 'NIK hanya boleh berisi angka.'
+  if (rawValue !== filtered) {
+    errors.nik = 'NIK wajib angka dan 16 digit'
   } else {
     errors.nik = ''
   }
@@ -254,8 +256,8 @@ const filterNIKInput = (e) => {
 const filterPhoneInput = (e) => {
   const rawValue = e.target.value
   const filtered = rawValue.replace(/\D/g, '').slice(0, 15)
-  if (filtered !== rawValue.replace(/\D/g, '')) {
-    errors.no_hp = 'Nomor telepon hanya boleh berisi angka.'
+  if (rawValue !== filtered) {
+    errors.no_hp = 'Nomor telepon wajib angka'
   } else {
     errors.no_hp = ''
   }

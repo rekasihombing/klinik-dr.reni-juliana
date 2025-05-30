@@ -1,11 +1,13 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-[#B7D7E8] flex justify-between items-center px-6 py-3 text-[#1B2A4D] text-sm font-sans">
-      <div>{{ clinicName }}</div>
-      <div class="flex items-center space-x-1 cursor-pointer">
-        <span>{{ patientName }}</span>
-        <i class="fas fa-user-circle text-lg"></i>
+    <header
+      class="bg-[#F5FDFF] backdrop-blur-sm shadow-lg flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-100"
+    >
+      <div class="font-semibold text-[#2D4480]">{{ clinicName }}</div>
+      <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors" @click.stop="router.visit('/profilpasien')">
+        <span class="font-medium">{{ patientName }}</span>
+        <i class="fas fa-user-circle text-xl text-[#3674B5]"></i>
       </div>
     </header>
 
@@ -86,14 +88,14 @@
                 sudah tidak berlaku.
               </p>
 
-              <button type="submit" class="bg-[#3674B5] text-white text-xs px-4 py-1 rounded w-max">
+              <button type="submit" class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max">
                 Simpan
               </button>
             </form>
 
             <!-- Jadwal Dokter -->
-            <div class="mt-6 md:mt-0 md:w-1/2">
-              <table class="w-full border border-gray-300 rounded-lg border-collapse">
+            <div class="mt-6 md:mt-0 md:w-1/2 ">
+              <table class="w-full border border-gray-300 rounded-xl border-collapse shadow p-4">
                 <thead>
                   <tr class="bg-[#3674B5] text-white text-sm">
                     <th class="py-2 px-4 border border-gray-300 text-left">Hari</th>
@@ -130,11 +132,11 @@
         <p class="text-black text-xs mb-6">
           Pastikan anda hadir tepat waktu sesuai dengan tanggal dan jam janji temu
         </p>
-        <div class="flex justify-end space-x-3">
-          <button @click="showModal = false" class="text-[#3674B5] text-xs border border-[#3674B5] rounded px-3 py-1 hover:bg-blue-50 transition">
+        <div class="flex justify-center gap-2">
+          <button @click="showModal = false" class="text-[#3674B5] shadow-md hover:shadow-lg p-4 border border-[#3674B5] rounded-lg px-4 py-1 hover:bg-blue-50 transition text-sm w-max">
             Batal
           </button>
-          <button @click="confirmSubmit" class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 hover:bg-blue-800 transition">
+          <button @click="confirmSubmit" class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max">
             Selesai
           </button>
         </div>
@@ -154,8 +156,8 @@
           {{ errorMessage }}
         </p>
         <div class="flex justify-center">
-          <button @click="showErrorModal = false" class="bg-red-500 text-white text-sm rounded px-4 py-2 hover:bg-red-600 transition">
-            Tutup
+          <button @click="showErrorModal = false" class="bg-[#FF2317] shadow p-4 hover:bg-[#D31D14] text-white px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg transition">
+            Tutup 
           </button>
         </div>
       </div>

@@ -13,7 +13,7 @@
         :class="isActive('/dashboard') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-home text-lg"></i>
-        <span>Dashboard Pasien</span>
+        <span>Dashboard</span>
       </Link>
       
       <!-- Buat Janji Temu -->

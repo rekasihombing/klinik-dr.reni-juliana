@@ -3,7 +3,13 @@
     <div>{{ clinicName }}</div>
     <div class="flex items-center space-x-1 cursor-pointer">
       <span>{{ patientName }}</span>
-      <i class="fas fa-user-circle text-lg"></i>
+        <Link 
+        href="/profilpasien" 
+        class="flex items-center space-x-2 rounded px-3 py-2"
+        :class="isActive('/dashboard') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+      >
+        <i class="fas fa-user-circle text-lg"></i>
+      </Link>
     </div>
   </header>
 </template>
