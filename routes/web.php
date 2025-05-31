@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\PatientDashboardController;
+use App\Http\Controllers\RekamMedisController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -107,9 +108,9 @@ Route::get('/dashboarddokter', function () {
     return Inertia::render('dokter/DashboardDokter');
 })->name('dashboarddokter');
 
-Route::get('/tambahrekammedis', function () {
-    return Inertia::render('Doctor/TambahRekamMedis');
-})->name('tambahrekammedis');
+// Route::get('/tambahrekammedis', function () {
+//     return Inertia::render('Doctor/TambahRekamMedis');
+// })->name('tambahrekammedis');
 
 // Routes untuk dokter (gunakan middleware auth dan role dokter jika ada)
 Route::middleware(['auth'])->group(function () {
@@ -137,6 +138,30 @@ Route::post('/appointment/cancel', [AppointmentController::class, 'cancelAppoint
     ->name('appointment.cancel');
 
 Route::post('/checkin', [AppointmentController::class, 'checkIn']);
+
+Route::get('/tambahrekammedis/{id}', [RekamMedisController::class, 'create'])->name('rekammedis.create');
+
+Route::middleware(['auth'])->group(function () {
+    // Routes untuk Rekam Medis
+    Route::get('/rekam-medis/create/{appointmentId}', [RekamMedisController::class, 'create'])
+        ->name('rekam-medis.create');
+    
+    // Route::post('/rekam-medis/store', [RekamMedisController::class, 'store'])
+    //     ->name('rekam-medis.store');
+    
+    Route::get('/Dashboard', [RekamMedisController::class, 'show'])
+        ->name('rekam-medis.show');
+    
+    Route::get('/rekam-medis', [RekamMedisController::class, 'index'])
+        ->name('rekam-medis.index');
+    
+    // Route untuk backward compatibility dengan nama lama
+    Route::get('/tambahrekammedis/{appointmentId}', [RekamMedisController::class, 'create'])
+        ->name('tambahrekammedis');
+});
+
+// Route untuk menyimpan rekam medis (sesuai dengan yang ada di Vue component)
+Route::post('/rekam-medis', [RekamMedisController::class, 'store'])->middleware('auth');
 
 
 require __DIR__.'/settings.php';

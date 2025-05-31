@@ -117,8 +117,8 @@ onMounted(() => {
 });
 
 function handleTambahRekamMedisClick() {
-    router.visit("/tambahrekammedis");
-  }
+  router.visit(`/tambahrekammedis/${appointment.id}`);
+}
 
 </script>
 

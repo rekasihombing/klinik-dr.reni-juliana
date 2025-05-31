@@ -122,7 +122,7 @@
                 </div>
               </template>
 
-              <template v-else-if="isAppointmentPassed && !hidePassedNotification">
+              <template v-else-if="isAppointmentPassed">
                 <div class="text-xs text-[#E53935] font-semibold mb-3">
                   Anda <strong>melewatkan</strong> jadwal konsultasi pada
                   <br />
@@ -372,12 +372,27 @@ function handleCompleteProfile() {
 function isAppointmentInFuture(tanggal, jam) {
   if (!tanggal || !jam) return false;
 
-  const [hour, minute] = jam.split(':').map(Number);
-  const appointmentDate = new Date(tanggal);
-  appointmentDate.setHours(hour, minute, 0, 0);
+  try {
+    // Parsing jam yang lebih robust
+    const timeparts = jam.split(':');
+    const hour = parseInt(timeparts[0], 10);
+    const minute = parseInt(timeparts[1], 10) || 0;
+    
+    // Buat date object dengan timezone lokal
+    const appointmentDate = new Date(tanggal + 'T00:00:00');
+    appointmentDate.setHours(hour, minute, 0, 0);
 
-  const now = new Date();
-  return appointmentDate > now;
+    const now = new Date();
+    
+    console.log('Appointment Date:', appointmentDate);
+    console.log('Current Date:', now);
+    console.log('Is Future:', appointmentDate > now);
+    
+    return appointmentDate > now;
+  } catch (error) {
+    console.error('Error parsing appointment time:', error);
+    return false;
+  }
 }
 
 // Computed untuk mengecek apakah sudah check-in
@@ -385,15 +400,23 @@ const isCheckedIn = computed(() => {
   return props.nextAppointment && props.nextAppointment.checked_in_at;
 });
 
-const isValidAppointment = computed(() =>
-  props.nextAppointment &&
-  isAppointmentInFuture(props.nextAppointment.tanggal, props.nextAppointment.jam_konsultasi)
-);
+const isValidAppointment = computed(() => {
+  const appt = props.nextAppointment;
+  if (!appt || !appt.tanggal || !appt.jam_konsultasi) return false;
 
-const isAppointmentPassed = computed(() =>
-  props.nextAppointment &&
-  !isAppointmentInFuture(props.nextAppointment.tanggal, props.nextAppointment.jam_konsultasi)
-);
+  return isAppointmentInFuture(appt.tanggal, appt.jam_konsultasi);
+});
+
+
+const isAppointmentPassed = computed(() => {
+  const result = props.nextAppointment &&
+    !isAppointmentInFuture(props.nextAppointment.tanggal, props.nextAppointment.jam_konsultasi);
+  
+  console.log('isAppointmentPassed:', result);
+  
+  return result;
+});
+
 
 function handleJanjiTemuClick() {
   const hasPendingAppointment =
@@ -448,6 +471,15 @@ async function handleCancelAppointment() {
 }
 
 onMounted(() => {
+  console.log('Props received:', props);
+  console.log('Next Appointment:', props.nextAppointment);
+  
+  if (props.nextAppointment) {
+    console.log('Appointment Date:', props.nextAppointment.tanggal);
+    console.log('Appointment Time:', props.nextAppointment.jam_konsultasi);
+    console.log('Current Time:', new Date());
+  }
+
   flatpickr("#calendar", {
     inline: true,
     locale: {

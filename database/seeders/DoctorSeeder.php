@@ -12,7 +12,7 @@ class DoctorSeeder extends Seeder
     public function run()
     {
         $userId = DB::table('users')->insertGetId([
-            'email' => 'dokter@mail.com',
+            'email' => 'dokter@gmail.com',
             'password' => Hash::make('dokter123'),
             'role' => 'dokter',
             'created_at' => now(),

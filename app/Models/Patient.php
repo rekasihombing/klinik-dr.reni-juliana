@@ -29,7 +29,10 @@ class Patient extends Model
     return $this->belongsTo(User::class);  // Relasi balik ke model User
 }
 
-    
+public function rekamMedis()
+{
+    return $this->hasMany(RekamMedis::class, 'patient_id');
+}
 }
 
 
