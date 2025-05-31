@@ -34,7 +34,7 @@
       <Link 
         href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/riwayatjanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-calendar-alt text-lg"></i>
         <span>Janji Temu</span>
@@ -44,7 +44,7 @@
       <Link 
         href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/datapasien') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-users text-lg"></i>
         <span>Pegawai</span>
@@ -54,7 +54,7 @@
       <Link 
         href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/konfirmasijanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-file-alt text-lg"></i>
         <span>Laporan</span>

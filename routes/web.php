@@ -108,6 +108,15 @@ Route::get('/dashboarddokter', function () {
     return Inertia::render('dokter/DashboardDokter');
 })->name('dashboarddokter');
 
+Route::get('/resepobat', function () {
+    return Inertia::render('Doctor/ResepObat');
+})->name('resepobat');
+
+Route::get('/pendaftaranpegawai', function () {
+    return Inertia::render('Doctor/PendaftaranPegawai');
+})->name('pendaftaranpegawai');
+
+
 // Route::get('/tambahrekammedis', function () {
 //     return Inertia::render('Doctor/TambahRekamMedis');
 // })->name('tambahrekammedis');

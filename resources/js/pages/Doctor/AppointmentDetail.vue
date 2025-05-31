@@ -31,14 +31,14 @@
         </section>
 
         <section class="px-10 pb-8 flex space-x-4">
-          <button class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 flex items-center space-x-1 shadow-md hover:bg-blue-700 transition" type="button">
+          <button class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max" type="button">
             <i class="fas fa-file-alt"></i>
             <span>Lihat Rekam Medis</span>
           </button>
-          <button  @click="handleTambahRekamMedisClick" class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+          <button  @click="handleTambahRekamMedisClick" class="bg-[#47B536] hover:bg-[#449A37] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"  type="button">
             <span>Tambah Rekam Medis</span>
           </button>
-          <button class="bg-[#FF9500] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+          <button class="bg-[#FF8A00] p-4 hover:bg-[#E67700] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max" type="button">
             <span>Resep Obat</span>
           </button>
         </section>
