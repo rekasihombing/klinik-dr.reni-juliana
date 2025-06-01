@@ -18,12 +18,15 @@ class Appointment extends Model
         'status',
         'dibuat_oleh',
     ];
+        protected $casts = [
+        'checked_in_at' => 'datetime',  // supaya otomatis ke Carbon
+    ];
 
     // Relasi ke pasien (jika model Patient ada)
-    public function pasien()
-    {
-        return $this->belongsTo(Patient::class, 'pasien_id');
-    }
+  public function patient() // ubah dari pasien() ke patient()
+{
+    return $this->belongsTo(Patient::class, 'pasien_id');
+}
 
     // Relasi ke dokter (jika model Doctor ada)
     public function dokter()
