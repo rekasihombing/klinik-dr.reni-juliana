@@ -14,7 +14,7 @@ class CreateRekamMedisTable extends Migration
     $table->unsignedBigInteger('appointment_id')->unique();
     $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
 
-    $table->unsignedBigInteger('patient_id')->unique();
+    $table->unsignedBigInteger('patient_id');
     $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
 
     // Riwayat Kunjungan

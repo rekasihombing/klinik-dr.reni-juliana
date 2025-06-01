@@ -12,6 +12,7 @@ use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\PatientDashboardController;
 use App\Http\Controllers\RekamMedisController;
+use App\Http\Controllers\RiwayatRekamMedisController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -162,6 +163,16 @@ Route::middleware(['auth'])->group(function () {
 
 // Route untuk menyimpan rekam medis (sesuai dengan yang ada di Vue component)
 Route::post('/rekam-medis', [RekamMedisController::class, 'store'])->middleware('auth');
+
+
+Route::middleware(['auth'])->group(function () {
+Route::get('/riwayat-janji-temu', [AppointmentController::class, 'history'])->name('appointments.history');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/riwayat-rekam-medis', [RiwayatRekamMedisController::class, 'index'])
+        ->name('patient.medical-history');
+});
 
 
 require __DIR__.'/settings.php';
