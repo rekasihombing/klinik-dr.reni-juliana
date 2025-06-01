@@ -9,8 +9,8 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OnlinePatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DoctorDashboardController;
+use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\PatientDashboardController;
-use App\Http\Controllers\OfflineBookingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -39,10 +39,9 @@ Route::get('/dashboardstaff', function () {
     return Inertia::render('staff/DashboardStaff');
 })->name('dashboardstaff');
 
-
-Route::get('/pendaftaran', [OfflineBookingController::class, 'create'])->name('pendaftaran.create');
-Route::post('/pendaftaran', [OfflineBookingController::class, 'store'])->name('pendaftaran.store');
-
+Route::get('/pendaftaran', function () {
+    return Inertia::render('staff/PendaftaranPasienStaff');
+})->name('pendaftaran');
 
 Route::get('/KonfirmasiPasien', function () {
     return Inertia::render('staff/KonfiirmasiPasienStaff');
@@ -60,7 +59,6 @@ Route::get('/invoice', function () {
 Route::get('/JadwalKlinik', function () {
     return Inertia::render('staff/Jadwal');
 })->name('JadwalKlinik');
-
 //Pasien
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -127,6 +125,19 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/appointment/{id}/status', [DoctorDashboardController::class, 'updateStatus'])
         ->name('appointment.update.status');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard'); // pasien
+    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff'); // staff
+    Route::get('/dashboarddokter', [DoctorDashboardController::class, 'index'])->name('dashboarddokter'); // dokter
+});
+
+Route::post('/appointment/cancel', [AppointmentController::class, 'cancelAppointment'])
+    ->middleware(['auth'])
+    ->name('appointment.cancel');
+
+Route::post('/checkin', [AppointmentController::class, 'checkIn']);
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

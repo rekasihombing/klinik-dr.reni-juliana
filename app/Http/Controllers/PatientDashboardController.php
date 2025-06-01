@@ -23,13 +23,14 @@ class PatientDashboardController extends Controller
         // Ambil jadwal konsultasi berikutnya dari tabel appointments
         $nextAppointment = null;
 
-        if ($patient) {
-            $nextAppointment = Appointment::where('pasien_id', $patient->id)
-                ->where('tanggal', '>=', now()->toDateString())
-                ->orderBy('tanggal')
-                ->orderBy('jam_konsultasi')
-                ->first();
-        }
+if ($patient) {
+    $nextAppointment = Appointment::where('pasien_id', $patient->id)
+        ->whereIn('status', ['menunggu', 'dikonfirmasi']) // hanya status aktif
+        ->where('tanggal', '>=', now()->toDateString())
+        ->orderBy('tanggal')
+        ->orderBy('jam_konsultasi')
+        ->first();
+}
 
         return Inertia::render('pasien/Dashboard', [
             'patientName' => $patientName,
