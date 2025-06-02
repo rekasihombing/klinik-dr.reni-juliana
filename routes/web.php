@@ -67,7 +67,21 @@ Route::get('/Pembayaran', function () {
 Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
+Route::get('/JadwalKlinik', function () {
+    return Inertia::render('staff/Jadwal');
+})->name('JadwalKlinik');
 
+Route::get('/Pasien', function () {
+    return Inertia::render('staff/PasienList');
+})->name('Pasien');
+
+Route::get('/DetailPasien', function () {
+    return Inertia::render('staff/DetailPasien');
+})->name('DetailPasien');
+
+Route::get('/listjanjitemu', function () {
+    return Inertia::render('staff/listjanjitemu');
+})->name('janjitemu');
 
 
 Route::get('/clinic-schedules', [ClinicScheduleController::class, 'index'])->name('clinic.schedules.index');
