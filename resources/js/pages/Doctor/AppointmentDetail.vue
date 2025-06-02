@@ -1,13 +1,14 @@
 <template>
   <div class="bg-[#1f2d3d] font-sans min-h-screen flex flex-col">
-    <header class="text-gray-400 text-sm px-4 py-2">PDFT Pasien Offline</header>
+    <header class="text-gray-400 text-sm px-4 py-2">PDFT Pasien</header>
     <main class="flex-grow flex justify-center items-start p-6">
       <div class="relative bg-white w-full max-w-4xl rounded-sm shadow-md min-h-[480px]">
-        <div class="absolute top-0 left-0 h-full w-6 rounded-tr-3xl rounded-br-3xl bg-[#1f2d3d]"></div>
-        <div class="flex justify-between items-center bg-[#b9def9] rounded-sm px-6 py-3 ml-6">
+        <div class="flex justify-between items-center bg-[#b9def9] rounded-sm px-6 py-3 ">
           <div class="flex items-center space-x-1 text-sm text-[#1f2d3d] font-normal">
             <i class="fas fa-home text-lg"></i>
-            <span>Dashboard</span>
+            <a href="/dashboarddokter">
+          <span>Dashboard</span>
+        </a>
             <span>&gt;</span>
             <span class="text-blue-700 font-semibold">Detail Appointment</span>
           </div>
@@ -23,22 +24,22 @@
 
           <dl class="max-w-xl space-y-3">
             <div class="flex" v-for="(item, index) in patientDetails" :key="index">
-              <dt class="w-40 font-normal" v-html="item.label"></dt>
+              <dt class="w-40 font-medium" v-html="item.label"></dt>
               <dd class="flex-1">: &nbsp;&nbsp; {{ item.value }}</dd>
             </div>
           </dl>
         </section>
 
         <section class="px-10 pb-8 flex space-x-4">
-          <button class="bg-blue-600 text-white text-xs rounded px-3 py-1 flex items-center space-x-1 shadow-md hover:bg-blue-700 transition" type="button">
-            <span>Lihat Rekam Medis</span>
+          <button class="bg-[#3674B5] text-white text-xs rounded px-3 py-1 flex items-center space-x-1 shadow-md hover:bg-blue-700 transition" type="button">
             <i class="fas fa-file-alt"></i>
+            <span>Lihat Rekam Medis</span>
           </button>
-          <button class="bg-blue-600 text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
-            Tambah Rekam Medis
+          <button  @click="handleTambahRekamMedisClick" class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+            <span>Tambah Rekam Medis</span>
           </button>
-          <button class="bg-blue-600 text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
-            Buat Resep Obat
+          <button class="bg-[#FF9500] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+            <span>Resep Obat</span>
           </button>
         </section>
       </div>
@@ -47,6 +48,7 @@
 </template>
 
 <script setup>
+import { router } from '@inertiajs/vue3';
 import { ref, onMounted, computed } from 'vue';
 
 const props = defineProps({
@@ -113,6 +115,11 @@ onMounted(() => {
   updateDateTime();
   setInterval(updateDateTime, 1000);
 });
+
+function handleTambahRekamMedisClick() {
+  router.visit(`/tambahrekammedis/${appointment.id}`);
+}
+
 </script>
 
 <style scoped>

@@ -1,10 +1,12 @@
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-[#B7D7E8] flex justify-between items-center px-6 py-3 text-[#1B2A4D] text-sm font-sans">
-      <div>{{ clinicName }}</div>
-      <div class="flex items-center space-x-1 cursor-pointer">
-        <span>{{ patientName }}</span>
-        <i class="fas fa-user-circle text-lg"></i>
+    <header
+      class="bg-[#F5FDFF] backdrop-blur-sm shadow-lg flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-100"
+    >
+      <div class="font-semibold text-[#2D4480]">{{ clinicName }}</div>
+      <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors" @click.stop="router.visit('/profilpasien')">
+        <span class="font-medium">{{ patientName }}</span>
+        <i class="fas fa-user-circle text-xl text-[#3674B5]"></i>
       </div>
     </header>
 

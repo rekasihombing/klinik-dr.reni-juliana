@@ -13,7 +13,7 @@
         :class="isActive('/dashboard') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-home text-lg"></i>
-        <span>Dashboard Pasien</span>
+        <span>Dashboard</span>
       </Link>
       
       <!-- Buat Janji Temu -->
@@ -28,9 +28,9 @@
       
       <!-- Riwayat Janji Temu -->
       <Link 
-        href="/riwayatjanjitemu" 
+        href="/riwayat-janji-temu" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/riwayatjanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/riwayat-janji-temu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-history text-lg"></i>
         <span>Riwayat Janji Temu</span>
@@ -38,9 +38,9 @@
       
       <!-- Data Pasien -->
       <Link 
-        href="/riwayatrekammedis" 
+        href="/riwayat-rekam-medis" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/riwayatrekammedis') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/riwayat-rekam-medis') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-file-medical text-lg"></i>
         <span>Rekam Medis</span>

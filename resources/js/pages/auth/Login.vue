@@ -18,16 +18,13 @@
             <input :type="showPassword ? 'text' : 'password'" v-model="form.password" id="password" required
               class="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" />
             <button type="button" @click="togglePassword" class="absolute right-3 top-9 text-gray-500">
-            <!-- Mata terbuka -->
-            <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 3C5.454 3 1.796 6.28.458 10c1.338 3.72 4.996 7 9.542 7s8.204-3.28 9.542-7C18.204 6.28 14.546 3 10 3zm0 11a4 4 0 110-8 4 4 0 010 8z"/>
                 <path d="M10 7a3 3 0 100 6 3 3 0 000-6z"/>
-            </svg>
-
-            <!-- Mata tertutup -->
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M3.293 2.293a1 1 0 011.414 0l13 13a1 1 0 01-1.414 1.414l-2.164-2.164C12.764 15.52 11.404 16 10 16c-4.546 0-8.204-3.28-9.542-7a10.367 10.367 0 012.61-3.956L3.293 3.707a1 1 0 010-1.414zm9.59 9.59l-1.337-1.337a2 2 0 01-2.505-2.505L7.707 5.879a4 4 0 004.176 6.004z" clip-rule="evenodd" />
-            </svg>
+              </svg>
             </button>
           </div>
 
@@ -46,11 +43,10 @@
         </form>
       </div>
 
-      <!-- Logo Area -->
+      <!-- Logo -->
       <div class="hidden md:flex md:w-1/2 bg-blue-800 items-center justify-center">
         <div class="bg-gray-300 w-32 h-32 flex items-center justify-center rounded shadow-md">
           <span class="text-gray-700">Logo</span>
-          <!-- Ganti bagian di atas dengan <img src="/path/logo.png" alt="Logo" class="w-32 h-32 object-contain" /> -->
         </div>
       </div>
     </div>
@@ -60,6 +56,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 const form = useForm({
   email: '',
@@ -72,6 +71,16 @@ const togglePassword = () => {
 }
 
 const login = () => {
-  form.post('/login')
+  form.post('/login', {
+    onError: (errors) => {
+      if (errors.email) {
+        toast.error(errors.email) // Misal: "Email tidak terdaftar"
+      } else if (errors.password) {
+        toast.error(errors.password) // Misal: "Password salah"
+      } else {
+        toast.error('Login gagal. Periksa kembali data Anda.')
+      }
+    },
+  })
 }
 </script>
