@@ -51,7 +51,9 @@
             </div>
 
 <!-- First table - Tindakan -->
+<!-- First table - Tindakan -->
             <div class="overflow-x-auto mb-4">
+              <table class="w-full text-xs font-sans text-black">
               <table class="w-full text-xs font-sans text-black">
                 <thead>
                   <tr class="bg-[#f3f4f6]">
@@ -59,9 +61,20 @@
                     <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Kuantitas</th>
                     <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-28">Harga</th>
                     <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Aksi</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-left font-semibold">Tindakan</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Kuantitas</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-28">Harga</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Suntik Vitamin</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                    </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="25000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                   <tr>
                     <td class="border border-[#d1d5db] px-2 py-1">Suntik Vitamin</td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
@@ -85,10 +98,34 @@
                     <td class="border border-[#d1d5db] px-2 py-1">Konsultasi Dokter</td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
                       <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Konsultasi Dokter</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
                       <input type="number" min="0" value="50000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                      <input type="number" min="0" value="50000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
                       <div class="flex justify-center gap-1">
                         <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
@@ -106,7 +143,10 @@
 
 
 <!-- Second table - Produk -->
+
+<!-- Second table - Produk -->
             <div class="overflow-x-auto mb-4">
+              <table class="w-full text-xs font-sans text-black">
               <table class="w-full text-xs font-sans text-black">
                 <thead>
                   <tr class="bg-[#f3f4f6]">
@@ -114,9 +154,20 @@
                     <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Kuantitas</th>
                     <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-28">Harga</th>
                     <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Aksi</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-left font-semibold">Produk</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Kuantitas</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-28">Harga</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Paracetamol</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="2" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                    </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="10000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                   <tr>
                     <td class="border border-[#d1d5db] px-2 py-1">Paracetamol</td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
@@ -140,10 +191,34 @@
                     <td class="border border-[#d1d5db] px-2 py-1">Antibiotik</td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
                       <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Antibiotik</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
                       <input type="number" min="0" value="15000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                      <input type="number" min="0" value="15000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
                       <div class="flex justify-center gap-1">
                         <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
@@ -158,6 +233,7 @@
                 </tbody>
               </table>
             </div>
+
 
 
             <div class="text-right text-xs text-[#1a1a1a] font-sans mb-4">
@@ -202,12 +278,25 @@
       </div>
     </div>
   </div>
+      </div>
+    </div>
+  </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
+import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
+
+// Data breadcrumb
+const breadcrumbPages = [
+  { label: "Dashboard", href: "/dashboardstaff" },
+  { label: "Pembayaran", href: "/pembayaran" }
+]
+
+// Form fields
 import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
 // Data breadcrumb
@@ -226,13 +315,27 @@ const totalAmount = ref(0)
 const tindakanItems = reactive([
   { name: 'Suntik Vitamin', quantity: 1, price: 25000 },
   { name: 'Konsultasi Dokter', quantity: 1, price: 50000 }
+const totalAmount = ref(0)
+
+// Data Tindakan dan Produk
+const tindakanItems = reactive([
+  { name: 'Suntik Vitamin', quantity: 1, price: 25000 },
+  { name: 'Konsultasi Dokter', quantity: 1, price: 50000 }
 ])
 
 const produkItems = reactive([
   { name: 'Paracetamol', quantity: 2, price: 3000 },
   { name: 'Vitamin C', quantity: 1, price: 10000 }
+const produkItems = reactive([
+  { name: 'Paracetamol', quantity: 2, price: 3000 },
+  { name: 'Vitamin C', quantity: 1, price: 10000 }
 ])
 
+// Fungsi menghitung total keseluruhan
+function calculateTotal() {
+  const totalTindakan = tindakanItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  const totalProduk = produkItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  totalAmount.value = totalTindakan + totalProduk
 // Fungsi menghitung total keseluruhan
 function calculateTotal() {
   const totalTindakan = tindakanItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
@@ -263,9 +366,18 @@ function handlePayment() {
   }
 
   // Proses simpan data bisa ditambahkan di sini
+  // Proses simpan data bisa ditambahkan di sini
   showSuccessModal.value = true
 }
+}
 
+// Fungsi untuk menutup modal
+function closeModal() {
+  showSuccessModal.value = false
+}
+
+// Hitung total awal
+calculateTotal()
 // Fungsi untuk menutup modal
 function closeModal() {
   showSuccessModal.value = false
