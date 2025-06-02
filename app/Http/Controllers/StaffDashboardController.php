@@ -16,7 +16,7 @@ class StaffDashboardController extends Controller
             // Ambil pasien yang telah dikonfirmasi hari ini
             $pasienHariIni = Appointment::where('status', 'dikonfirmasi')
                 ->whereDate('tanggal', Carbon::today())
-                ->with('patient')
+                ->with('pasien')
                 ->get();
 
             // Generate nomor antrian untuk pasien yang dikonfirmasi
@@ -24,17 +24,17 @@ class StaffDashboardController extends Controller
                 return [
                     'id' => $appointment->id,
                     'no_antrian' => 'A' . str_pad($index + 1, 2, '0', STR_PAD_LEFT),
-                    'nama_pasien' => $appointment->patient->nama_lengkap ?? 'N/A',
+                    'nama_pasien' => $appointment->pasien->nama_lengkap ?? 'N/A',
                     'waktu' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : '-',
                     'status' => $this->getStatusDisplay($appointment->status),
                     'registrasi_number' => 'REG - ' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT),
-                    'nik' => $appointment->patient->nik ?? 'N/A',
-                    'tanggal_lahir' => $appointment->patient->tanggal_lahir ? 
-                        Carbon::parse($appointment->patient->tanggal_lahir)->format('d - m - Y') : 'N/A',
-                    'jenis_kelamin' => $appointment->patient->jenis_kelamin ?? 'N/A',
-                    'golongan_darah' => $appointment->patient->golongan_darah ?? 'N/A',
-                    'nomor_hp' => $appointment->patient->nomor_hp ?? 'N/A',
-                    'alamat' => $appointment->patient->alamat ?? 'N/A',
+                    'nik' => $appointment->pasien->nik ?? 'N/A',
+                    'tanggal_lahir' => $appointment->pasien->tanggal_lahir ? 
+                        Carbon::parse($appointment->pasien->tanggal_lahir)->format('d - m - Y') : 'N/A',
+                    'jenis_kelamin' => $appointment->pasien->jenis_kelamin ?? 'N/A',
+                    'golongan_darah' => $appointment->pasien->golongan_darah ?? 'N/A',
+                    'nomor_hp' => $appointment->pasien->nomor_hp ?? 'N/A',
+                    'alamat' => $appointment->pasien->alamat ?? 'N/A',
                     'keluhan' => $appointment->keluhan ?? 'N/A'
                 ];
             });

@@ -18,7 +18,7 @@ class KonfirmasiPasienStaffController extends Controller
                 ->whereDate('checked_in_at', Carbon::today())
                 ->where('dibuat_oleh', 'pasien')
                 ->where('status', 'menunggu')  // hanya status menunggu
-                ->with('patient')
+                ->with('pasien')
                 ->orderBy('checked_in_at', 'asc')
                 ->get();
 
@@ -51,7 +51,7 @@ public function konfirmasi(Request $request, $appointmentId)
         ]);
 
         // redirect via Inertia ke dashboard atau halaman pasien hari ini
-        return Inertia::location('/dashboard-staff');  // redirect
+        return Inertia::location('/dashboardstaff');  // redirect
         // atau kalau mau render langsung page
         // return Inertia::render('staff/DashboardStaff');
 

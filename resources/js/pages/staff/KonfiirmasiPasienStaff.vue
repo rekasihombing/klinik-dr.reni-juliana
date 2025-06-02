@@ -39,7 +39,7 @@
             >
               <td class="py-2 px-3 border border-gray-300 text-left font-semibold">{{ index + 1 }}</td>
               <td class="py-2 px-3 border border-gray-300 text-left font-semibold">
-                {{ pasien.patient?.nama_lengkap || "Tidak diketahui" }}
+                {{ pasien.pasien?.nama_lengkap || "Tidak diketahui" }}
               </td>
               <td class="py-2 px-3 border border-gray-300 text-left font-semibold text-green-600">
                 {{ pasien.checked_in_at ? formatDate(pasien.checked_in_at) : "-" }}
@@ -166,7 +166,7 @@ export default {
     filteredPasienCheckedIn() {
       if (!this.searchQuery) return this.pasienCheckedIn;
       return this.pasienCheckedIn.filter((p) =>
-        p.patient?.nama_lengkap?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        p.pasien?.nama_lengkap?.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     },
   },
@@ -180,12 +180,12 @@ export default {
       this.selectedPasien = {};
     },
     editPasien() {
-      alert(`Edit data pasien: ${this.selectedPasien.patient?.nama_lengkap}`);
+      alert(`Edit data pasien: ${this.selectedPasien.pasien?.nama_lengkap}`);
     },
     konfirmasiPasien() {
       if (!this.selectedPasien.id) return;
       if (
-        confirm(`Konfirmasi pasien ${this.selectedPasien.patient?.nama_lengkap}?`)
+        confirm(`Konfirmasi pasien ${this.selectedPasien.pasien?.nama_lengkap}?`)
       ) {
         this.loading = true;
         Inertia.post(
@@ -242,25 +242,25 @@ export default {
         return this.formatDate(this.selectedPasien[key]);
       }
       if (key === "nama_lengkap") {
-        return this.selectedPasien.patient?.nama_lengkap || "-";
+        return this.selectedPasien.pasien?.nama_lengkap || "-";
       }
       if (key === "nik") {
-        return this.selectedPasien.patient?.nik || "-";
+        return this.selectedPasien.pasien?.nik || "-";
       }
       if (key === "tanggal_lahir") {
-        return this.selectedPasien.patient?.tanggal_lahir || "-";
+        return this.selectedPasien.pasien?.tanggal_lahir || "-";
       }
       if (key === "jenis_kelamin") {
-        return this.selectedPasien.patient?.jenis_kelamin || "-";
+        return this.selectedPasien.pasien?.jenis_kelamin || "-";
       }
       if (key === "golongan_darah") {
-        return this.selectedPasien.patient?.golongan_darah || "-";
+        return this.selectedPasien.pasien?.golongan_darah || "-";
       }
       if (key === "nomor_hp") {
-        return this.selectedPasien.patient?.nomor_hp || "-";
+        return this.selectedPasien.pasien?.nomor_hp || "-";
       }
       if (key === "alamat") {
-        return this.selectedPasien.patient?.alamat || "-";
+        return this.selectedPasien.pasien?.alamat || "-";
       }
       if (key === "keluhan") {
         return this.selectedPasien.keluhan || "-";
