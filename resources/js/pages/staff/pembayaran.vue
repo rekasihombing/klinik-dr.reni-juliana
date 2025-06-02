@@ -6,192 +6,204 @@
 
     <!-- Main content -->
     <main class="flex-1">
-      <!-- Top Navigation Bar -->
-      <div class="bg-gradient-to-r from-blue-400 to-blue-500 px-6 py-4 shadow-sm">
-        <div class="flex items-center justify-between text-white">
-          <div class="flex items-center gap-3">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4-4 4 4"></path>
-            </svg>
-            <span class="font-medium">Dashboard</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-            <span class="font-medium">Tagihan</span>
-          </div>
-          <div class="text-right">
-            <div class="text-sm">{{ currentDate }}</div>
-            <div class="text-xs opacity-90">{{ currentTime }}</div>
-          </div>
-        </div>
-      </div>
+
+       <!-- Header Section -->
+      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
       <!-- Content Container -->
       <div class="p-6">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 max-w-4xl mx-auto">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 max-w-5xl mx-auto">
+
           <!-- Header Section -->
-          <div class="px-6 py-4 border-b border-gray-200">
+          <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
               </div>
               <div>
-                <h1 class="text-xl font-bold text-gray-900">Nama Klinik</h1>
-                <p class="text-sm text-gray-600">No Tagihan :</p>
+                <h1 class="text-lg font-bold text-gray-900">Klinik Dr. Reni Juliana Manurung</h1>
+                <p class="text-sm text-gray-600 mt-1">Tagihan Pembayaran Pasien</p>
+                <p class="text-xs text-gray-500">No: {{ generateBillNumber() }}</p>
               </div>
             </div>
           </div>
 
           <!-- Patient Information -->
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Nama Pasien</label>
-              <input 
-                v-model="patientName"
-                type="text" 
-                placeholder="Masukkan nama pasien"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              />
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div class="px-8 py-6 border-b border-gray-200">
+            <h3 class="text-base font-semibold text-gray-900 mb-4">Informasi Pasien</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <span class="text-gray-600">Informasi Pembayaran</span>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Pasien *</label>
+                <input 
+                  v-model="patientName"
+                  type="text" 
+                  placeholder="Masukkan nama lengkap pasien"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                />
               </div>
-              <div>
-                <span class="text-gray-600">Administrasi</span>
+              <div class="space-y-3">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 class="text-sm font-medium text-blue-900 mb-2">Biaya Layanan</h4>
+                  <div class="text-xs text-blue-700 space-y-1">
+                    <div class="flex justify-between">
+                      <span>• Biaya Konsultasi Dokter</span>
+                      <span>Rp 75.000</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>• Biaya Administrasi</span>
+                      <span>Rp 10.000</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            <div class="mt-2 text-sm text-gray-700">
-              <span>Biaya Dokter</span>
             </div>
           </div>
 
           <!-- Medicine & Treatment Table -->
-          <div class="px-6 py-4">
-            <div class="bg-gray-50 rounded-lg p-4">
-              
+          <div class="px-8 py-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-semibold text-gray-900">Obat & Tindakan Medis</h3>
+              <button 
+                @click="addItem"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Tambah Obat
+              </button>
+            </div>
+            
+            <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
               <div class="overflow-x-auto">
                 <table class="w-full">
-                  <thead>
-                    <tr class="border-b border-gray-200">
-                      <th class="text-left py-3 px-2 font-semibold text-sm text-gray-700">Produk</th>
-                      <th class="text-center py-3 px-2 font-semibold text-sm text-gray-700">Kuantitas</th>
-                      <th class="text-center py-3 px-2 font-semibold text-sm text-gray-700">Kuantitas</th>
-                      <th class="text-center py-3 px-2 font-semibold text-sm text-gray-700">Satuan</th>
-                      <th class="text-center py-3 px-2 font-semibold text-sm text-gray-700">Harga</th>
-                      <th class="text-center py-3 px-2 font-semibold text-sm text-gray-700">Aksi</th>
+                  <thead class="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th class="text-left py-4 px-4 font-semibold text-sm text-gray-700 w-[35%]">Nama Obat/Tindakan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[12%]">Qty</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[12%]">Satuan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[18%]">Harga Satuan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[15%]">Subtotal</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[8%]">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr v-for="(item, index) in billItems" :key="index" class="border-b border-gray-100">
-                      <td class="py-3 px-2">
-                        <span class="text-sm text-gray-900">{{ item.name }}</span>
-                      </td>
-                      <td class="py-3 px-2 text-center">
+                  <tbody class="bg-white">
+                    <tr v-for="(item, index) in billItems" :key="index" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td class="py-4 px-4">
                         <input 
-                          v-model="item.quantity1"
+                          v-model="item.name"
+                          type="text" 
+                          placeholder="Contoh: Paracetamol 500mg"
+                          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        />
+                      </td>
+                      <td class="py-4 px-3 text-center">
+                        <input 
+                          v-model="item.quantity"
                           type="number" 
-                          min="0"
-                          class="w-16 text-center border border-gray-300 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          min="1"
+                          placeholder="1"
+                          class="w-full text-center border border-gray-300 rounded-md px-2 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                           @input="calculateTotal"
                         />
                       </td>
-                      <td class="py-3 px-2 text-center">
-                        <input 
-                          v-model="item.quantity2"
-                          type="number" 
-                          min="0"
-                          class="w-16 text-center border border-gray-300 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          @input="calculateTotal"
-                        />
-                      </td>
-                      <td class="py-3 px-2 text-center">
-                        <input 
+                      <td class="py-4 px-3 text-center">
+                        <select 
                           v-model="item.unit"
-                          type="text"
-                          class="w-20 text-center border border-gray-300 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                        />
+                          class="w-full text-center border border-gray-300 rounded-md px-2 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                        >
+                          <option value="">Pilih</option>
+                          <option value="tablet">Tablet</option>
+                          <option value="kapsul">Kapsul</option>
+                          <option value="botol">Botol</option>
+                          <option value="tube">Tube</option>
+                          <option value="strip">Strip</option>
+                          <option value="ampul">Ampul</option>
+                          <option value="vial">Vial</option>
+                          <option value="sachet">Sachet</option>
+                          <option value="pcs">Pcs</option>
+                        </select>
                       </td>
-                      <td class="py-3 px-2 text-center">
-                        <input 
-                          v-model="item.price"
-                          type="number" 
-                          min="0"
-                          class="w-24 text-center border border-gray-300 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          @input="calculateTotal"
-                        />
-                      </td>
-                      <td class="py-3 px-2 text-center">
-                        <div class="flex items-center justify-center gap-2">
-                          <button 
-                            @click="removeItem(index)"
-                            class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-md flex items-center justify-center transition-colors"
-                            title="Hapus item"
-                          >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                          </button>
-                          <button 
-                            @click="editItem(index)"
-                            class="w-8 h-8 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-md flex items-center justify-center transition-colors"
-                            title="Edit item"
-                          >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                          </button>
+                      <td class="py-4 px-3 text-center">
+                        <div class="relative">
+                          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                          <input 
+                            v-model="item.price"
+                            type="number" 
+                            min="0"
+                            placeholder="0"
+                            class="w-full text-center border border-gray-300 rounded-md pl-8 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            @input="calculateTotal"
+                          />
                         </div>
+                      </td>
+                      <td class="py-4 px-3 text-center">
+                        <span class="text-sm font-medium text-gray-900">
+                          Rp {{ formatCurrency(getItemSubtotal(item)) }}
+                        </span>
+                      </td>
+                      <td class="py-4 px-3 text-center">
+                        <button 
+                          @click="confirmRemoveItem(index)"
+                          class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                          title="Hapus item"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              
-              <!-- Add Item Button -->
-              <div class="mt-4">
-                <button 
-                  @click="addItem"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                  Tambah Item
-                </button>
-              </div>
             </div>
           </div>
 
           <!-- Total Section -->
-          <div class="px-6 py-4 border-t border-gray-200">
+          <div class="px-8 py-6 border-t border-gray-200 bg-gray-50">
             <div class="flex justify-end">
-              <div class="bg-blue-50 border border-blue-200 rounded-lg px-6 py-4 min-w-[200px]">
-                <div class="flex items-center justify-between">
-                  <span class="font-semibold text-gray-900">Total</span>
-                  <span class="text-xl font-bold text-blue-600">Rp {{ formatCurrency(totalAmount) }}</span>
+              <div class="bg-white border-2 border-blue-200 rounded-xl px-8 py-6 min-w-[300px] shadow-sm">
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">Biaya Obat & Tindakan:</span>
+                    <span class="font-medium">Rp {{ formatCurrency(medicineTotal) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">Biaya Konsultasi:</span>
+                    <span class="font-medium">Rp {{ formatCurrency(75000) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600">Biaya Administrasi:</span>
+                    <span class="font-medium">Rp {{ formatCurrency(10000) }}</span>
+                  </div>
+                  <div class="border-t border-gray-200 pt-3">
+                    <div class="flex justify-between items-center">
+                      <span class="text-lg font-semibold text-gray-900">Total Pembayaran:</span>
+                      <span class="text-lg font-bold text-blue-600">Rp {{ formatCurrency(totalAmount) }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Action Buttons -->
-          <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
-            <div class="flex justify-end gap-3">
-              <button class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md transition-colors">
-                Batal
+          <div class="px-8 py-6 border-t border-gray-200 bg-white rounded-b-xl">
+            <div class="flex justify-end gap-4">
+              <button 
+                @click="resetForm"
+                class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                Reset Form
               </button>
-
               <button 
                 @click="payBill"
-                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors"
+                class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
               >
-                Bayar
+                Proses Pembayaran
               </button>
             </div>
           </div>
@@ -199,31 +211,57 @@
       </div>
     </main>
 
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all">
+        <div class="p-6 text-center">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Tidak Dapat Menghapus</h3>
+          <p class="text-gray-600 mb-6">
+            Minimal harus memiliki 1 item obat dalam daftar pembayaran.
+          </p>
+          <button 
+            @click="closeDeleteModal"
+            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all"
+          >
+            OK, Mengerti
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Payment Success Modal -->
     <div v-if="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div class="p-6 text-center">
-          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+        <div class="p-8 text-center">
+          <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Pembayaran Berhasil!</h3>
+          <h3 class="text-xl font-bold text-gray-900 mb-3">Pembayaran Berhasil!</h3>
+          <p class="text-gray-600 mb-2">
+            Pembayaran atas nama <span class="font-semibold text-gray-900">{{ patientName }}</span>
+          </p>
           <p class="text-gray-600 mb-6">
-            Pembayaran sebesar <span class="font-semibold">Rp {{ formatCurrency(totalAmount) }}</span> telah berhasil diproses.
+            sebesar <span class="font-bold text-green-600">Rp {{ formatCurrency(totalAmount) }}</span> telah berhasil diproses.
           </p>
           <div class="flex gap-3 justify-center">
             <button 
               @click="closePaymentModal"
-              class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
+              class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all"
             >
               Tutup
             </button>
             <button 
               @click="showInvoice"
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all"
             >
-              Lihat Invoice
+              Lihat Struk
             </button>
           </div>
         </div>
@@ -232,88 +270,92 @@
 
     <!-- Invoice Modal -->
     <div v-if="showInvoiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
+      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-8">
           <!-- Invoice Header -->
-          <div class="flex justify-between items-start mb-6">
-            <div>
-              <h2 class="text-xl font-bold text-gray-900">Nama Klinik</h2>
-            </div>
-            <div class="text-right text-sm text-gray-600">
-              <div>No Tagihan {{ invoiceNumber }}</div>
-              <div>{{ formatDate(new Date()) }}</div>
+          <div class="text-center border-b border-gray-200 pb-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Klinik Sehat Bersama</h2>
+            <p class="text-sm text-gray-600 mt-1">Jl. Kesehatan No. 123, Medan</p>
+            <p class="text-sm text-gray-600">Telp: (061) 123-4567</p>
+            <div class="mt-4 text-right">
+              <div class="text-sm text-gray-600">No. Struk: {{ invoiceNumber }}</div>
+              <div class="text-sm text-gray-600">{{ formatDateTime(new Date()) }}</div>
             </div>
           </div>
 
           <!-- Patient Info -->
           <div class="mb-6">
-            <div class="text-sm text-gray-600 mb-1">Ditujukan kepada :</div>
-            <div class="font-semibold text-gray-900">{{ paidBillData.patientName }}</div>
-          </div>
-
-          <!-- Payment Info -->
-          <div class="mb-6">
-            <div class="text-sm font-semibold text-gray-700 mb-2">Informasi Pembayaran</div>
-            <div class="text-sm text-gray-600 space-y-1">
-              <div>Administrasi</div>
-              <div>Biaya Dokter</div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Detail Pasien</h3>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="text-sm text-gray-600 mb-1">Nama Pasien:</div>
+              <div class="font-semibold text-gray-900">{{ paidBillData.patientName }}</div>
             </div>
           </div>
 
           <!-- Items Table -->
           <div class="mb-6">
-            <table class="w-full border-collapse">
-              <thead>
-                <tr class="border-b border-gray-300">
-                  <th class="text-left py-2 text-sm font-semibold text-gray-700">Produk</th>
-                  <th class="text-center py-2 text-sm font-semibold text-gray-700">Kuantitas</th>
-                  <th class="text-right py-2 text-sm font-semibold text-gray-700">Harga</th>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Rincian Pembayaran</h3>
+            <table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 border-r border-gray-300">Item</th>
+                  <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700 border-r border-gray-300">Qty</th>
+                  <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700 border-r border-gray-300">Satuan</th>
+                  <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Subtotal</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr v-for="item in paidBillData.items" :key="item.name" class="border-b border-gray-200">
-                  <td class="py-2 text-sm text-gray-900">{{ item.name }}</td>
-                  <td class="py-2 text-center text-sm text-gray-900">{{ getTotalQuantity(item) }}</td>
-                  <td class="py-2 text-right text-sm text-gray-900">Rp {{ formatCurrency(getItemTotal(item)) }}</td>
+              <tbody class="bg-white">
+                <tr class="border-b border-gray-200">
+                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">Konsultasi Dokter</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">1</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">kali</td>
+                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(75000) }}</td>
                 </tr>
-                <tr>
-                  <td colspan="3" class="py-2">
-                    <div class="text-sm text-gray-600">lainlain</div>
-                  </td>
+                <tr class="border-b border-gray-200">
+                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">Biaya Administrasi</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">1</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">kali</td>
+                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(10000) }}</td>
+                </tr>
+                <tr v-for="item in paidBillData.items" :key="item.name" class="border-b border-gray-200">
+                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">{{ item.name }}</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.quantity }}</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.unit }}</td>
+                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(getItemSubtotal(item)) }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <!-- Total -->
-          <div class="border-t border-gray-300 pt-4 mb-6">
-            <div class="flex justify-between items-center">
-              <span class="font-semibold text-gray-900">Total</span>
-              <span class="text-lg font-bold text-gray-900">Rp {{ formatCurrency(paidBillData.total) }}</span>
+          <div class="border-t-2 border-gray-300 pt-4 mb-6">
+            <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
+              <span class="text-lg font-bold text-gray-900">TOTAL PEMBAYARAN</span>
+              <span class="text-2xl font-bold text-blue-600">Rp {{ formatCurrency(paidBillData.total) }}</span>
             </div>
           </div>
 
           <!-- Status -->
-          <div class="mb-6">
-            <span class="inline-block bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
-              Lunas
+          <div class="mb-6 text-center">
+            <span class="inline-block bg-green-100 text-green-800 text-sm font-semibold px-4 py-2 rounded-full border border-green-200">
+              LUNAS
             </span>
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex justify-between">
+          <div class="flex justify-center gap-4">
             <button 
               @click="downloadInvoice"
-              class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
-              Unduh
+              Unduh Struk
             </button>
             <button 
               @click="closeInvoiceModal"
-              class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
+              class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
             >
               Tutup
             </button>
@@ -326,103 +368,101 @@
 
 <script>
 import SidebarStaff from '../../layouts/staff/SidebarStaff.vue'
+import HeaderStaff from '../../layouts/staff/HeaderStaff.vue';
 
 export default {
   name: "TagihanStaff",
   components: {
     SidebarStaff,
+    HeaderStaff,
   },
   data() {
     return {
       patientName: "",
-      currentDate: "",
-      currentTime: "",
       billItems: [
         {
-          name: "Suntik Vitamin B kompleks",
-          quantity1: 0,
-          quantity2: 0,
+          name: "",
+          quantity: 1,
           unit: "",
           price: 0
         },
-        {
-          name: "Paracetamol",
-          quantity1: 0,
-          quantity2: 0,
-          unit: "",
-          price: 0
-        },
-        {
-          name: "Ibuprofen",
-          quantity1: 0,
-          quantity2: 0,
-          unit: "",
-          price: 0
-        }
       ],
-      totalAmount: 0,
+      medicineTotal: 0,
+      totalAmount: 85000, // Base cost (consultation + admin)
       showPaymentModal: false,
       showInvoiceModal: false,
+      showDeleteModal: false,
       paidBillData: {},
-      invoiceNumber: ""
+      invoiceNumber: "",
+      breadcrumbPages: [
+        { label: "Dashboard", href: "/dashboardstaff" },
+        { label: "Pembayaran", href: "/pembayaran" }
+      ]
     };
   },
+  computed: {
+    canPay() {
+      return this.patientName.trim() && this.totalAmount > 0;
+    }
+  },
   mounted() {
-    this.updateDateTime();
-    // Update time every second
-    setInterval(this.updateDateTime, 1000);
     this.calculateTotal();
   },
   methods: {
-    updateDateTime() {
+    generateBillNumber() {
       const now = new Date();
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      };
-      this.currentDate = now.toLocaleDateString('id-ID', options);
-      this.currentTime = now.toLocaleTimeString('id-ID', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-      });
+      const year = now.getFullYear().toString().slice(-2);
+      const month = (now.getMonth() + 1).toString().padStart(2, '0');
+      const day = now.getDate().toString().padStart(2, '0');
+      const time = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
+      return `KSB-${year}${month}${day}-${time}`;
     },
     addItem() {
       this.billItems.push({
-        name: "Item Baru",
-        quantity1: 0,
-        quantity2: 0,
+        name: "",
+        quantity: 1,
         unit: "",
         price: 0
       });
     },
-    removeItem(index) {
-      if (this.billItems.length > 1) {
-        this.billItems.splice(index, 1);
-        this.calculateTotal();
+    confirmRemoveItem(index) {
+      if (this.billItems.length === 1) {
+        this.showDeleteModal = true;
+      } else {
+        this.removeItem(index);
       }
     },
-    editItem(index) {
-      // Logic for editing item - could open a modal or make row editable
-      console.log('Edit item at index:', index);
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+    },
+    removeItem(index) {
+      this.billItems.splice(index, 1);
+      this.calculateTotal();
+    },
+    getItemSubtotal(item) {
+      const quantity = parseInt(item.quantity) || 0;
+      const price = parseFloat(item.price) || 0;
+      return quantity * price;
     },
     calculateTotal() {
-      this.totalAmount = this.billItems.reduce((total, item) => {
-        const quantity = (parseInt(item.quantity1) || 0) + (parseInt(item.quantity2) || 0);
-        const price = parseFloat(item.price) || 0;
-        return total + (quantity * price);
+      this.medicineTotal = this.billItems.reduce((total, item) => {
+        return total + this.getItemSubtotal(item);
       }, 0);
+      
+      // Base costs: consultation (75k) + admin (10k) + medicine total
+      this.totalAmount = 85000 + this.medicineTotal;
     },
     formatCurrency(amount) {
       return new Intl.NumberFormat('id-ID').format(amount);
     },
-    formatDate(date) {
-      return date.toLocaleDateString('id-ID', {
+    formatDateTime(date) {
+      return date.toLocaleString('id-ID', {
+        weekday: 'long',
         day: '2-digit',
-        month: '2-digit',
-        year: '2-digit'
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
     },
     generateInvoiceNumber() {
@@ -431,48 +471,20 @@ export default {
       const month = (now.getMonth() + 1).toString().padStart(2, '0');
       const day = now.getDate().toString().padStart(2, '0');
       const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
-     return `${random} ${day}-${month}-${year}`; 
-    },
-    getTotalQuantity(item) {
-      return (parseInt(item.quantity1) || 0) + (parseInt(item.quantity2) || 0);
-    },
-    getItemTotal(item) {
-      const quantity = this.getTotalQuantity(item);
-      const price = parseFloat(item.price) || 0;
-      return quantity * price;
-    },
-    saveBill() {
-      if (!this.patientName.trim()) {
-        alert('Mohon masukkan nama pasien');
-        return;
-      }
-      
-      const billData = {
-        patientName: this.patientName,
-        items: this.billItems,
-        total: this.totalAmount,
-        date: new Date().toISOString()
-      };
-      
-      console.log('Saving bill:', billData);
-      alert('Tagihan berhasil disimpan!');
+      return `INV-${year}${month}${day}-${random}`;
     },
     payBill() {
       if (!this.patientName.trim()) {
-        alert('Mohon masukkan nama pasien');
-        return;
-      }
-      
-      if (this.totalAmount === 0) {
-        alert('Total tagihan tidak boleh kosong');
+        alert('Mohon lengkapi nama pasien terlebih dahulu!');
         return;
       }
       
       // Store paid bill data
       this.paidBillData = {
         patientName: this.patientName,
-        items: [...this.billItems],
+        items: [...this.billItems.filter(item => item.name.trim())], // Only items with names
         total: this.totalAmount,
+        medicineTotal: this.medicineTotal,
         date: new Date().toISOString(),
         status: 'paid'
       };
@@ -498,34 +510,17 @@ export default {
     },
     downloadInvoice() {
       // Implementation for downloading invoice
-      // This could generate a PDF or open print dialog
-      alert('Fitur download invoice akan segera tersedia');
-      console.log('Download invoice for:', this.paidBillData);
+      window.print();
     },
     resetForm() {
       this.patientName = "";
       this.billItems = [
         {
-          name: "Suntik Vitamin B kompleks",
-          quantity1: 0,
-          quantity2: 0,
+          name: "",
+          quantity: 1,
           unit: "",
           price: 0
         },
-        {
-          name: "Paracetamol",
-          quantity1: 0,
-          quantity2: 0,
-          unit: "",
-          price: 0
-        },
-        {
-          name: "Ibuprofen",
-          quantity1: 0,
-          quantity2: 0,
-          unit: "",
-          price: 0
-        }
       ];
       this.calculateTotal();
     }
@@ -546,84 +541,75 @@ input[type="number"] {
 }
 
 /* Smooth transitions */
-.transition-colors {
-  transition-property: color, background-color, border-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+.transition-all {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Focus states */
-input:focus {
+input:focus, select:focus {
   outline: none;
-}
-
-/* Table styling */
-table {
-  border-collapse: separate;
-  border-spacing: 0;
+  transform: translateY(-1px);
 }
 
 /* Button hover effects */
-button:hover {
+button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-button:active {
+button:active:not(:disabled) {
   transform: translateY(0);
 }
 
-/* Modal styling */
-.fixed {
-  position: fixed;
-}
-
-.inset-0 {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-/* Animation for modals */
-.bg-black.bg-opacity-50 {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Invoice table styling */
-.border-collapse {
-  border-collapse: collapse;
+/* Disabled state */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Print styles for invoice */
 @media print {
   .fixed {
-    position: static;
+    position: static !important;
   }
   
-  .bg-black.bg-opacity-50 {
-    background: white;
+  .bg-black {
+    background: white !important;
   }
   
-  .shadow-xl {
-    box-shadow: none;
+  .shadow-2xl, .shadow-xl {
+    box-shadow: none !important;
   }
   
-  .rounded-lg {
-    border-radius: 0;
+  .rounded-xl {
+    border-radius: 0 !important;
   }
   
   button {
-    display: none;
+    display: none !important;
   }
+  
+  .border-gray-300 {
+    border-color: #000 !important;
+  }
+  
+  .text-blue-600 {
+    color: #000 !important;
+  }
+}
+
+/* Animation for modals */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fixed .transform {
+  animation: fadeIn 0.3s ease-out;
 }
 </style>
