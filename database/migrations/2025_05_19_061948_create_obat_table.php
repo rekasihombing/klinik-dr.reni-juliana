@@ -10,10 +10,12 @@ class CreateObatTable extends Migration
     {
         Schema::create('obat', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_obat', 100);
+            $table->string('nama_obat');
+            $table->string('jenis_obat')->nullable();
             $table->text('deskripsi')->nullable();
-            $table->boolean('dari_klinik')->default(true);
-            $table->timestamp('created_at')->useCurrent();
+            $table->decimal('harga', 10, 2)->nullable();
+            $table->string('satuan')->default('pcs'); // pcs, botol, strip, dll
+            $table->timestamps();
         });
     }
 

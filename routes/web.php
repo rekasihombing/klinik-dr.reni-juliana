@@ -17,7 +17,9 @@ use App\Http\Controllers\OfflineBookingController;
 use App\Http\Controllers\KonfirmasiPasienStaffController;
 use App\Http\Controllers\ClinicScheduleController;
 use App\Http\Controllers\ScheduleExceptionController;
-
+use App\Http\Controllers\StokObatController;
+use App\Http\Controllers\ObatController;
+use App\Http\Controllers\JanjiTemuController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -201,6 +203,39 @@ Route::middleware(['auth'])->group(function () {
         ->name('patient.medical-history');
 });
 
+Route::middleware(['auth'])->group(function () {
+    
+    // Routes untuk Obat
+    Route::resource('obat', ObatController::class);
+    
+    // Routes untuk Stok Obat
+    Route::resource('stok-obat', StokObatController::class);
+    
+    // Atau jika ingin lebih spesifik:
+    /*
+    Route::prefix('obat')->name('obat.')->group(function () {
+        Route::get('/', [ObatController::class, 'index'])->name('index');
+        Route::get('/create', [ObatController::class, 'create'])->name('create');
+        Route::post('/', [ObatController::class, 'store'])->name('store');
+        Route::get('/{obat}', [ObatController::class, 'show'])->name('show');
+        Route::get('/{obat}/edit', [ObatController::class, 'edit'])->name('edit');
+        Route::put('/{obat}', [ObatController::class, 'update'])->name('update');
+        Route::delete('/{obat}', [ObatController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('stok-obat')->name('stok-obat.')->group(function () {
+        Route::get('/', [StokObatController::class, 'index'])->name('index');
+        Route::get('/create', [StokObatController::class, 'create'])->name('create');
+        Route::post('/', [StokObatController::class, 'store'])->name('store');
+        Route::get('/{stokObat}', [StokObatController::class, 'show'])->name('show');
+        Route::get('/{stokObat}/edit', [StokObatController::class, 'edit'])->name('edit');
+        Route::put('/{stokObat}', [StokObatController::class, 'update'])->name('update');
+        Route::delete('/{stokObat}', [StokObatController::class, 'destroy'])->name('destroy');
+    });
+    */
+});
+
+Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

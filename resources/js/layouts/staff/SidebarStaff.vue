@@ -46,6 +46,12 @@
           <i class="fas fa-file-alt"></i>
           <span>Laporan</span>
         </a>
+         <a href="#"
+          class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+        >
+          <i class="fas fa-file-alt"></i>
+          <span>obat</span>
+        </a>
       </nav>
     </div>
   <div class="sticky bottom-0 bg-white py-4">
