@@ -13,6 +13,7 @@ use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\PatientDashboardController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\RiwayatRekamMedisController;
+use App\Http\Controllers\JanjiTemuController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -174,6 +175,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('patient.medical-history');
 });
 
+Route::middleware(['auth'])->group(function () {
+
+
+});
+
+Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
