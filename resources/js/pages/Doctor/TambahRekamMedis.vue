@@ -235,6 +235,26 @@
                     </td>
                   </tr>
 
+                   <tr>
+                    <th
+                      class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Catatan dokter
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5" colspan="2">
+                      <textarea
+                        v-model="form.catatan_dokter"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="3"
+                        aria-label="catatan_dokter"
+                        placeholder="masukkan catatan disini"
+                      ></textarea>
+                    </td>
+                  </tr>
+
                   <!-- <tr>
                     <th
                       class="border border-gray-300 text-left font-semibold px-2 py-0.5"

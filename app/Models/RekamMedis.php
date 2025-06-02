@@ -70,12 +70,12 @@ class RekamMedis extends Model
     // Scope untuk filter berdasarkan dokter
     public function scopeByDokter($query, $dokterId)
     {
-        return $query->where('dokter_id', $dokterId);
+        return $query->where('doctor_id', $dokterId);
     }
 
     // Scope untuk filter berdasarkan pasien
     public function scopeByPasien($query, $pasienId)
     {
-        return $query->where('pasien_id', $pasienId);
+        return $query->where('patient_id', $pasienId);
     }
 }

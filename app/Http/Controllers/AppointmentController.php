@@ -46,6 +46,83 @@ class AppointmentController extends Controller
         ]); 
     }   
     
+    // Method baru untuk menampilkan riwayat janji temu
+    public function history()
+    {
+        $user = Auth::user();
+        $patient = $user->patient;
+
+        if (!$patient) {
+            return redirect()->back()->withErrors(['error' => 'Data pasien tidak ditemukan']);
+        }
+
+        // Ambil semua riwayat appointment milik pasien ini, urutkan berdasarkan tanggal terbaru
+        $appointments = Appointment::where('pasien_id', $patient->id)
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('jam_konsultasi', 'desc')
+            ->get()
+            ->map(function ($appointment, $index) {
+                // Generate nomor antrian berdasarkan urutan pada hari yang sama
+                $queueNumber = $this->generateQueueNumber($appointment);
+                
+                return [
+                    'id' => $appointment->id,
+                    'date' => Carbon::parse($appointment->tanggal)->format('d-m-Y'),
+                    'time' => Carbon::parse($appointment->jam_konsultasi)->format('H.i'),
+                    'queueNumber' => $queueNumber,
+                    'status' => $this->getStatusLabel($appointment->status),
+                    'keluhan' => $appointment->keluhan ?? '-',
+                    'originalStatus' => $appointment->status,
+                    'createdBy' => $appointment->dibuat_oleh,
+                    'checkedInAt' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('d-m-Y H:i') : null
+                ];
+            })
+            ->toArray();
+
+        return Inertia::render('pasien/RiwayatJanjiTemu', [
+            'patientName' => $patient->nama_lengkap,
+            'clinicName' => 'Klinik Kesehatan', // Sesuaikan dengan nama klinik Anda
+            'appointments' => $appointments
+        ]);
+    }
+
+    // Helper method untuk generate nomor antrian
+    private function generateQueueNumber($appointment)
+    {
+        // Cari posisi appointment ini berdasarkan waktu pada tanggal yang sama
+        $sameDataAppointments = Appointment::where('dokter_id', $appointment->dokter_id)
+            ->where('tanggal', $appointment->tanggal)
+            ->whereIn('status', ['menunggu', 'dikonfirmasi', 'selesai']) // Tidak termasuk yang dibatalkan
+            ->orderBy('jam_konsultasi')
+            ->orderBy('created_at')
+            ->get();
+
+        $position = $sameDataAppointments->search(function ($item) use ($appointment) {
+            return $item->id === $appointment->id;
+        });
+
+        // Jika tidak ditemukan atau dibatalkan, return "-"
+        if ($position === false || $appointment->status === 'dibatalkan') {
+            return '-';
+        }
+
+        // Generate format antrian: A01, A02, dst
+        return 'A' . str_pad($position + 1, 2, '0', STR_PAD_LEFT);
+    }
+
+    // Helper method untuk mapping status
+    private function getStatusLabel($status)
+    {
+        $statusMap = [
+            'menunggu' => 'Menunggu',
+            'dikonfirmasi' => 'Dikonfirmasi',
+            'selesai' => 'Selesai',
+            'dibatalkan' => 'Dibatalkan'
+        ];
+
+        return $statusMap[$status] ?? ucfirst($status);
+    }
+    
     public function store(Request $request) 
     {
         $validated = $request->validate([
@@ -131,10 +208,6 @@ class AppointmentController extends Controller
             // Cek apakah appointment memang sudah lewat
             $appointmentDateTime = \Carbon\Carbon::parse($appointment->tanggal . ' ' . $appointment->jam_konsultasi);
             $now = \Carbon\Carbon::now();
-
-            if ($appointmentDateTime->greaterThan($now)) {
-                return back()->withErrors(['error' => 'Tidak dapat membatalkan janji temu yang belum lewat']);
-            }
 
             // Update status menjadi 'dibatalkan' (sesuai enum yang sudah ada)
             $appointment->update([

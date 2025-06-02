@@ -108,18 +108,36 @@
                   </div>
                 </div>
                 
-                <div class="bg-blue-50 rounded-lg p-3 mb-3">
+                <!-- Check-in info berdasarkan tanggal -->
+                <div v-if="canCheckInToday" class="bg-blue-50 rounded-lg p-3 mb-3">
                   <div class="text-xs font-medium text-[#3674B5] flex items-center">
                     <i class="fas fa-mouse-pointer mr-2"></i>
-                    Klik untuk check-in
+                    Klik untuk check-in (Hari ini adalah hari appointment Anda)
+                  </div>
+                </div>
+                
+                <div v-else class="bg-gray-50 rounded-lg p-3 mb-3">
+                  <div class="text-xs font-medium text-gray-500 flex items-center">
+                    <i class="fas fa-clock mr-2"></i>
+                    Check-in hanya tersedia pada hari appointment
                   </div>
                 </div>
 
                 <!-- Status Check-in -->
-                <div v-if="isCheckedIn" class="flex items-center text-emerald-600 text-sm font-semibold">
+                <div v-if="isCheckedIn" class="flex items-center text-emerald-600 text-sm font-semibold mb-3">
                   <i class="fas fa-check-circle mr-2"></i>
                   Sudah Check-in
                 </div>
+
+                <!-- Tombol Batalkan Janji Temu - Selalu tampil untuk janji temu aktif -->
+                <button
+                  @click.stop="handleCancelAppointmentFromModal"
+                  :disabled="cancelLoading"
+                  class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 mt-2"
+                  style="cursor:pointer;"
+                >
+                  {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
+                </button>
               </template>
 
               <template v-else-if="isAppointmentPassed">
@@ -261,23 +279,81 @@
         Check-in pada: {{ formatCheckInTime(nextAppointment.checked_in_at) }}
       </p>
       
-      <!-- Tombol Check In hanya muncul jika belum check-in -->
-      <button
-        v-if="!isCheckedIn"
-        @click="handleCheckIn"
-        :disabled="checkInLoading"
-        class="bg-[#47B536] hover:bg-[#449A37] v text-white px-4 py-2 rounded-lg text-sm mb-4 disabled:opacity-50 mr-2"
-      >
-        {{ checkInLoading ? 'Loading...' : 'Check In' }}
-      </button>
+      <!-- Pesan jika bukan hari appointment -->
+      <p v-if="!canCheckInToday && !isCheckedIn" class="text-xs text-gray-500 mb-4">
+        Check-in hanya dapat dilakukan pada hari appointment Anda
+      </p>
+      
+      <!-- Container untuk tombol dengan flex column -->
+      <div class="flex flex-col gap-2 mb-4">
+        <!-- Tombol Check In hanya muncul jika belum check-in DAN hari ini adalah hari appointment -->
+        <button
+          v-if="!isCheckedIn && canCheckInToday"
+          @click="handleCheckIn"
+          :disabled="checkInLoading"
+          class="bg-[#47B536] hover:bg-[#449A37] text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+        >
+          {{ checkInLoading ? 'Loading...' : 'Check In' }}
+        </button>
+
+        <!-- Tombol disabled jika bukan hari appointment -->
+        <button
+          v-if="!isCheckedIn && !canCheckInToday"
+          disabled
+          class="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg text-sm cursor-not-allowed"
+        >
+          Check In (Belum waktunya)
+        </button>
+
+      </div>
 
       <button
         @click="showAppointmentModal = false"
-        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm"
+        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm"
       >
         Tutup
       </button>
 
+    </div>
+  </div>
+</div>
+
+<!-- Modal Konfirmasi Batalkan Janji Temu -->
+<div
+  v-if="showCancelConfirm"
+  class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+  style="background-color: rgba(0, 0, 0, 0.15);"
+>
+  <div class="bg-white rounded-xl p-6 w-80 shadow-lg">
+    <div class="text-center">
+      <i class="fas fa-exclamation-triangle text-[#E53935] text-4xl mb-4"></i>
+      
+      <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
+        Konfirmasi Pembatalan
+      </h2>
+      
+      <p class="text-sm text-gray-700 mb-4">
+        Apakah Anda yakin ingin membatalkan janji temu pada:<br />
+        <strong>{{ formatDate(nextAppointment.tanggal) }}</strong><br />
+        pukul <strong>{{ nextAppointment.jam_konsultasi }} WIB</strong>?
+      </p>
+      
+      <div class="flex gap-2 justify-center">
+        <button
+          @click="confirmCancelAppointment"
+          :disabled="cancelLoading"
+          class="bg-[#E53935] hover:bg-[#D32F2F] text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+        >
+          {{ cancelLoading ? 'Loading...' : 'Ya, Batalkan' }}
+        </button>
+        
+        <button
+          @click="showCancelConfirm = false"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm"
+        >
+          Tidak
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -312,6 +388,7 @@ const hidePassedNotification = ref(false);
 const hideProfileNotification = ref(false);
 const cancelLoading = ref(false);
 const checkInLoading = ref(false);
+const showCancelConfirm = ref(false);
 
 // Computed untuk mengecek kelengkapan profil
 // Anda bisa menyesuaikan logika ini berdasarkan field yang diperlukan
@@ -334,6 +411,29 @@ const isProfileComplete = computed(() => {
   return requiredFields.every(field => 
     profile[field] && profile[field].toString().trim() !== ''
   );
+});
+
+// Function untuk mengecek apakah hari ini adalah hari appointment
+function isToday(dateStr) {
+  if (!dateStr) return false;
+  
+  const today = new Date();
+  const appointmentDate = new Date(dateStr);
+  
+  // Set both dates to start of day for accurate comparison
+  today.setHours(0, 0, 0, 0);
+  appointmentDate.setHours(0, 0, 0, 0);
+  
+  return today.getTime() === appointmentDate.getTime();
+}
+
+// Computed untuk mengecek apakah bisa check-in hari ini
+const canCheckInToday = computed(() => {
+  if (!props.nextAppointment || !props.nextAppointment.tanggal) {
+    return false;
+  }
+  
+  return isToday(props.nextAppointment.tanggal);
 });
 
 // Format tanggal Indonesia
@@ -430,17 +530,10 @@ function handleJanjiTemuClick() {
   }
 }
 
-// Function untuk membatalkan janji temu yang sudah lewat
+// Function untuk membatalkan janji temu yang sudah lewat (tetap digunakan untuk notifikasi yang sudah lewat)
 async function handleCancelAppointment() {
   if (!props.nextAppointment || !props.nextAppointment.id) {
     console.error('No appointment ID found');
-    return;
-  }
-
-  // Tambahkan pengecekan: pastikan janji temu sudah lewat
-  const sudahLewat = isAppointmentPassed.value;
-  if (!sudahLewat) {
-    alert('Janji temu belum lewat, tidak bisa dibatalkan.');
     return;
   }
 
@@ -470,6 +563,47 @@ async function handleCancelAppointment() {
   }
 }
 
+// Function untuk menampilkan modal konfirmasi pembatalan dari modal detail
+function handleCancelAppointmentFromModal() {
+  showCancelConfirm.value = true;
+}
+
+// Function untuk mengkonfirmasi pembatalan janji temu - TIDAK ADA BATASAN WAKTU
+async function confirmCancelAppointment() {
+  if (!props.nextAppointment || !props.nextAppointment.id) {
+    console.error('No appointment ID found');
+    return;
+  }
+
+  try {
+    cancelLoading.value = true;
+
+    await router.post('/appointment/cancel', {
+      appointment_id: props.nextAppointment.id
+    }, {
+      onSuccess: () => {
+        showCancelConfirm.value = false;
+        showAppointmentModal.value = false;
+        alert('Janji temu berhasil dibatalkan!');
+        // Refresh halaman untuk mendapatkan data terbaru
+        window.location.reload();
+      },
+      onError: (error) => {
+        console.error('Failed to cancel appointment:', error);
+        alert(error.response?.data?.error || 'Gagal membatalkan janji temu. Silakan coba lagi.');
+      },
+      onFinish: () => {
+        cancelLoading.value = false;
+      }
+    });
+
+  } catch (error) {
+    console.error('Error cancelling appointment:', error);
+    cancelLoading.value = false;
+    alert('Terjadi kesalahan. Silakan coba lagi.');
+  }
+}
+
 onMounted(() => {
   console.log('Props received:', props);
   console.log('Next Appointment:', props.nextAppointment);
@@ -478,6 +612,7 @@ onMounted(() => {
     console.log('Appointment Date:', props.nextAppointment.tanggal);
     console.log('Appointment Time:', props.nextAppointment.jam_konsultasi);
     console.log('Current Time:', new Date());
+    console.log('Can Check In Today:', canCheckInToday.value);
   }
 
   flatpickr("#calendar", {
@@ -527,7 +662,13 @@ async function handleCheckIn() {
     return;
   }
   
-  if (!props.nextAppointment || !props.nextAppointment.id) {
+  // Cek apakah hari ini adalah hari appointment
+  if (!canCheckInToday.value) {
+    alert('Check-in hanya dapat dilakukan pada hari appointment Anda.');
+    return;
+  }
+
+   if (!props.nextAppointment || !props.nextAppointment.id) {
     alert('Janji temu tidak ditemukan.');
     return;
   }

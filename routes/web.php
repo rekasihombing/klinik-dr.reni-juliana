@@ -12,6 +12,7 @@ use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\PatientDashboardController;
 use App\Http\Controllers\RekamMedisController;
+use App\Http\Controllers\RiwayatRekamMedisController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -60,6 +61,16 @@ Route::get('/invoice', function () {
 Route::get('/JadwalKlinik', function () {
     return Inertia::render('staff/Jadwal');
 })->name('JadwalKlinik');
+
+Route::get('/Pasien', function () {
+    return Inertia::render('staff/PasienList');
+})->name('Pasien');
+
+Route::get('/DetailPasien', function () {
+    return Inertia::render('staff/DetailPasien');
+})->name('DetailPasien');
+
+
 //Pasien
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -138,7 +149,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard'); // pasien
-    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff'); // staff
+    // Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff');
     Route::get('/dashboarddokter', [DoctorDashboardController::class, 'index'])->name('dashboarddokter'); // dokter
 });
 
@@ -171,6 +182,16 @@ Route::middleware(['auth'])->group(function () {
 
 // Route untuk menyimpan rekam medis (sesuai dengan yang ada di Vue component)
 Route::post('/rekam-medis', [RekamMedisController::class, 'store'])->middleware('auth');
+
+
+Route::middleware(['auth'])->group(function () {
+Route::get('/riwayat-janji-temu', [AppointmentController::class, 'history'])->name('appointments.history');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/riwayat-rekam-medis', [RiwayatRekamMedisController::class, 'index'])
+        ->name('patient.medical-history');
+});
 
 
 require __DIR__.'/settings.php';
