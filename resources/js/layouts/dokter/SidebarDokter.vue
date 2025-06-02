@@ -32,7 +32,7 @@
 
       <!-- Janji Temu -->
       <Link 
-        href="/" 
+        href="/janji-temu" 
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/riwayatjanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
