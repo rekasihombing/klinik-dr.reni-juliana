@@ -2,25 +2,18 @@
   <div class="bg-white min-h-screen flex">
     <!-- Sidebar -->
     <SidebarStaff class="w-64 bg-white shadow-md" />
+
+     <!-- Header with blue background -->
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" class="mb-4" />
+
+        <div class="items-center text-xs text-[#1a1a1a] mb-4 font-sans bg-[#9dd7ff] rounded-md px-4 py-2">
     
     <!-- Main Content -->
     <div class="flex-1 flex flex-col items-center py-6 px-4">
       <div class="w-full max-w-3xl rounded-lg shadow-md p-4 md:p-6 bg-white">
-         
-        <!-- Header with blue background -->
-        <div class="flex justify-between items-center text-xs text-[#1a1a1a] mb-4 font-sans bg-[#9dd7ff] rounded-md px-4 py-2">
         
-          <div class="flex items-center gap-1">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-            <span>&gt;</span>
-            <span>Tagihan</span>
-          </div>
-          <div class="text-right">
-            <div>{{ currentDate }}</div>
-            <div>{{ currentTime }}</div>
-          </div>
-        </div>
+       
+        
 
         <!-- Content -->
         <div class="bg-[#f9f9f9] rounded-lg p-4 md:p-6 border border-[#d1d5db]">
@@ -57,119 +50,115 @@
               <p>Biaya Dokter</p>
             </div>
 
-            <!-- First table - Tindakan -->
+<!-- First table - Tindakan -->
             <div class="overflow-x-auto mb-4">
-              <table class="w-full border-collapse border border-[#d1d5db] text-xs font-sans text-black">
+              <table class="w-full text-xs font-sans text-black">
                 <thead>
                   <tr class="bg-[#f3f4f6]">
-                    <th class="border border-[#d1d5db] px-2 py-1 text-left">Tindakan</th>
-                    <th class="border border-[#d1d5db] px-2 py-1 text-center">Kuantitas</th>
-                    <th class="border border-[#d1d5db] px-2 py-1 text-center">Harga</th>
-                    <th class="border border-[#d1d5db] px-2 py-1 text-center">Aksi</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-left font-semibold">Tindakan</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Kuantitas</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-28">Harga</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in tindakanItems" :key="`tindakan-${index}`">
-                    <td class="border border-[#d1d5db] px-2 py-1 leading-tight">
-                      {{ item.name }}
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Suntik Vitamin</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
-                      <input 
-                        v-model.number="item.quantity"
-                        class="w-16 border border-[#d1d5db] rounded text-center text-xs py-0.5" 
-                        type="number"
-                        min="0"
-                        @input="calculateTotal"
-                      />
+                      <input type="number" min="0" value="25000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
-                      <input 
-                        v-model.number="item.price"
-                        class="w-20 border border-[#d1d5db] rounded text-center text-xs py-0.5" 
-                        type="number"
-                        min="0"
-                        @input="calculateTotal"
-                      />
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
                     </td>
-                    <td class="border border-[#d1d5db] px-2 py-1 text-center flex justify-center gap-1">
-                      <button 
-                        @click="deleteItem('tindakan', index)"
-                        :aria-label="`Delete ${item.name}`" 
-                        class="bg-[#f87171] text-white rounded text-[10px] w-5 h-5 flex items-center justify-center" 
-                        type="button"
-                      >
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                      <button 
-                        @click="editItem('tindakan', index)"
-                        :aria-label="`Edit ${item.name}`" 
-                        class="bg-[#22c55e] text-white rounded text-[10px] w-5 h-5 flex items-center justify-center" 
-                        type="button"
-                      >
-                        <i class="fas fa-pen"></i>
-                      </button>
+                  </tr>
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Konsultasi Dokter</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                    </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="50000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                    </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <!-- Second table - Produk -->
+
+<!-- Second table - Produk -->
             <div class="overflow-x-auto mb-4">
-              <table class="w-full border-collapse border border-[#d1d5db] text-xs font-sans text-black">
+              <table class="w-full text-xs font-sans text-black">
                 <thead>
                   <tr class="bg-[#f3f4f6]">
-                    <th class="border border-[#d1d5db] px-2 py-1 text-left">Produk</th>
-                    <th class="border border-[#d1d5db] px-2 py-1 text-center">Kuantitas</th>
-                    <th class="border border-[#d1d5db] px-2 py-1 text-center">Harga</th>
-                    <th class="border border-[#d1d5db] px-2 py-1 text-center">Aksi</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-left font-semibold">Produk</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Kuantitas</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-28">Harga</th>
+                    <th class="border border-[#d1d5db] px-2 py-1 text-center font-semibold w-20">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in produkItems" :key="`produk-${index}`">
-                    <td class="border border-[#d1d5db] px-2 py-1 leading-tight">
-                      {{ item.name }}
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Paracetamol</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="2" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
-                      <input 
-                        v-model.number="item.quantity"
-                        class="w-16 border border-[#d1d5db] rounded text-center text-xs py-0.5" 
-                        type="number"
-                        min="0"
-                        @input="calculateTotal"
-                      />
+                      <input type="number" min="0" value="10000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
                     </td>
                     <td class="border border-[#d1d5db] px-2 py-1 text-center">
-                      <input 
-                        v-model.number="item.price"
-                        class="w-20 border border-[#d1d5db] rounded text-center text-xs py-0.5" 
-                        type="number"
-                        min="0"
-                        @input="calculateTotal"
-                      />
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
                     </td>
-                    <td class="border border-[#d1d5db] px-2 py-1 text-center flex justify-center gap-1">
-                      <button 
-                        @click="deleteItem('produk', index)"
-                        :aria-label="`Delete ${item.name}`" 
-                        class="bg-[#f87171] text-white rounded text-[10px] w-5 h-5 flex items-center justify-center" 
-                        type="button"
-                      >
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                      <button 
-                        @click="editItem('produk', index)"
-                        :aria-label="`Edit ${item.name}`" 
-                        class="bg-[#22c55e] text-white rounded text-[10px] w-5 h-5 flex items-center justify-center" 
-                        type="button"
-                      >
-                        <i class="fas fa-pen"></i>
-                      </button>
+                  </tr>
+                  <tr>
+                    <td class="border border-[#d1d5db] px-2 py-1">Antibiotik</td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="1" class="w-16 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                    </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <input type="number" min="0" value="15000" class="w-20 text-center text-xs border border-[#d1d5db] rounded py-0.5" />
+                    </td>
+                    <td class="border border-[#d1d5db] px-2 py-1 text-center">
+                      <div class="flex justify-center gap-1">
+                        <button type="button" class="bg-[#f87171] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="bg-[#22c55e] text-white rounded w-5 h-5 text-[10px] flex items-center justify-center">
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
 
             <div class="text-right text-xs text-[#1a1a1a] font-sans mb-4">
               Total: Rp {{ totalAmount.toLocaleString('id-ID') }}
@@ -213,143 +202,75 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, reactive } from 'vue'
 import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
+import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
+// Data breadcrumb
+const breadcrumbPages = [
+  { label: "Dashboard", href: "/dashboardstaff" },
+  { label: "Pembayaran", href: "/pembayaran" }
+]
+
+// Form fields
 const patientName = ref('')
 const billNumber = ref('INV-2025-001')
-const currentDate = ref('')
-const currentTime = ref('')
-const totalAmount = ref(0)
 const showSuccessModal = ref(false)
-let timeInterval = null
+const totalAmount = ref(0)
 
-const tindakanItems = ref([
-  { name: 'Suntik Vitamin B kompleks', quantity: 0, price: 0 },
-  { name: 'Oprname', quantity: 0, price: 0 },
-  { name: 'lalala', quantity: 0, price: 0 }
+// Data Tindakan dan Produk
+const tindakanItems = reactive([
+  { name: 'Suntik Vitamin', quantity: 1, price: 25000 },
+  { name: 'Konsultasi Dokter', quantity: 1, price: 50000 }
 ])
 
-const produkItems = ref([
-  { name: 'Suntik Vitamin B kompleks', quantity: 0, price: 0 },
-  { name: 'Paracetamol', quantity: 0, price: 0 },
-  { name: 'lalala', quantity: 0, price: 0 }
+const produkItems = reactive([
+  { name: 'Paracetamol', quantity: 2, price: 3000 },
+  { name: 'Vitamin C', quantity: 1, price: 10000 }
 ])
 
-const updateDateTime = () => {
-  const now = new Date()
-  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-  const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-
-  const dayName = days[now.getDay()]
-  const day = now.getDate()
-  const month = months[now.getMonth()]
-  const year = now.getFullYear()
-
-  currentDate.value = `${dayName}, ${day} ${month} ${year}`
-  currentTime.value = now.toLocaleTimeString('id-ID', { 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    second: '2-digit' 
-  })
+// Fungsi menghitung total keseluruhan
+function calculateTotal() {
+  const totalTindakan = tindakanItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  const totalProduk = produkItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  totalAmount.value = totalTindakan + totalProduk
 }
 
-const calculateTotal = () => {
-  const tindakanTotal = tindakanItems.value.reduce((sum, item) => {
-    const qty = isNaN(item.quantity) ? 0 : item.quantity
-    const price = isNaN(item.price) ? 0 : item.price
-    return sum + (qty * price)
-  }, 0)
-
-  const produkTotal = produkItems.value.reduce((sum, item) => {
-    const qty = isNaN(item.quantity) ? 0 : item.quantity
-    const price = isNaN(item.price) ? 0 : item.price
-    return sum + (qty * price)
-  }, 0)
-
-  totalAmount.value = tindakanTotal + produkTotal
-}
-
-const deleteItem = (type, index) => {
-  if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
-    if (type === 'tindakan') {
-      tindakanItems.value.splice(index, 1)
-    } else {
-      produkItems.value.splice(index, 1)
-    }
-    calculateTotal()
+// Fungsi hapus item
+function deleteItem(type, index) {
+  if (type === 'tindakan') {
+    tindakanItems.splice(index, 1)
+  } else if (type === 'produk') {
+    produkItems.splice(index, 1)
   }
+  calculateTotal()
 }
 
-const editItem = (type, index) => {
-  const item = type === 'tindakan' ? tindakanItems.value[index] : produkItems.value[index]
-  const newName = prompt('Edit nama item:', item.name)
-  if (newName && newName.trim()) {
-    item.name = newName.trim()
+// Fungsi edit item (placeholder)
+function editItem(type, index) {
+  alert(Fitur edit untuk ${type} di index ${index} belum diimplementasikan.)
+}
+
+// Fungsi handle pembayaran
+function handlePayment() {
+  if (!patientName.value) {
+    alert("Nama pasien harus diisi.")
+    return
   }
+
+  // Proses simpan data bisa ditambahkan di sini
+  showSuccessModal.value = true
 }
 
-const closeModal = () => {
+// Fungsi untuk menutup modal
+function closeModal() {
   showSuccessModal.value = false
 }
 
-const handlePayment = () => {
-  if (!patientName.value.trim()) {
-    alert('Silakan masukkan nama pasien')
-    return
-  }
-
-  if (totalAmount.value === 0) {
-    alert('Tidak ada item yang akan dibayar')
-    return
-  }
-
-  const paymentData = {
-    patient: patientName.value,
-    billNumber: billNumber.value,
-    total: totalAmount.value,
-    tindakan: tindakanItems.value.filter(item => item.quantity > 0),
-    produk: produkItems.value.filter(item => item.quantity > 0),
-    date: currentDate.value,
-    time: currentTime.value
-  }
-
-  console.log('Processing payment:', paymentData)
-
-  // Show success modal instead of alert
-  showSuccessModal.value = true
-
-  // Auto close modal after 3 seconds
-  setTimeout(() => {
-    showSuccessModal.value = false
-    
-    // Reset form after modal closes
-    patientName.value = ''
-    tindakanItems.value.forEach(item => {
-      item.quantity = 0
-      item.price = 0
-    })
-    produkItems.value.forEach(item => {
-      item.quantity = 0
-      item.price = 0
-    })
-    calculateTotal()
-  }, 3000)
-}
-
-onMounted(() => {
-  updateDateTime()
-  timeInterval = setInterval(updateDateTime, 1000)
-  calculateTotal()
-})
-
-onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
-})
+// Hitung total awal
+calculateTotal()
 </script>
