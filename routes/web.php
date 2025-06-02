@@ -19,6 +19,7 @@ use App\Http\Controllers\ClinicScheduleController;
 use App\Http\Controllers\ScheduleExceptionController;
 use App\Http\Controllers\StokObatController;
 use App\Http\Controllers\ObatController;
+use App\Http\Controllers\JanjiTemuController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -220,6 +221,8 @@ Route::middleware(['auth'])->group(function () {
     });
     */
 });
+
+Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
