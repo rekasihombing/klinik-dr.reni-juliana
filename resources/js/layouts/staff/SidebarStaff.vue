@@ -13,7 +13,7 @@
         </div>
       </div>
       <nav class="flex flex-col space-y-6 text-sm font-light">
-        <a href="#"
+        <a href="/dashboardstaff"
           class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors duration-200
                  bg-blue-100 text-blue-700 font-semibold shadow-sm"
           aria-current="page"
@@ -21,25 +21,20 @@
           <i class="fas fa-home"></i>
           <span>Dashboard</span>
         </a>
-        <a href="#"
+        <a href="/Pasien"
           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
         >
           <i class="fas fa-user-injured"></i>
           <span>Pasien</span>
         </a>
-        <a href="#"
+        <a href="/listjanjitemu"
           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
         >
           <i class="fas fa-calendar-check"></i>
           <span>Janji Temu</span>
         </a>
-        <a href="#"
-          class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
-        >
-          <i class="fas fa-calendar-alt"></i>
-          <span>Jadwal</span>
-        </a>
-        <a href="#"
+        
+        <a href="/Pembayaran"
           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
         >
           <i class="fas fa-file-invoice-dollar"></i>

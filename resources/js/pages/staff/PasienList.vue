@@ -6,7 +6,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
       <!-- Header -->
-      <div class="bg-gradient-to-r from-blue-400 to-blue-500 rounded-t-lg p-4 text-white">
+      <div class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-t-lg p-4 text-white">
         <div class="flex justify-between items-center">
           <div class="flex items-center space-x-2">
             <div class="text-sm">🏠 Dashboard &gt; Data Pasien</div>
@@ -156,6 +156,7 @@
                       >
                         <i class="fas fa-eye text-xs"></i>
                       </button>
+                      
                       <button 
                         @click="togglePatientStatus(patient)"
                         :title="patient.status === 'active' ? `Nonaktifkan ${patient.nama}` : `Aktifkan ${patient.nama}`"
@@ -413,10 +414,28 @@ export default {
       // TODO: Call API to update patient status
       // this.$api.updatePatientStatus(patient.id, patient.status);
     },
+    
     viewPatient(patient) {
       console.log('View patient:', patient.nama);
       // TODO: Navigate to detail page
       // this.$router.push(`/staff/pasien/${patient.id}`);
+    },
+    deletePatient(patient) {
+      if (confirm(`Apakah Anda yakin ingin menghapus data pasien ${patient.nama}?`)) {
+        const index = this.patients.findIndex(p => p.id === patient.id);
+        if (index > -1) {
+          this.patients.splice(index, 1);
+          console.log('Deleted patient:', patient.nama);
+          
+          // Adjust current page if needed
+          if (this.paginatedPatients.length === 0 && this.currentPage > 1) {
+            this.currentPage--;
+          }
+        }
+        
+        // TODO: Call API to delete patient
+        // this.$api.deletePatient(patient.id);
+      }
     },
     previousPage() {
       if (this.currentPage > 1) {
