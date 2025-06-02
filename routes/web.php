@@ -224,5 +224,8 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 
+Route::put('/appointment/{id}/mulai-konsultasi', [AppointmentController::class, 'mulaiKonsultasi'])
+    ->name('appointment.mulai-konsultasi');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

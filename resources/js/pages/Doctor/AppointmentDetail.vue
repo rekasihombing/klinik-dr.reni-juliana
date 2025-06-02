@@ -35,11 +35,47 @@
             <i class="fas fa-file-alt"></i>
             <span>Lihat Rekam Medis</span>
           </button>
-          <button  @click="handleTambahRekamMedisClick" class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+          
+          <!-- Tombol Tambah Rekam Medis dengan validasi -->
+          <button 
+            v-if="!hasRekamMedis" 
+            @click="handleTambahRekamMedisClick" 
+            class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-green-700 transition" 
+            type="button"
+          >
             <span>Tambah Rekam Medis</span>
           </button>
-          <button class="bg-[#FF9500] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition" type="button">
+          
+          <!-- Tombol disabled jika sudah ada rekam medis -->
+          <button 
+            v-else 
+            class="bg-gray-400 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed" 
+            disabled
+            title="Rekam medis sudah pernah diinput untuk appointment ini"
+          >
+            <span>Rekam Medis Sudah Ada</span>
+          </button>
+          
+          <button class="bg-[#FF9500] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-orange-700 transition" type="button">
             <span>Resep Obat</span>
+          </button>
+          
+          <button
+            v-if="status === 'dikonfirmasi'"
+            @click="mulaiKonsultasi"
+            class="bg-[#007AFF] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition"
+            type="button"
+          >
+            <span>Mulai Konsultasi</span>
+          </button>
+
+          <!-- Tombol pasif ketika sedang konsultasi -->
+          <button
+            v-else-if="status === 'diproses'"
+            class="bg-green-600 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed"
+            disabled
+          >
+            <span>Sedang Konsultasi</span>
           </button>
         </section>
       </div>
@@ -52,10 +88,16 @@ import { router } from '@inertiajs/vue3';
 import { ref, onMounted, computed } from 'vue';
 
 const props = defineProps({
-  appointment: Object
+  appointment: Object,
+  hasRekamMedis: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const appointment = props.appointment; // ambil appointment dari props
+const status = ref(appointment.status); // salin status awal
+const hasRekamMedis = ref(props.hasRekamMedis); // status apakah sudah ada rekam medis
 
 const patientDetails = computed(() => [
   { label: "Tanggal Lahir", value: appointment.pasien.tanggal_lahir },
@@ -71,7 +113,7 @@ const patientDetails = computed(() => [
   },
   { label: "Tanggal Konsultasi", value: appointment.tanggal },
   { label: "Jam Konsultasi", value: appointment.jam_konsultasi },
-  { label: "Status", value: appointment.status },
+  { label: "Status", value: status.value },
 ]);
 
 const currentDate = ref("");
@@ -117,9 +159,27 @@ onMounted(() => {
 });
 
 function handleTambahRekamMedisClick() {
+  // Double check validasi sebelum redirect
+  if (hasRekamMedis.value) {
+    alert('Rekam medis sudah pernah diinput untuk appointment ini.');
+    return;
+  }
+  
   router.visit(`/tambahrekammedis/${appointment.id}`);
 }
 
+function mulaiKonsultasi() {
+  if (confirm('Mulai konsultasi dengan pasien ini?')) {
+    router.put(route('appointment.mulai-konsultasi', appointment.id), {}, {
+      onSuccess: () => {
+        status.value = 'diproses'; // update status di frontend tanpa reload
+      },
+      onError: () => {
+        alert('Gagal memulai konsultasi.');
+      }
+    });
+  }
+}
 </script>
 
 <style scoped>

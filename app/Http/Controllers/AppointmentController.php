@@ -261,4 +261,14 @@ class AppointmentController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat check-in']);
         }
     }
+
+    public function mulaiKonsultasi($id)
+{
+    $appointment = Appointment::findOrFail($id);
+    $appointment->status = 'diproses';
+    $appointment->save();
+
+    return back()->with('success', 'Status pasien diubah menjadi Diproses.');
+}
+
 }
