@@ -70,6 +70,9 @@ Route::get('/DetailPasien', function () {
     return Inertia::render('staff/DetailPasien');
 })->name('DetailPasien');
 
+Route::get('/listjanjitemu', function () {
+    return Inertia::render('staff/listjanjitemu');
+})->name('janjitemu');
 
 //Pasien
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');

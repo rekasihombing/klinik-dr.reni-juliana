@@ -19,7 +19,7 @@
           <div>
             <p class="font-bold">Nama Klinik</p>
             <p class="mt-1">
-              Dituju kepada :<br />
+              Dituju kepada :<br/>
               Marvitha Khairani
             </p>
             <p class="mt-3 font-bold">Informasi Pembayaran</p>
