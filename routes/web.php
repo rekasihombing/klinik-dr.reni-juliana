@@ -13,6 +13,11 @@ use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\PatientDashboardController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\RiwayatRekamMedisController;
+use App\Http\Controllers\OfflineBookingController;
+use App\Http\Controllers\KonfirmasiPasienStaffController;
+use App\Http\Controllers\ClinicScheduleController;
+use App\Http\Controllers\ScheduleExceptionController;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -37,18 +42,16 @@ Route::get('/kontak', function () {
 Route::post('/kontak', [FaqController::class, 'store']);   
 
 //Staff
-Route::get('/dashboardstaff', function () {
-    return Inertia::render('staff/DashboardStaff');
-})->name('dashboardstaff');
-
-Route::get('/pendaftaran', function () {
-    return Inertia::render('staff/PendaftaranPasienStaff');
-})->name('pendaftaran');
-
-Route::get('/KonfirmasiPasien', function () {
-    return Inertia::render('staff/KonfiirmasiPasienStaff');
-})->name('KonfirmasiPasien');
-
+Route::get('/staff/dashboard', [StaffDashboardController::class, 'index'])->middleware(['auth', 'staff']);
+Route::post('/staff/appointment/{id}/status', [StaffDashboardController::class, 'updateStatus']);
+Route::get('/pendaftaran', [OfflineBookingController::class, 'create'])->name('pendaftaran.form');
+Route::post('/simpanpendaftar', [OfflineBookingController::class, 'store'])->name('pendaftaran.store');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/konfirmasi-pasien', [KonfirmasiPasienStaffController::class, 'index'])
+        ->name('konfirmasi.pasien');
+    
+    Route::post('/konfirmasi-pasien/{id}', [KonfirmasiPasienStaffController::class, 'konfirmasi']);
+});
 
 Route::get('/Pembayaran', function () {
     return Inertia::render('staff/pembayaran');
@@ -58,10 +61,6 @@ Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
 
-Route::get('/JadwalKlinik', function () {
-    return Inertia::render('staff/Jadwal');
-})->name('JadwalKlinik');
-
 Route::get('/Pasien', function () {
     return Inertia::render('staff/PasienList');
 })->name('Pasien');
@@ -69,6 +68,15 @@ Route::get('/Pasien', function () {
 Route::get('/DetailPasien', function () {
     return Inertia::render('staff/DetailPasien');
 })->name('DetailPasien');
+
+Route::get('/listjanjitemu', function () {
+    return Inertia::render('staff/listjanjitemu');
+})->name('janjitemu');
+
+
+Route::get('/clinic-schedules', [ClinicScheduleController::class, 'index'])->name('clinic.schedules.index');
+Route::put('/clinic-schedules/bulk-update', [ClinicScheduleController::class, 'bulkUpdate'])->name('clinic.schedules.bulk-update');
+Route::get('/schedule-exceptions', [ScheduleExceptionController::class, 'index'])->name('schedule.exceptions.index');
 
 
 //Pasien
@@ -149,7 +157,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard'); // pasien
-    // Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff');
+    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff'); // staff
     Route::get('/dashboarddokter', [DoctorDashboardController::class, 'index'])->name('dashboarddokter'); // dokter
 });
 
