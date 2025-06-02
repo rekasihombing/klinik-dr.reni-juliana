@@ -51,6 +51,12 @@ public function patient()
 {
     return $this->hasOne(Doctor::class);
 }
+
+public function rekamMedis()
+{
+    return $this->hasMany(RekamMedis::class, 'doctor_id');
+}
+
 } 
 
 

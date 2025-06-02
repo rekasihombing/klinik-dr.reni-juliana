@@ -45,17 +45,17 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200">
-                <tr 
-                  v-for="(day, index) in daysOfWeek" 
-                  :key="day" 
-                  :class="[
-                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white',
-                    'hover:bg-blue-50 transition-colors'
-                  ]"
-                >
-                  <td class="px-6 py-4 font-medium text-gray-800">{{ day }}</td>
-                  <td class="px-6 py-4 text-gray-600">{{ jadwalData[day] }}</td>
-                </tr>
+              <tr 
+                v-for="(day, index) in daysOfWeek" 
+                :key="day" 
+                :class="[
+                  index % 2 === 0 ? 'bg-gray-50' : 'bg-white',
+                  'hover:bg-blue-50 transition-colors'
+                ]"
+              >
+                <td class="px-6 py-4 font-medium text-gray-800">{{ day }}</td>
+                <td class="px-6 py-4 text-gray-600">{{ jadwalData[day] }}</td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -355,12 +355,22 @@
 
 <script>
 import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
+import { ref, computed } from 'vue'
+import { usePage } from '@inertiajs/inertia-vue3'
+
+
 
 export default {
   name: 'JadwalKlinikDashboard',
   components: {
     SidebarStaff
   },
+
+  props: {
+    schedules: Array
+  },
+
+
   data() {
     return {
       showEditPopup: false,
@@ -372,48 +382,58 @@ export default {
       selectedDate: null,
       currentMonth: 4, // Mei = 4 (0-indexed)
       currentYear: 2025,
-      today: new Date(), // Menambahkan tanggal hari ini
-      
-      jadwalData: {
-        Senin: '08:00 - 15:00',
-        Selasa: '08:00 - 15:00',
-        Rabu: '08:00 - 15:00',
-        Kamis: '08:00 - 15:00',
-        Jumat: '08:00 - 15:00',
-        Sabtu: 'Tutup',
-        Minggu: 'Tutup'
-      },
-      
+      today: new Date(),
+
       daysOfWeek: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
       monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
-      
       timeSlots: [
-        '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', 
+        '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
         '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
         '18:00', '19:00', '20:00', '21:00', '22:00'
       ]
-    }
+    };
   },
-  
   computed: {
     calendarDays() {
-      const daysInMonth = this.getDaysInMonth(this.currentMonth, this.currentYear);
-      const firstDay = this.getFirstDayOfMonth(this.currentMonth, this.currentYear);
-      const days = [];
-
-      // Empty cells for days before the first day of the month
-      for (let i = 0; i < firstDay; i++) {
-        days.push(null);
-      }
-
-      // Days of the month
-      for (let day = 1; day <= daysInMonth; day++) {
-        days.push(day);
-      }
-
-      return days;
-    }
+  const daysInMonth = this.getDaysInMonth(this.currentMonth, this.currentYear);
+  const firstDay = this.getFirstDayOfMonth(this.currentMonth, this.currentYear);
+  const days = [];
+  
+  // Empty cells for days before the first day of the month
+  for (let i = 0; i < firstDay; i++) {
+    days.push(null);
+  }
+  
+  // Days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    days.push(day);
+  }
+  
+  return days;
   },
+
+    jadwalData() {
+      const jadwal = {};
+
+      this.daysOfWeek.forEach(day => {
+        const match = this.schedules.find(s => 
+          s.day_of_week.toLowerCase() === day.toLowerCase()
+        );
+
+        if (match) {
+          jadwal[day] = match.is_open
+            ? `${match.open_time.substring(0, 5)} - ${match.close_time.substring(0, 5)}`
+            : 'Tutup';
+        } else {
+          jadwal[day] = 'Tidak tersedia';
+        }
+      });
+
+      return jadwal;
+    }
+
+  },
+  
   
   methods: {
     // Method baru untuk mengecek apakah tanggal adalah hari ini

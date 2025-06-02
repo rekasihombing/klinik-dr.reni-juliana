@@ -118,7 +118,7 @@ export default {
     });
 
     const submit = () => {
-      form.post('/pendaftaran');
+      form.post('/simpanpendaftar');
     };
 
     return {

@@ -13,35 +13,23 @@ class KonfirmasiPasienStaffController extends Controller
     public function index()
     {
         try {
-            // Ambil hanya pasien yang sudah check-in hari ini
+            // Ambil pasien hari ini yang sudah check-in dan statusnya menunggu
             $pasienCheckedIn = Appointment::whereNotNull('checked_in_at')
-                ->whereDate('checked_in_at', Carbon::today()) // hanya hari ini
-                ->with(['patient']) 
-                ->orderBy('checked_in_at', 'asc') // urutkan berdasarkan waktu check-in
+                ->whereDate('checked_in_at', Carbon::today())
+                ->where('dibuat_oleh', 'pasien')
+                ->where('status', 'menunggu')  // hanya status menunggu
+                ->with('patient')
+                ->orderBy('checked_in_at', 'asc')
                 ->get();
-
-            // Debug info
-            logger()->info('Jumlah pasien checked in hari ini: ' . $pasienCheckedIn->count());
-            
-            if ($pasienCheckedIn->count() > 0) {
-                logger()->info('Sample checked-in patient:', [
-                    'id' => $pasienCheckedIn->first()->id,
-                    'patient_name' => $pasienCheckedIn->first()->patient?->nama_lengkap,
-                    'checked_in_at' => $pasienCheckedIn->first()->checked_in_at,
-                    'status' => $pasienCheckedIn->first()->status,
-                ]);
-            }
 
             return Inertia::render('staff/KonfiirmasiPasienStaff', [
                 'pasienList' => $pasienCheckedIn,
                 'totalCheckedIn' => $pasienCheckedIn->count(),
                 'currentDate' => Carbon::today()->format('Y-m-d')
             ]);
-
         } catch (\Exception $e) {
-            logger()->error('Error in KonfirmasiPasienController: ' . $e->getMessage());
+            logger()->error('Error in KonfirmasiPasienStaffController: ' . $e->getMessage());
             logger()->error('Stack trace: ' . $e->getTraceAsString());
-            
             return Inertia::render('staff/KonfiirmasiPasienStaff', [
                 'pasienList' => [],
                 'totalCheckedIn' => 0,
@@ -50,29 +38,28 @@ class KonfirmasiPasienStaffController extends Controller
         }
     }
 
-    // Method untuk konfirmasi pasien
-    public function konfirmasi(Request $request, $appointmentId)
-    {
-        try {
-            $appointment = Appointment::findOrFail($appointmentId);
-            
-            // Update status menjadi confirmed
-            $appointment->update([
-                'status' => 'confirmed',
-                'confirmed_at' => Carbon::now(),
-                'confirmed_by' => auth()->id() // jika ada auth
-            ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Pasien berhasil dikonfirmasi'
-            ]);
+public function konfirmasi(Request $request, $appointmentId)
+{
+    try {
+        $appointment = Appointment::findOrFail($appointmentId);
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal konfirmasi pasien: ' . $e->getMessage()
-            ], 500);
-        }
+        $appointment->update([
+            'status' => 'dikonfirmasi',
+            'confirmed_at' => Carbon::now(),
+            'confirmed_by' => auth()->id() ?? null
+        ]);
+
+        // redirect via Inertia ke dashboard atau halaman pasien hari ini
+        return Inertia::location('/dashboard-staff');  // redirect
+        // atau kalau mau render langsung page
+        // return Inertia::render('staff/DashboardStaff');
+
+    } catch (\Exception $e) {
+        return Inertia::render('ErrorPage', [
+            'message' => 'Gagal konfirmasi pasien: ' . $e->getMessage()
+        ]);
     }
+}
+
 }

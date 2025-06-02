@@ -27,16 +27,15 @@
       </div>
     </div>
 
-
       <div class="bg-white rounded-xl px-8 py-6 w-full sm:w-1/4 flex flex-col items-center justify-center text-center min-h-[140px] shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1">
         <p class="text-gray-600 text-base font-medium mb-2">Pasien Hari ini</p>
-        <p class="text-gray-900 font-extrabold text-3xl">3</p>
+        <p class="text-gray-900 font-extrabold text-3xl">{{ totalPasienHariIni > 0 ? totalPasienHariIni : 'Tidak ada pasien dikonfirmasi' }}</p>
       </div>
 
       <div @click="goToConfirmation" 
       class="bg-white rounded-xl px-8 py-6 w-full sm:w-1/2 flex flex-col items-center justify-center min-h-[140px] shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1 cursor-pointer">
         <p class="text-gray-600 text-base font-medium mb-3 text-center">Pasien Online Menunggu Konfirmasi</p>
-        <p class="text-gray-900 font-extrabold text-4xl mb-4">10</p>
+         <p class="text-gray-900 font-extrabold text-4xl mb-4">{{ totalMenungguKonfirmasi.length > 0 ? totalMenungguKonfirmasi.length : '0' }}</p>
         <button 
         @click="goToConfirmation" 
         class="bg-blue-600 text-white text-sm font-semibold rounded-md px-5 py-2 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1" type="button">
@@ -58,29 +57,22 @@
                 <th class="py-2 px-3 border border-blue-700 text-center align-middle w-25">Detail</th>
               </tr>
             </thead>
-            <tbody>
-              <tr class="border border-gray-300">
-                <td class="py-2 px-3 border border-gray-300 bg-blue-100 font-normal text-center align-middle">A01</td>
-                <td class="py-2 px-3 border border-gray-300">Zahra N Parinduri</td>
-                <td class="py-2 px-3 border border-gray-300 text-center">15.00</td>
-                <td class="py-2 px-3 border border-gray-300">Selesai</td>
-                <td class="py-2 px-3 border border-gray-300 text-center text-blue-600 cursor-pointer hover:underline" @click="showDetail('REG - 00321', 'Zahra N Parinduri', '000000000000000000000', '10 - 10 - 2005', 'Perempuan', 'O', '08222838901', 'Medan', 'Pusing, Demam, Batuk')">Lihat Detail</td>
-              </tr>
-              <tr class="border border-gray-300">
-                <td class="py-2 px-3 border border-gray-300 bg-blue-100 font-normal text-center align-middle">A02</td>
-                <td class="py-2 px-3 border border-gray-300">Marvitha Khairani</td>
-                <td class="py-2 px-3 border border-gray-300 text-center">15.00</td>
-                <td class="py-2 px-3 border border-gray-300">Menunggu Pembayaran</td>
-                <td class="py-2 px-3 border border-gray-300 text-center text-blue-600 cursor-pointer hover:underline" @click="showDetail('REG - 00322', 'Marvitha Khairani', '000000000000000000001', '10 - 10 - 2005', 'Perempuan', 'O', '08222838902', 'Medan', 'Pusing, Demam')">Lihat Detail</td>
-              </tr>
-              <tr class="border border-gray-300">
-                <td class="py-2 px-3 border border-gray-300 bg-blue-100 font-normal text-center align-middle">A03</td>
-                <td class="py-2 px-3 border border-gray-300">Wawan Santoso</td>
-                <td class="py-2 px-3 border border-gray-300 text-center">19.00</td>
-                <td class="py-2 px-3 border border-gray-300">Menunggu Antrian</td>
-                <td class="py-2 px-3 border border-gray-300 text-center text-blue-600 cursor-pointer hover:underline" @click="showDetail('REG - 00323', 'Wawan Santoso', '000000000000000000002', '10 - 10 - 2005', 'Laki-laki', 'B', '08222838903', 'Medan', 'Batuk')">Lihat Detail</td>
-              </tr>
-            </tbody>
+<tbody>
+  <tr v-for="(patient, index) in pasienHariIni" :key="patient.id" class="border border-gray-300">
+    <td class="py-2 px-3 border border-gray-300 bg-blue-100 font-normal text-center align-middle">
+      {{ patient.no_antrian }}
+    </td>
+    <td class="py-2 px-3 border border-gray-300">{{ patient.nama_pasien }}</td>
+    <td class="py-2 px-3 border border-gray-300 text-center">{{ patient.waktu }}</td>
+    <td class="py-2 px-3 border border-gray-300">{{ patient.status }}</td>
+    <td 
+      class="py-2 px-3 border border-gray-300 text-center text-blue-600 cursor-pointer hover:underline" 
+      @click="showDetail(patient)"
+    >
+      Lihat Detail
+    </td>
+  </tr>
+</tbody>
           </table>
         </div>
       </section>
@@ -171,18 +163,25 @@
 </template>
 
 <script>
-import { router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3'
 import SidebarStaff from '../../layouts/staff/SidebarStaff.vue'
 
 export default {
   name: 'DashboardStaff',
-  components: {
-    SidebarStaff
+  components: { SidebarStaff },
+  props: {
+    pasienHariIni: Array,
+    totalPasienHariIni: Number,
+    totalMenungguKonfirmasi: Number,
+    aktivitasMingguan: Array,
+    currentDate: String,
+    currentTime: String
   },
   data() {
     return {
       isDetailVisible: false,
-      registrationNumber: '',
+      // Untuk detail pasien, inisialisasi kosong
+      registrasiNumber: '',
       patientName: '',
       nik: '',
       birthDate: '',
@@ -194,31 +193,31 @@ export default {
     }
   },
   methods: {
-    showDetail(registrationNumber, name, nik, birthDate, gender, bloodType, phoneNumber, address, complaint) {
-      this.registrationNumber = registrationNumber;
-      this.patientName = name;
-      this.nik = nik;
-      this.birthDate = birthDate;
-      this.gender = gender;
-      this.bloodType = bloodType;
-      this.phoneNumber = phoneNumber;
-      this.address = address;
-      this.complaint = complaint;
-      this.isDetailVisible = true;
+    showDetail(patient) {
+      this.registrasiNumber = patient.registrasi_number
+      this.patientName = patient.nama_pasien
+      this.nik = patient.nik
+      this.birthDate = patient.tanggal_lahir
+      this.gender = patient.jenis_kelamin
+      this.bloodType = patient.golongan_darah
+      this.phoneNumber = patient.nomor_hp
+      this.address = patient.alamat
+      this.complaint = patient.keluhan
+      this.isDetailVisible = true
     },
     handleEdit() {
-      alert('Tombol Ubah diklik');
+      alert('Tombol Ubah diklik')
     },
-      goToRegistration() {
-    // Contoh menggunakan router InertiaJS untuk pindah halaman pendaftaran
-    router.visit('/pendaftaran');  // ganti dengan path halaman pendaftaran yang sesuai
-  },
-  goToConfirmation() {
-    router.visit('/KonfirmasiPasien');
-  }
+    goToRegistration() {
+      router.visit('/pendaftaran')
+    },
+    goToConfirmation() {
+      router.visit('/konfirmasi-pasien')
+    }
   }
 }
 </script>
+
 
 <style scoped>
 /* Tambahkan gaya untuk pop-up jika diperlukan */

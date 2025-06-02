@@ -8,17 +8,39 @@ class CreateRekamMedisTable extends Migration
 {
     public function up()
     {
-        Schema::create('rekam_medis', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('appointment_id');
-            $table->text('keluhan')->nullable();
-            $table->text('diagnosis')->nullable();
-            $table->text('tindakan')->nullable();
-            $table->timestamp('tanggal_input')->useCurrent();
+       Schema::create('rekam_medis', function (Blueprint $table) {
+    $table->id();
 
-            $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
-            $table->index('appointment_id');
-        });
+    $table->unsignedBigInteger('appointment_id')->unique();
+    $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
+
+    $table->unsignedBigInteger('patient_id');
+    $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+
+    // Riwayat Kunjungan
+    $table->string('no_rekam_medis')->nullable();
+    $table->date('tanggal_kunjungan')->nullable();
+    $table->text('keluhan')->nullable();
+    $table->text('rps')->nullable();
+    $table->text('rpd')->nullable();
+    $table->text('alergi')->nullable();
+    $table->text('riwayat_obat')->nullable();
+
+    // Pemeriksaan Fisik
+    $table->string('tekanan_darah')->nullable();
+    $table->string('suhu_tubuh')->nullable();
+    $table->string('nadi')->nullable();
+    $table->string('pernapasan')->nullable();
+    $table->string('berat_badan')->nullable();
+    $table->string('status_gizi')->nullable();
+
+    // Diagnosa & Catatan (tanpa tindakan karena sudah ada relasi di tagihan_tindakan)
+    $table->text('diagnosa')->nullable();
+    $table->text('catatan_dokter')->nullable();
+
+    $table->timestamps();
+});
+
     }
 
     public function down()

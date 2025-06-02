@@ -31,6 +31,7 @@ public function store(Request $request)
 
     $tanggal = Carbon::now()->toDateString();       // yyyy-mm-dd
     $jam = Carbon::now()->format('H:i');            // hh:mm
+    $checkedInAt = Carbon::now()->format('Y-m-d H:i:s');
 
     // Buat data pasien dulu
     $patient = Patient::create([
@@ -47,13 +48,15 @@ public function store(Request $request)
     // Buat appointment dengan 'pasien_id' sesuai model
 Appointment::create([
     'pasien_id' => $patient->id,
-    'dokter_id' => 1, // asumsi kamu ada input dokter
+    'dokter_id' => 1,
     'tanggal' => $tanggal,
     'jam_konsultasi' => $jam,
     'keluhan' => $validated['keluhan'],
-    'status' => 'menunggu',
-    'dibuat_oleh' => 'staff',  // Karena daftar offline oleh staf
+    'status' => 'dikonfirmasi',
+    'dibuat_oleh' => 'staff',
+    'checked_in_at' => $checkedInAt,
 ]);
+
 
 
     return redirect()->route('dashboardstaff')->with('success', 'Pendaftaran berhasil.');

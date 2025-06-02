@@ -1,8 +1,6 @@
 <template>
   <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-      <div>{{ clinicName }}</div>
       <div class="flex items-center space-x-1 cursor-pointer">
-        <span>{{ patientData.nama || patientName }}</span>
       </div>
 
     <!-- Main Container -->
@@ -11,26 +9,10 @@
       <Sidebar :patient-name="patientData.nama || patientName" />
 
       <!-- Main content -->
-      <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight">
+      <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight text-black">
+
         <!-- Top bar -->
-        <header class="bg-sky-200 flex justify-between items-center px-3 py-2 text-[13px] select-none">
-          <div class="flex items-center space-x-1">
-            <button
-              aria-label="Home"
-              class="p-1 rounded hover:bg-sky-300 active:bg-sky-400 transition-colors"
-              type="button"
-            >
-              <i class="fas fa-home text-sky-900"></i>
-            </button>
-            <span>Dashboard</span>
-            <i class="fas fa-chevron-right text-sky-900"></i>
-            <span>Pasien</span>
-          </div>
-          <div class="text-sky-900 text-right font-normal">
-            <div>{{ formatCurrentDate() }}</div>
-            <div class="font-mono font-semibold tracking-widest">{{ currentTime }}</div>
-          </div>
-        </header>
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
         <!-- Content -->
         <div class="max-w-4xl mx-auto p-4">
@@ -38,10 +20,16 @@
             class="bg-white rounded-md shadow-md p-4 select-text"
             style="min-width:320px"
           >
-            <h2 class="font-bold text-[17px] mb-3">Detail Pasien</h2>
+            <h2 class="text-[#2A4482] font-semibold text-[15px] mb-2 border-b border-gray-400 pb-1">Rekam Medis</h2>
 
-            <div class="mb-3">
-              <strong class="text-[13px]">Rekam Medis</strong>
+            <!-- Error Messages - Inertia style -->
+            <div v-if="form.errors && Object.keys(form.errors).length > 0" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <strong class="font-bold">Terjadi kesalahan:</strong>
+              <ul class="mt-2">
+                <li v-for="(error, field) in form.errors" :key="field" class="text-sm">
+                  <strong>{{ field }}:</strong> {{ Array.isArray(error) ? error[0] : error }}
+                </li>
+              </ul>
             </div>
 
             <div class="flex justify-between text-[13px] mb-2">
@@ -49,226 +37,268 @@
               <div>No. Rekam Medis : {{ patientData.noRekamMedis || generateRecordNumber() }}</div>
             </div>
 
-            <table class="w-full border-collapse text-[13px]">
-              <tbody>
-                <tr>
-                  <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
-                    colspan="2"
-                  >
-                    Informasi Pasien
-                  </th>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5 w-36">Nama</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ patientData.nama || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Umur</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ patientData.umur || calculateAge() }}</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Jenis Kelamin</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ patientData.jenisKelamin || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Golongan Darah</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ patientData.golonganDarah || '-' }}</td>
-                </tr>
+            <form @submit.prevent="submitForm">
+              <table class="w-full border-collapse text-[13px]">
+                <tbody>
+                  <tr>
+                    <th
+                      class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Informasi Pasien
+                    </th>
+                  </tr>
 
-                <tr>
-                  <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
-                    colspan="2"
-                  >
-                    Riwayat Kunjungan
-                  </th>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5 w-36">Tanggal Kunjungan</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ formatVisitDate() }}</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Keluhan Utama</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ visitHistory.keluhanUtama || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">RPS</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    {{ visitHistory.rps || '-' }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">RPD</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    {{ visitHistory.rpd || '-' }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Riwayat Alergi</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ visitHistory.riwayatAlergi || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Riwayat Obat</td>
-                  <td class="border border-gray-300 px-2 py-0.5">{{ visitHistory.riwayatObat || '-' }}</td>
-                </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Umur</td>
+                    <td class="border border-gray-300 px-2 py-0.5">{{ patientData.umur || calculateAge() }}</td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Jenis Kelamin</td>
+                    <td class="border border-gray-300 px-2 py-0.5">{{ patientData.jenisKelamin || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Golongan Darah</td>
+                    <td class="border border-gray-300 px-2 py-0.5">{{ patientData.golonganDarah || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="px-2 py-0.5"></td> <!-- Baris kosong -->
+                  </tr>
+                  <tr>
+                    <th
+                      class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Riwayat Kunjungan
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5 w-36">Tanggal Kunjungan</td>
+                    <td class="border border-gray-300 px-2 py-0.5">{{ formatVisitDate() }}</td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Keluhan Utama</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <textarea
+                        v-model="form.keluhan"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="2"
+                        placeholder="Masukkan keluhan utama pasien"
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">RPS</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <textarea
+                        v-model="form.rps"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="2"
+                        placeholder="Riwayat Penyakit Sekarang"
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">RPD</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <textarea
+                        v-model="form.rpd"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="2"
+                        placeholder="Riwayat Penyakit Dahulu"
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Riwayat Alergi</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.alergi"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        placeholder="Riwayat alergi pasien"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Riwayat Obat</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.riwayat_obat"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        placeholder="Riwayat obat yang sedang dikonsumsi"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="px-2 py-0.5"></td> <!-- Baris kosong -->
+                  </tr>
+                  <tr>
+                    <th
+                      class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Pemeriksaan Fisik
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5 w-36">Tekanan Darah</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.tekanan_darah"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        aria-label="Tekanan Darah"
+                        placeholder="120/80 mmHg"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Suhu Tubuh</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.suhu_tubuh"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        aria-label="Suhu Tubuh"
+                        placeholder="36.5°C"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Nadi</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.nadi"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        aria-label="Nadi"
+                        placeholder="80 bpm"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Pernapasan</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.pernapasan"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        aria-label="Pernapasan"
+                        placeholder="20/menit"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Berat Badan</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.berat_badan"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        aria-label="Berat Badan"
+                        placeholder="55 kg"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Status Gizi</td>
+                    <td class="border border-gray-300 px-2 py-0.5">
+                      <input
+                        v-model="form.status_gizi"
+                        type="text"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
+                        aria-label="Status Gizi"
+                        placeholder="Normal"
+                      />
+                    </td>
+                  </tr>
 
-                <tr>
-                  <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
-                    colspan="2"
-                  >
-                    Pemeriksaan Fisik
-                  </th>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5 w-36">Tekanan Darah</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.tekananDarah"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Tekanan Darah"
-                      placeholder="120/80 mmHg"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Suhu Tubuh</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.suhuTubuh"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Suhu Tubuh"
-                      placeholder="36.5°C"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Nadi</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.nadi"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Nadi"
-                      placeholder="80 bpm"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Pernapasan</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.pernapasan"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Pernapasan"
-                      placeholder="20/menit"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Berat Badan</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.beratBadan"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Berat Badan"
-                      placeholder="55 kg"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5">Status Gizi</td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.statusGizi"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Status Gizi"
-                      placeholder="Normal"
-                    />
-                  </td>
-                </tr>
+                  <tr>
+                    <th
+                      class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Diagnosa
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5" colspan="2">
+                      <textarea
+                        v-model="form.diagnosa"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="3"
+                        aria-label="Diagnosa"
+                        placeholder="Masukkan diagnosa"
+                      ></textarea>
+                    </td>
+                  </tr>
 
-                <tr>
-                  <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
-                    colspan="2"
-                  >
-                    Diagnosa
-                  </th>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5" colspan="2">
-                    <input
-                      v-model="medicalRecord.diagnosa"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Diagnosa"
-                      placeholder="Masukkan diagnosa"
-                    />
-                  </td>
-                </tr>
+                   <tr>
+                    <th
+                      class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Catatan dokter
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5" colspan="2">
+                      <textarea
+                        v-model="form.catatan_dokter"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="3"
+                        aria-label="catatan_dokter"
+                        placeholder="masukkan catatan disini"
+                      ></textarea>
+                    </td>
+                  </tr>
 
-                <tr>
-                  <th
-                    class="border border-gray-300 text-left font-semibold px-2 py-0.5"
-                    colspan="2"
-                  >
-                    Tindakan/Tedis
-                  </th>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5" colspan="2">
-                    <input
-                      v-model="medicalRecord.tindakan"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Tindakan/Tedis"
-                      placeholder="Masukkan tindakan medis"
-                    />
-                  </td>
-                </tr>
+                  <!-- <tr>
+                    <th
+                      class="border border-gray-300 text-left font-semibold px-2 py-0.5"
+                      colspan="2"
+                    >
+                      Tindakan/Terapi
+                    </th>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5" colspan="2">
+                      <textarea
+                        v-model="form.tindakan"
+                        class="w-full border border-gray-300 px-1 py-0.5 text-[13px] resize-none"
+                        rows="3"
+                        aria-label="Tindakan/Terapi"
+                        placeholder="Masukkan tindakan medis atau terapi"
+                      ></textarea>
+                    </td>
+                  </tr> -->
+                </tbody>
+              </table>
 
-                <tr>
-                  <td class="border border-gray-300 px-2 py-0.5 font-semibold" style="width: 160px;">
-                    Catatan Dokter
-                    <span class="inline-block ml-1">:</span>
-                  </td>
-                  <td class="border border-gray-300 px-2 py-0.5">
-                    <input
-                      v-model="medicalRecord.catatanDokter"
-                      type="text"
-                      class="w-full border border-gray-300 px-1 py-0.5 text-[13px]"
-                      aria-label="Catatan Dokter"
-                      placeholder="Catatan tambahan dokter"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              <div class="flex gap-3 mt-4">
+                <button
+                  type="submit"
+                  :disabled="form.processing"
+                  class="bg-[#3674B5] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[13px] shadow-md px-3 py-1 rounded select-none flex items-center gap-2 transition-colors"
+                >
+                  <i class="fas fa-save text-[13px]"></i> 
+                  <span v-if="form.processing">Menyimpan...</span>
+                  <span v-else>Simpan Rekam Medis</span>
+                </button>
 
-            <button
-              @click="createPrescription"
-              type="button"
-              class="mt-4 flex items-center gap-2 text-[13px] font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-            >
-              <i class="far fa-file-alt text-lg"></i>
-              Buat Resep Obat
-            </button>
+                <button
+                  type="button"
+                  @click="downloadRecord"
+                  class="bg-green-600 hover:bg-green-700 text-white text-[13px] shadow-md px-3 py-1 rounded select-none flex items-center gap-2 transition-colors"
+                >
+                  <i class="fas fa-download text-[13px]"></i> Download PDF
+                </button>
+              </div>
+            </form>
+
           </section>
-
-          <button
-            @click="downloadRecord"
-            type="button"
-            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-[13px] px-3 py-1 rounded select-none flex items-center gap-2 transition-colors"
-          >
-            <i class="fas fa-download text-[13px]"></i> Unduh
-          </button>
         </div>
       </main>
     </div>
@@ -276,20 +306,25 @@
 </template>
 
 <script setup>
+// Bagian script yang diperbaiki untuk komponen Vue
 import { defineProps, onMounted, ref, computed } from "vue";
+import { useForm } from '@inertiajs/vue3';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
+import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
 import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
   patientName: String,
   clinicName: String,
   nextAppointment: Object,
-  // Props baru untuk data dinamis
+  appointment: Object,
+  pasien: Object,
   patientData: {
     type: Object,
     default: () => ({
+      id: '',
       nama: '',
       umur: '',
       tanggalLahir: '',
@@ -297,7 +332,10 @@ const props = defineProps({
       golonganDarah: '',
       noRekamMedis: ''
     })
+
+    
   },
+
   visitHistory: {
     type: Object,
     default: () => ({
@@ -308,26 +346,49 @@ const props = defineProps({
       riwayatAlergi: '',
       riwayatObat: ''
     })
-  }
+  },
+  errors: Object // Tambahkan untuk menangani error dari server
 });
+
+
+// Breadcrumb data
+const breadcrumbPages = [
+  { label: "Dashboard", href: "/dashboarddokter" },
+  { label: "Tambah Rekam Medis", href: "/tambahrekammedis" }
+];
 
 const showInfoModal = ref(false);
 const currentTime = ref('');
+const recordNumber = ref('');
 
-// Medical record form data
-const medicalRecord = ref({
-  tekananDarah: '',
-  suhuTubuh: '',
+// Form dengan Inertia - pastikan semua field sesuai dengan validasi backend
+const form = useForm({
+  // Data pasien dan appointment - pastikan ada nilai
+  patient_id: props.patientData?.id || props.appointment?.patient_id || props.patient?.id || '',
+  appointment_id: props.appointment?.id || '',
+  no_rekam_medis: props.patientData?.noRekamMedis || generateRecordNumber(),
+  tanggal_kunjungan: props.visitHistory?.tanggalKunjungan || new Date().toISOString().split('T')[0],
+  
+  // Anamnesis
+  keluhan: props.visitHistory?.keluhan || '',
+  rps: props.visitHistory?.rps || '',
+  rpd: props.visitHistory?.rpd || '',
+  alergi: props.visitHistory?.Alergi || '',
+  riwayat_obat: props.visitHistory?.riwayatObat || '',
+  
+  // Pemeriksaan Fisik
+  tekanan_darah: '',
+  suhu_tubuh: '',
   nadi: '',
   pernapasan: '',
-  beratBadan: '',
-  statusGizi: '',
+  berat_badan: '',
+  status_gizi: '',
+  
+  // Diagnosa dan Tindakan
   diagnosa: '',
-  tindakan: '',
-  catatanDokter: ''
+  // tindakan: '',
+  catatan_dokter: ''
 });
-
-const recordNumber = ref('');
 
 function generateRecordNumber() {
   if (!recordNumber.value) {
@@ -336,14 +397,14 @@ function generateRecordNumber() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    recordNumber.value = `${year}${month}${day}${random}`; // ✅ Perbaikan: gunakan backticks
+    recordNumber.value = `RM${year}${month}${day}${random}`;
   }
   return recordNumber.value;
 }
 
 // Hitung umur dari tanggal lahir
 function calculateAge() {
-  if (!props.patientData.tanggalLahir) return '';
+  if (!props.patientData?.tanggalLahir) return '';
   
   const birthDate = new Date(props.patientData.tanggalLahir);
   const today = new Date();
@@ -354,29 +415,17 @@ function calculateAge() {
     age--;
   }
   
-  return age;
+  return age + ' tahun';
 }
 
 // Format tanggal kunjungan
 function formatVisitDate() {
-  const visitDate = props.visitHistory.tanggalKunjungan || new Date();
+  const visitDate = props.visitHistory?.tanggalKunjungan || new Date();
   const date = new Date(visitDate);
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day} - ${month} - ${year}`; // ✅ Perbaikan: gunakan backticks
-}
-
-// Format tanggal saat ini
-function formatCurrentDate() {
-  const date = new Date();
-  const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  };
-  return date.toLocaleDateString('id-ID', options);
+  return `${day}-${month}-${year}`;
 }
 
 // Update waktu setiap detik
@@ -385,9 +434,86 @@ function updateTime() {
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
-  currentTime.value = `${hours} : ${minutes} : ${seconds}`; // ✅ Perbaikan: gunakan backticks
+  currentTime.value = `${hours}:${minutes}:${seconds}`;
 }
 
+// Submit form ke database - diperbaiki
+function submitForm() {
+  // Validasi data sebelum submit
+  if (!form.patient_id) {
+    alert('Data pasien tidak ditemukan. Silakan refresh halaman.');
+    return;
+  }
+
+  if (!form.keluhan.trim()) {
+    alert('Keluhan utama harus diisi.');
+    return;
+  }
+
+  if (!form.diagnosa.trim()) {
+    alert('Diagnosa harus diisi.');
+    return;
+  }
+
+  // if (!form.tindakan.trim()) {
+  //   alert('Tindakan/Terapi harus diisi.');
+  //   return;
+  // }
+
+  // Submit menggunakan Inertia form
+  form.post('/rekam-medis', {
+    onSuccess: (page) => {
+      console.log('Medical record saved successfully');
+      // Redirect ke dashboard dengan pesan sukses
+      router.visit('/dashboarddokter', {
+        method: 'get',
+        data: { success: 'Rekam medis berhasil disimpan' }
+      });
+    },
+    onError: (errors) => {
+      console.error('Validation errors:', errors);
+      // Error akan otomatis ditampilkan di template
+      // Scroll ke atas untuk melihat pesan error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    onFinish: () => {
+      console.log('Form submission finished');
+    },
+    preserveScroll: false, // Ubah ke false agar bisa scroll ke atas saat error
+    preserveState: false   // Ubah ke false untuk refresh state saat sukses
+  });
+}
+
+// Download record sebagai PDF - placeholder untuk fitur masa depan
+function downloadRecord() {
+  // Validasi apakah data sudah disimpan
+  if (!form.isDirty && !form.recentlySuccessful) {
+    alert('Silakan simpan rekam medis terlebih dahulu sebelum mendownload.');
+    return;
+  }
+
+  const recordData = {
+    patient: props.patientData,
+    visitHistory: props.visitHistory,
+    medicalRecord: {
+      tekanan_darah: form.tekanan_darah,
+      suhu_tubuh: form.suhu_tubuh,
+      nadi: form.nadi,
+      pernapasan: form.pernapasan,
+      berat_badan: form.berat_badan,
+      status_gizi: form.status_gizi,
+      diagnosa: form.diagnosa,
+      // tindakan: form.tindakan,
+      catatan_dokter: form.catatan_dokter
+    },
+    recordNumber: form.no_rekam_medis,
+    visitDate: formatVisitDate()
+  };
+  
+  console.log('Downloading medical record...', recordData);
+  // TODO: Implementasi download PDF
+  alert('Fitur download PDF akan segera tersedia');
+}
 
 onMounted(() => {
   // Initialize calendar
@@ -423,26 +549,14 @@ onMounted(() => {
   // Start time updates
   updateTime();
   setInterval(updateTime, 1000);
-  
-  // Generate record number once on mount
-  if (!props.patientData.noRekamMedis) {
-    generateRecordNumber();
-  }
+
+  // Log untuk debugging
+  console.log('Patient Data:', props.patientData);
+  console.log('Form Data:', form.data());
 });
 
-function formatDate(dateStr) {
-  if (!dateStr) return "";
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  return new Date(dateStr).toLocaleDateString("id-ID", options);
-}
-
 function handleJanjiTemuClick() {
-  if (props.nextAppointment && props.nextAppointment.tanggal && props.nextAppointment.jam_konsultasi) {
+  if (props.nextAppointment?.tanggal && props.nextAppointment?.jam_konsultasi) {
     showInfoModal.value = true;
   } else {
     router.visit("/janjitemu");
@@ -450,42 +564,38 @@ function handleJanjiTemuClick() {
 }
 
 function createPrescription() {
-  // Logic untuk membuat resep obat
-  console.log('Creating prescription for:', props.patientData.nama);
-  // Navigate ke halaman resep dengan data pasien
+  console.log('Creating prescription for:', props.patientData?.nama);
+  // Gunakan Inertia visit dengan data
   router.visit('/resep', {
+    method: 'get',
     data: {
-      patientId: props.patientData.id,
-      patientName: props.patientData.nama,
-      medicalRecord: medicalRecord.value
-    }
+      patient_id: props.patientData?.id,
+      patient_name: props.patientData?.nama,
+      medical_record_id: form.no_rekam_medis
+    },
+    preserveState: true
   });
 }
 
-function downloadRecord() {
-  // Logic untuk download rekam medis
-  const recordData = {
-    patient: props.patientData,
-    visitHistory: props.visitHistory,
-    medicalRecord: medicalRecord.value,
-    recordNumber: props.patientData.noRekamMedis || generateRecordNumber(),
-    visitDate: formatVisitDate()
-  };
-  
-  console.log('Downloading medical record...', recordData);
-  
-  // Bisa implementasi download sebagai PDF atau format lain
-  // Contoh: generate PDF atau export ke Excel
-}
+onMounted(() => {
+  console.log('Patient ID:', props.patientData?.id);
+});
 </script>
 
 <style scoped>
-/* Tambahan styling jika perlu */
 .select-text {
   user-select: text;
 }
 
 .select-none {
   user-select: none;
+}
+
+.disabled\:opacity-50:disabled {
+  opacity: 0.5;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed;
 }
 </style>

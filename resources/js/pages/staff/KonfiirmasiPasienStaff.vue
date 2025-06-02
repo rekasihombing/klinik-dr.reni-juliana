@@ -8,18 +8,15 @@
       <!-- Top bar -->
       <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
-      <!-- Title and search -->
+      <!-- Title & Search -->
       <div class="flex justify-between items-center mb-3">
         <h1 class="text-gray-900 font-normal text-base">Daftar Pasien Online Menunggu Konfirmasi</h1>
-        <div class="flex items-center gap-3">
-          <!-- Info counter -->
-          <input
-            type="search"
-            placeholder="Cari nama pasien..."
-            v-model="searchQuery"
-            class="text-xs rounded-md px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
+        <input
+          type="search"
+          placeholder="Cari nama pasien..."
+          v-model="searchQuery"
+          class="text-xs rounded-md px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
       </div>
 
       <!-- Table -->
@@ -27,7 +24,7 @@
         <table class="min-w-full border-collapse bg-white rounded-md">
           <thead>
             <tr class="bg-blue-600 text-white text-xs font-semibold text-center">
-              <th class="py-2 px-3 border border-blue-700">No Registrasi</th>
+              <th class="py-2 px-3 border border-blue-700">No</th>
               <th class="py-2 px-3 border border-blue-700 text-left">Nama Pasien</th>
               <th class="py-2 px-3 border border-blue-700">Waktu</th>
               <th class="py-2 px-3 border border-blue-700">Status</th>
@@ -44,10 +41,8 @@
               <td class="py-2 px-3 border border-gray-300 text-left font-semibold">
                 {{ pasien.patient?.nama_lengkap || "Tidak diketahui" }}
               </td>
-              <td class="py-2 px-3 border border-gray-300 text-left font-semibold">
-                <span class="text-green-600">
-                  {{ pasien.checked_in_at ? formatDate(pasien.checked_in_at) : "-" }}
-                </span>
+              <td class="py-2 px-3 border border-gray-300 text-left font-semibold text-green-600">
+                {{ pasien.checked_in_at ? formatDate(pasien.checked_in_at) : "-" }}
               </td>
               <td class="py-2 px-3 border border-gray-300">
                 <span :class="getStatusClass(pasien.status)">
@@ -62,15 +57,13 @@
               </td>
             </tr>
             <tr v-if="filteredPasienCheckedIn.length === 0">
-              <td colspan="6" class="py-6 text-center text-gray-500 italic">
+              <td colspan="5" class="py-6 text-center text-gray-500 italic">
                 {{ searchQuery ? 'Tidak ada pasien ditemukan dengan kata kunci tersebut.' : 'Belum ada pasien yang check-in hari ini.' }}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-
-
     </main>
 
     <!-- Modal Overlay -->
@@ -83,73 +76,40 @@
       @click.self="closeModal"
     >
       <div class="w-full max-w-lg bg-white rounded-md shadow-lg">
-        <div
-          class="bg-blue-600 text-white text-center py-2.5 rounded-t-md font-normal text-lg select-none"
-        >
+        <div class="bg-blue-600 text-white text-center py-2.5 rounded-t-md font-normal text-lg select-none">
           Detail Pasien Check-In
         </div>
         <div class="px-8 py-6">
           <div class="grid grid-cols-[140px_12px_1fr] gap-y-3 text-black text-sm font-normal">
-            <div>No Antrian</div>
-            <div class="text-center">:</div>
-            <div class="font-semibold">{{ selectedPasien.antrian || "-" }}</div>
-
-            <div>Nama Lengkap</div>
-            <div class="text-center">:</div>
-            <div class="font-semibold">{{ selectedPasien.patient?.nama_lengkap || "-" }}</div>
-
-            <div>NIK</div>
-            <div class="text-center">:</div>
-            <div>{{ selectedPasien.patient?.nik || "-" }}</div>
-
-            <div>Tanggal Lahir</div>
-            <div class="text-center">:</div>
-            <div>{{ selectedPasien.patient?.tanggal_lahir || "-" }}</div>
-
-            <div>Jenis Kelamin</div>
-            <div class="text-center">:</div>
-            <div>{{ selectedPasien.patient?.jenis_kelamin || "-" }}</div>
-
-            <div>Golongan Darah</div>
-            <div class="text-center">:</div>
-            <div>{{ selectedPasien.patient?.golongan_darah || "-" }}</div>
-
-            <div>Nomor HP</div>
-            <div class="text-center">:</div>
-            <div>{{ selectedPasien.patient?.nomor_hp || "-" }}</div>
-
-            <div>Alamat</div>
-            <div class="text-center">:</div>
-            <div>{{ selectedPasien.patient?.alamat || "-" }}</div>
-
-            <div>Keluhan</div>
-            <div class="text-center">:</div>
-            <div class="font-semibold text-red-600">{{ selectedPasien.keluhan || "-" }}</div>
-
-            <div>Waktu Check-In</div>
-            <div class="text-center">:</div>
-            <div class="font-semibold text-green-600">{{ selectedPasien.checked_in_at ? formatDate(selectedPasien.checked_in_at) : "-" }}</div>
-
+            <template v-for="(label, key) in detailFields" :key="key">
+              <div>{{ label }}</div>
+              <div class="text-center">:</div>
+              <div :class="key === 'keluhan' ? 'font-semibold text-red-600' : 'font-semibold'" v-text="getDetailField(key)" />
+            </template>
             <div>Status</div>
             <div class="text-center">:</div>
-            <div :class="getStatusClass(selectedPasien.status)">{{ getStatusText(selectedPasien.status) }}</div>
+            <div :class="getStatusClass(selectedPasien.status)">
+              {{ getStatusText(selectedPasien.status) }}
+            </div>
           </div>
+
           <div class="mt-8 flex justify-center gap-4">
             <button
-              class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-6 py-1.5 select-none"
               @click="editPasien"
+              class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-6 py-1.5"
             >
               Edit Data
             </button>
             <button
-              class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-full px-6 py-1.5 select-none"
               @click="konfirmasiPasien"
+              :disabled="loading"
+              class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-full px-6 py-1.5 disabled:opacity-50"
             >
-              Konfirmasi
+              {{ loading ? "Memproses..." : "Konfirmasi" }}
             </button>
             <button
               @click="closeModal"
-              class="bg-gray-500 hover:bg-gray-600 text-white text-xs font-semibold rounded-full px-6 py-1.5 select-none"
+              class="bg-gray-500 hover:bg-gray-600 text-white text-xs font-semibold rounded-full px-6 py-1.5"
             >
               Tutup
             </button>
@@ -161,20 +121,18 @@
 </template>
 
 <script>
+import { Inertia } from '@inertiajs/inertia';
 import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
 import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
 export default {
-  name: "KonfiirmasiPasienStaff",
-  components: {
-    SidebarStaff,
-    HeaderStaff,
-  },
+  name: "KonfirmasiiPasienStaff",
+  components: { SidebarStaff, HeaderStaff },
   props: {
     pasienList: {
       type: Array,
-      required: true,
       default: () => [],
+      required: true,
     },
   },
   data() {
@@ -182,73 +140,77 @@ export default {
       searchQuery: "",
       isModalVisible: false,
       selectedPasien: {},
+      loading: false,
       breadcrumbPages: [
         { label: "Dashboard", href: "/dashboardstaff" },
-        { label: "Daftar Pasien Menunggu Konfirmasi", href: "/KonfirmasiPasien" },
+        { label: "Daftar Pasien Menunggu Konfirmasi", href: "/konfirmasi-pasien" },
       ],
+      detailFields: {
+        antrian: "No Antrian",
+        nama_lengkap: "Nama Lengkap",
+        nik: "NIK",
+        tanggal_lahir: "Tanggal Lahir",
+        jenis_kelamin: "Jenis Kelamin",
+        golongan_darah: "Golongan Darah",
+        nomor_hp: "Nomor HP",
+        alamat: "Alamat",
+        keluhan: "Keluhan",
+        checked_in_at: "Waktu Check-In",
+      },
     };
   },
   computed: {
-    // Filter hanya pasien yang sudah check-in (sudah difilter di controller, tapi double-check)
     pasienCheckedIn() {
-      return this.pasienList.filter(pasien => pasien.checked_in_at !== null);
+      return this.pasienList.filter((p) => p.checked_in_at);
     },
-    
-    // Filter berdasarkan search query
     filteredPasienCheckedIn() {
       if (!this.searchQuery) return this.pasienCheckedIn;
-      
-      return this.pasienCheckedIn.filter((pasien) =>
-        pasien.patient?.nama_lengkap
-          ?.toLowerCase()
-          .includes(this.searchQuery.toLowerCase())
+      return this.pasienCheckedIn.filter((p) =>
+        p.patient?.nama_lengkap?.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     },
-  },
-  mounted() {
-    console.log("Data pasien diterima frontend:", this.pasienList);
-    console.log("Jumlah pasien yang sudah check-in:", this.pasienCheckedIn.length);
-    
-    // Debug struktur data
-    if (this.pasienList.length > 0) {
-      console.log("Sample data structure:", this.pasienList[0]);
-    }
   },
   methods: {
     showDetail(pasien) {
       this.selectedPasien = pasien;
       this.isModalVisible = true;
     },
-    
     closeModal() {
       this.isModalVisible = false;
       this.selectedPasien = {};
     },
-    
     editPasien() {
-      // Implementasi edit pasien
-      console.log("Edit pasien:", this.selectedPasien);
       alert(`Edit data pasien: ${this.selectedPasien.patient?.nama_lengkap}`);
     },
-    
     konfirmasiPasien() {
-      // Implementasi konfirmasi pasien
-      console.log("Konfirmasi pasien:", this.selectedPasien);
-      
-      if (confirm(`Konfirmasi pasien ${this.selectedPasien.patient?.nama_lengkap}?`)) {
-        // TODO: Kirim request ke backend untuk konfirmasi
-        alert("Pasien berhasil dikonfirmasi!");
-        this.closeModal();
-        
-        // Refresh data atau update status
-        // this.$inertia.reload();
+      if (!this.selectedPasien.id) return;
+      if (
+        confirm(`Konfirmasi pasien ${this.selectedPasien.patient?.nama_lengkap}?`)
+      ) {
+        this.loading = true;
+        Inertia.post(
+          `/konfirmasi-pasien/${this.selectedPasien.id}`,
+          {},
+          {
+            onFinish: () => {
+              this.loading = false;
+            },
+            onSuccess: () => {
+              alert("Pasien berhasil dikonfirmasi!");
+              this.closeModal();
+              // Emit event supaya parent reload data kalau perlu
+              this.$emit("refresh");
+            },
+            onError: () => {
+              alert("Gagal mengkonfirmasi pasien.");
+            },
+          }
+        );
       }
     },
-    
     formatDate(datetime) {
       if (!datetime) return "-";
-      const d = new Date(datetime);
-      return d.toLocaleString("id-ID", {
+      return new Date(datetime).toLocaleString("id-ID", {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -257,37 +219,58 @@ export default {
         second: "2-digit",
       });
     },
-    
     getStatusText(status) {
-      const statusMap = {
-        'pending': 'Menunggu',
-        'confirmed': 'Dikonfirmasi',
-        'in_progress': 'Sedang Ditangani',
-        'completed': 'Selesai',
-        'cancelled': 'Dibatalkan'
+      const map = {
+        menunggu: "Menunggu",
+        dikonfirmasi: "Dikonfirmasi",
+        selesai: "Selesai",
+        dibatalkan: "Dibatalkan",
       };
-      
-      return statusMap[status] || 'Menunggu Konfirmasi';
+      return map[status] || "Menunggu";
     },
-    
     getStatusClass(status) {
-      const classMap = {
-        'pending': 'text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs',
-        'confirmed': 'text-blue-600 bg-blue-100 px-2 py-1 rounded text-xs',
-        'in_progress': 'text-purple-600 bg-purple-100 px-2 py-1 rounded text-xs',
-        'completed': 'text-green-600 bg-green-100 px-2 py-1 rounded text-xs',
-        'cancelled': 'text-red-600 bg-red-100 px-2 py-1 rounded text-xs'
+      const map = {
+        menunggu: "text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs",
+        dikonfirmasi: "text-blue-600 bg-blue-100 px-2 py-1 rounded text-xs",
+        selesai: "text-green-600 bg-green-100 px-2 py-1 rounded text-xs",
+        dibatalkan: "text-red-600 bg-red-100 px-2 py-1 rounded text-xs",
       };
-      
-      return classMap[status] || 'text-gray-600 bg-gray-100 px-2 py-1 rounded text-xs';
+      return map[status] || "text-gray-600";
+    },
+    getDetailField(key) {
+      if (key === "checked_in_at" && this.selectedPasien[key]) {
+        return this.formatDate(this.selectedPasien[key]);
+      }
+      if (key === "nama_lengkap") {
+        return this.selectedPasien.patient?.nama_lengkap || "-";
+      }
+      if (key === "nik") {
+        return this.selectedPasien.patient?.nik || "-";
+      }
+      if (key === "tanggal_lahir") {
+        return this.selectedPasien.patient?.tanggal_lahir || "-";
+      }
+      if (key === "jenis_kelamin") {
+        return this.selectedPasien.patient?.jenis_kelamin || "-";
+      }
+      if (key === "golongan_darah") {
+        return this.selectedPasien.patient?.golongan_darah || "-";
+      }
+      if (key === "nomor_hp") {
+        return this.selectedPasien.patient?.nomor_hp || "-";
+      }
+      if (key === "alamat") {
+        return this.selectedPasien.patient?.alamat || "-";
+      }
+      if (key === "keluhan") {
+        return this.selectedPasien.keluhan || "-";
+      }
+      return this.selectedPasien[key] || "-";
     },
   },
 };
 </script>
 
 <style scoped>
-/* Custom styling jika diperlukan */
-.hover\:bg-gray-50:hover {
-  background-color: #f9fafb;
-}
+/* Contoh styling tambahan */
 </style>
