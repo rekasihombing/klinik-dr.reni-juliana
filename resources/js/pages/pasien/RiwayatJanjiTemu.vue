@@ -19,58 +19,6 @@
       <main class="flex-grow p-6">
         <div class="max-w-6xl mx-auto">
           <!-- Header Section -->
-
-          <!-- Statistics Cards -->
-          <div v-if="appointments && appointments.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-md transition-all duration-200">
-              <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                  <i class="fas fa-calendar-alt text-blue-600"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-[#2A4482]">{{ appointments.length }}</div>
-                  <div class="text-sm text-gray-600">Total Janji</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-md transition-all duration-200">
-              <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-gradient-to-r from-green-100 to-green-200 rounded-xl flex items-center justify-center">
-                  <i class="fas fa-check-circle text-green-600"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-green-600">{{ completedCount }}</div>
-                  <div class="text-sm text-gray-600">Selesai</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-md transition-all duration-200">
-              <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-gradient-to-r from-orange-100 to-orange-200 rounded-xl flex items-center justify-center">
-                  <i class="fas fa-clock text-orange-600"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-orange-600">{{ pendingCount }}</div>
-                  <div class="text-sm text-gray-600">Menunggu</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-md transition-all duration-200">
-              <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-gradient-to-r from-red-100 to-red-200 rounded-xl flex items-center justify-center">
-                  <i class="fas fa-times-circle text-red-600"></i>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-red-600">{{ cancelledCount }}</div>
-                  <div class="text-sm text-gray-600">Dibatalkan</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Search and Filter Bar -->
           <div class="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-white/50">
             <div class="flex flex-col md:flex-row gap-4 items-center">
