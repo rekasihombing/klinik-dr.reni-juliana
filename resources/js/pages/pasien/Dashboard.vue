@@ -58,32 +58,33 @@
         </transition>
 
         <!-- Appointment Notification Banner -->
-        <transition name="fade">
-          <div
-            v-if="nextAppointment && !hidePassedNotification"
-            class="rounded-xl backdrop-blur-xs shadow-md px-4 py-2 mb-6 flex items-center justify-between text-xs font-sans"
-            :class="isValidAppointment ? 'bg-[#D4F1E4] text-[#1B2A4D]' : 'bg-[#FFE2E2] text-[#E53935]'"
-          >
-            <div class="flex items-center space-x-2">
-              <i class="fas fa-bell"></i>
-              <span v-if="isValidAppointment">
-                Anda memiliki jadwal konsultasi pada
-                <strong>{{ formatDate(nextAppointment.tanggal) }}</strong>
-                pukul
-                <strong>{{ nextAppointment.jam_konsultasi }} WIB</strong>
-              </span>
-              <span v-else-if="isAppointmentPassed">
-                Anda <strong>melewatkan</strong> jadwal konsultasi pada
-                <strong>{{ formatDate(nextAppointment.tanggal) }}</strong>
-                pukul
-                <strong>{{ nextAppointment.jam_konsultasi }} WIB</strong>
-              </span>
-            </div>
+<transition name="fade">
+  <div
+    v-if="(isValidAppointment || isAppointmentPassed) && nextAppointment && !hidePassedNotification"
+    class="rounded-xl backdrop-blur-xs shadow-md px-4 py-2 mb-6 flex items-center justify-between text-xs font-sans"
+    :class="isValidAppointment ? 'bg-[#D4F1E4] text-[#1B2A4D]' : 'bg-[#FFE2E2] text-[#E53935]'"
+  >
+    <div class="flex items-center space-x-2">
+      <i class="fas fa-bell"></i>
+      <span v-if="isValidAppointment">
+        Anda memiliki jadwal konsultasi pada
+        <strong>{{ formatDate(nextAppointment.tanggal) }}</strong>
+        pukul
+        <strong>{{ nextAppointment.jam_konsultasi }} WIB</strong>
+      </span>
+      <span v-else-if="isAppointmentPassed">
+        Anda <strong>melewatkan</strong> jadwal konsultasi pada
+        <strong>{{ formatDate(nextAppointment.tanggal) }}</strong>
+        pukul
+        <strong>{{ nextAppointment.jam_konsultasi }} WIB</strong>
+      </span>
+    </div>
 
-            <div v-if="isAppointmentPassed" class="flex items-center gap-2">
-            </div>
-          </div>
-        </transition>
+    <div v-if="isAppointmentPassed" class="flex items-center gap-2">
+      <!-- tombol dll bisa di sini -->
+    </div>
+  </div>
+</transition>
 
         <!-- Content Grid -->
         <div class="flex flex-col md:flex-row gap-4">
@@ -129,8 +130,9 @@
                   Sudah Check-in
                 </div>
 
-                <!-- Tombol Batalkan Janji Temu - Selalu tampil untuk janji temu aktif -->
+                <!-- Tombol Batalkan Janji Temu - Hanya tampil jika BELUM check-in -->
                 <button
+                  v-if="!isCheckedIn"
                   @click.stop="handleCancelAppointmentFromModal"
                   :disabled="cancelLoading"
                   class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 mt-2"
@@ -138,6 +140,12 @@
                 >
                   {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
                 </button>
+
+                <!-- Pesan jika sudah check-in -->
+                <div v-if="isCheckedIn" class="w-full bg-gray-100 text-gray-500 text-sm rounded-lg px-4 py-2 font-medium text-center mt-2">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  Tidak dapat dibatalkan setelah check-in
+                </div>
               </template>
 
               <template v-else-if="isAppointmentPassed">
@@ -150,14 +158,14 @@
                 <div class="flex gap-2">
                   <button style="cursor:pointer;"
                     @click.stop="router.visit('/janjitemu')"
-                    class="bg-[#314169] hover:bg-[#26324D] text-white rounded px-3 py-1 text-xs transition"
+                    class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
                   >
                     Buat Janji Temu Baru
                   </button>
                   <button style="cursor:pointer;"
                     @click.stop="handleCancelAppointment"
                     :disabled="cancelLoading"
-                    class="text-[#E53935] border border-[#E53935] rounded px-3 py-1 text-xs hover:bg-[#FFEBEB] transition disabled:opacity-50"
+                    class="text-[#3674B5] border border-[#3674B5] rounded-lg px-4 py-2 text-sm hover:bg-blue-50 transition disabled:opacity-50"
                   >
                     {{ cancelLoading ? 'Loading...' : 'Oke' }}
                   </button>
@@ -165,7 +173,7 @@
               </template>
 
               <template v-else>
-                <div class="text-xs text-[#1B2A4D] font-semibold">
+                <div class="text-sm text-[#1B2A4D] font-semibold">
                   Tidak ada janji temu aktif
                 </div>
               </template>
@@ -186,14 +194,14 @@
                 </div>
               </div>
               
-              <button class="w-40 bg-gradient-to-r from-[#3674B5] to-[#437BB6] hover:from-[#3B59A1] hover:to-[#3B59A1] text-white text-sm rounded-lg px-4 py-3 font-medium transition-all duration-200 shadow-md hover:shadow-lg">
+              <button class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max">
                 Lihat Rekam Medis
               </button>
             </div>
             <!-- Tombol Janji Temu -->
             <button
               @click="handleJanjiTemuClick" style="cursor:pointer;"
-              class="w-46 bg-gradient-to-r from-[#3674B5] to-[#437BB6] hover:from-[#3B59A1] hover:to-[#3B59A1] text-white text-sm rounded-lg px-4 py-3 font-medium transition-all duration-200 shadow-md hover:shadow-lg "
+              class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
             >
               Buat Janji Temu Baru
             </button>
@@ -223,12 +231,12 @@
   </div>
 
   <!-- Modal Jika Sudah Ada Janji Temu -->
-  <div
-    v-if="showInfoModal"
-     class="fixed inset-0 flex items-center justify-center z-50"
-     style="background-color: rgba(0, 0, 0, 0.15);"
-  >
-    <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
+<div
+  v-if="showInfoModal"
+  class="fixed inset-0 flex items-center justify-center z-50"
+  style="background-color: rgba(0, 0, 0, 0.15);"
+>
+  <div class="bg-white rounded-lg shadow-2xl text-center p-6 w-90">
       <div class="text-center">
         <i class="fas fa-calendar-check text-[#2D4480] text-4xl mb-4"></i>
         <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
@@ -255,7 +263,7 @@
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-xl p-6 w-80 shadow-lg">
+  <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
     <div class="text-center">
       <!-- Icon berubah berdasarkan status check-in -->
       <i 
@@ -305,6 +313,12 @@
           Check In (Belum waktunya)
         </button>
 
+
+        <!-- Pesan jika sudah check-in -->
+        <div v-if="isCheckedIn" class="bg-gray-100 text-gray-500 text-sm rounded-lg px-4 py-2 font-medium">
+          <i class="fas fa-info-circle mr-2"></i>
+          Janji temu tidak dapat dibatalkan setelah check-in
+        </div>
       </div>
 
       <button
@@ -509,12 +523,25 @@ const isValidAppointment = computed(() => {
 
 
 const isAppointmentPassed = computed(() => {
-  const result = props.nextAppointment &&
-    !isAppointmentInFuture(props.nextAppointment.tanggal, props.nextAppointment.jam_konsultasi);
-  
-  console.log('isAppointmentPassed:', result);
-  
-  return result;
+  const appointment = props.nextAppointment;
+  if (!appointment) return false;
+
+  // Jika sudah check-in, tidak dianggap melewatkan
+  if (appointment.checked_in_at) return false;
+
+  // Gabungkan tanggal dan jam_konsultasi jadi 1 objek Date
+  const appointmentDateTime = new Date(`${appointment.tanggal}T${appointment.jam_konsultasi}:00`);
+
+  // Waktu sekarang
+  const now = new Date();
+
+  // Hitung selisih waktu dalam milidetik
+  const diffMs = now - appointmentDateTime;
+
+  // Lewat 1 jam = 3600000 milidetik
+  const isMoreThanOneHourPassed = diffMs > 3600000;
+
+  return isMoreThanOneHourPassed;
 });
 
 
@@ -565,13 +592,26 @@ async function handleCancelAppointment() {
 
 // Function untuk menampilkan modal konfirmasi pembatalan dari modal detail
 function handleCancelAppointmentFromModal() {
+  // Cek apakah sudah check-in
+  if (isCheckedIn.value) {
+    alert('Janji temu tidak dapat dibatalkan setelah check-in.');
+    return;
+  }
+  
   showCancelConfirm.value = true;
 }
 
-// Function untuk mengkonfirmasi pembatalan janji temu - TIDAK ADA BATASAN WAKTU
+// Function untuk mengkonfirmasi pembatalan janji temu - Hanya jika belum check-in
 async function confirmCancelAppointment() {
   if (!props.nextAppointment || !props.nextAppointment.id) {
     console.error('No appointment ID found');
+    return;
+  }
+
+  // Double check untuk memastikan belum check-in
+  if (isCheckedIn.value) {
+    alert('Janji temu tidak dapat dibatalkan setelah check-in.');
+    showCancelConfirm.value = false;
     return;
   }
 
@@ -710,4 +750,29 @@ async function handleCheckIn() {
 .fade-leave-to {
   opacity: 0;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fixed.inset-0 {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.bg-white.rounded-lg {
+  animation: slideIn 0.3s ease-out;
+}
+
 </style>

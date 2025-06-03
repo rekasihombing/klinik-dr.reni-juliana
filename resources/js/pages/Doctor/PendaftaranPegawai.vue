@@ -5,7 +5,7 @@
 
     <!-- Main Container -->
     <div class="flex flex-1 overflow-hidden">
-      <SidebarStaff class="w-64 bg-white shadow-md" />
+      <Sidebar :patient-name="patientData.nama || patientName" />
 
       <!-- Main content -->
       <main class="bg-gradient-to-br from-gray-50 to-gray-100 flex-1 font-sans text-[13px] leading-tight text-gray-800">
@@ -19,13 +19,13 @@
             <!-- Header Section -->
             <div class="bg-[#3674B5] p-4 text-white">
               <h2 class="text-lg font-bold flex items-center gap-3">
-                Pendaftaran Pasien
+                Pendaftaran Pegawai Baru
               </h2>
             </div>
 
             <!-- Form Section -->
             <div class="p-8">
-              <form @submit.prevent="submit" class="space-y-8">
+              <form @submit.prevent="submitForm" class="space-y-8">
                 <!-- Personal Information -->
                 <div class="space-y-6">
                   <h3 class="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2 flex items-center gap-2">
@@ -103,30 +103,14 @@
 
                     <div class="space-y-1">
                       <label class="block text-sm font-semibold text-gray-700">
-                        Golongan Darah <span class="text-gray-500 font-normal text-xs">(opsional)</span>
-                      </label>
-                      <select 
-                        v-model="form.golongan_darah" 
-                        class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400"
-                      >
-                        <option value="" disabled>Pilih Golongan Darah</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="AB">AB</option>
-                        <option value="O">O</option>
-                      </select>
-                    </div>
-
-                    <div class="space-y-1">
-                      <label class="block text-sm font-semibold text-gray-700">
                         Jenis Kelamin <span class="text-red-500">*</span>
                       </label>
                       <div class="flex items-center gap-6 mt-3">
                         <label class="flex items-center gap-2 cursor-pointer group">
                           <input 
                             type="radio" 
-                            v-model="form.jenis_kelamin" 
-                            value="L" 
+                            v-model="form.gender" 
+                            value="Laki-Laki" 
                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 focus:ring-2"
                           />
                           <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">Laki-Laki</span>
@@ -134,18 +118,51 @@
                         <label class="flex items-center gap-2 cursor-pointer group">
                           <input 
                             type="radio" 
-                            v-model="form.jenis_kelamin" 
-                            value="P" 
+                            v-model="form.gender" 
+                            value="Perempuan" 
                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 focus:ring-2"
                           />
                           <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">Perempuan</span>
                         </label>
                       </div>
-                      <p v-if="errors.jenis_kelamin" class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <p v-if="errors.gender" class="text-red-500 text-xs mt-1 flex items-center gap-1">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
-                        {{ errors.jenis_kelamin }}
+                        {{ errors.gender }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Employment Information -->
+                <div class="space-y-6">
+                  <h3 class="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#2A4482]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6"/>
+                    </svg>
+                    Informasi Kepegawaian
+                  </h3>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1">
+                      <label class="block text-sm font-semibold text-gray-700">
+                        Posisi/Jabatan <span class="text-red-500">*</span>
+                      </label>
+                      <input 
+                        v-model="form.posisi" 
+                        type="text" 
+                        :class="[
+                          'w-full border rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2',
+                          errors.posisi ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-200 focus:border-blue-400'
+                        ]"
+                        placeholder="Contoh: Dokter, Perawat, Admin"
+                      />
+                      <p v-if="errors.posisi" class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ errors.posisi }}
                       </p>
                     </div>
                   </div>
@@ -178,50 +195,19 @@
                         Nomor HP/WhatsApp <span class="text-gray-500 font-normal text-xs">(opsional)</span>
                       </label>
                       <input 
-                        v-model="form.no_hp" 
+                        v-model="form.hp" 
                         type="tel" 
                         class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400"
                         placeholder="08xxxxxxxxxx"
                         @input="validateHP"
                       />
-                      <p v-if="errors.no_hp" class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <p v-if="errors.hp" class="text-red-500 text-xs mt-1 flex items-center gap-1">
                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
-                        {{ errors.no_hp }}
+                        {{ errors.hp }}
                       </p>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Medical Information -->
-                <div class="space-y-6">
-                  <h3 class="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#2A4482]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    Informasi Medis
-                  </h3>
-                  
-                  <div class="space-y-1">
-                    <label class="block text-sm font-semibold text-gray-700">
-                      Keluhan <span class="text-red-500">*</span>
-                    </label>
-                    <textarea 
-                      v-model="form.keluhan" 
-                      rows="4"
-                      :class="[
-                        'w-full border rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 resize-none',
-                        errors.keluhan ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-200 focus:border-blue-400'
-                      ]"
-                      placeholder="Jelaskan keluhan atau gejala yang dialami..."
-                    ></textarea>
-                    <p v-if="errors.keluhan" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                      </svg>
-                      {{ errors.keluhan }}
-                    </p>
                   </div>
                 </div>
 
@@ -234,7 +220,7 @@
                       'px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2',
                       form.processing 
                         ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                        : 'bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg text-white'
+                        : 'bg-[#47B536] hover:bg-[#449A37] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max'
                     ]"
                   >
                     <svg v-if="form.processing" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -254,190 +240,196 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { defineProps, reactive } from "vue";
 import { useForm } from '@inertiajs/vue3';
-import { reactive } from 'vue';
-import SidebarStaff from '../../layouts/staff/SidebarStaff.vue';
-import HeaderStaff from '../../layouts/staff/HeaderStaff.vue';
+import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
+import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
+import { router } from "@inertiajs/vue3";
 
-export default {
-  name: 'PendaftaranPasienStaff',
-  components: {
-    SidebarStaff,
-    HeaderStaff
+const props = defineProps({
+  patientName: String,
+  clinicName: String,
+  patientData: {
+    type: Object,
+    default: () => ({
+      id: '',
+      nama: '',
+      umur: '',
+      tanggalLahir: '',
+      jenisKelamin: '',
+      golonganDarah: '',
+      noRekamMedis: ''
+    })
   },
-  setup() {
-    const form = useForm({
-      nama_lengkap: '',
-      nik: '',
-      tanggal_lahir: '',
-      golongan_darah: '',
-      jenis_kelamin: '',
-      alamat: '',
-      no_hp: '',
-      keluhan: ''
-    });
+});
 
-    // Validation errors state
-    const errors = reactive({
-      nama_lengkap: '',
-      nik: '',
-      tanggal_lahir: '',
-      jenis_kelamin: '',
-      no_hp: '',
-      keluhan: ''
-    });
+// Breadcrumb data
+const breadcrumbPages = [
+  { label: "Dashboard", href: "/dashboarddokter" },
+  { label: "Pendaftaran Pegawai", href: "/pendaftaranpegawai" }
+];
 
-    // Validate NIK: only digits, length 16
-    const validateNIK = () => {
-      form.nik = form.nik.replace(/\D/g, ''); // remove non-digits
-      const value = form.nik.trim();
+// Form data
+const form = useForm({
+  nama_lengkap: '',
+  nik: '',
+  tanggal_lahir: '',
+  posisi: '',
+  gender: '',
+  alamat: '',
+  hp: ''
+});
 
-      if (!value) {
-        errors.nik = 'NIK wajib diisi';
-      } else if (!/^\d{16}$/.test(value)) {
-        errors.nik = 'NIK harus 16 digit angka';
-      } else {
-        errors.nik = '';
-      }
-    };
+// Validation errors state
+const errors = reactive({
+  nama_lengkap: '',
+  nik: '',
+  tanggal_lahir: '',
+  posisi: '',
+  gender: '',
+  hp: ''
+});
 
-    // Validate Name: only letters and spaces
-    const validateName = () => {
-      form.nama_lengkap = form.nama_lengkap.replace(/[^a-zA-Z\s]/g, ''); // remove non-letters
-      const value = form.nama_lengkap.trim();
+// Validate NIK: only digits, length 16
+function validateNIK() {
+  form.nik = form.nik.replace(/\D/g, ''); // remove non-digits
+  const value = form.nik.trim();
 
-      if (!value) {
-        errors.nama_lengkap = 'Nama lengkap wajib diisi';
-      } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-        errors.nama_lengkap = 'Nama lengkap wajib huruf';
-      } else {
-        errors.nama_lengkap = '';
-      }
-    };
+  if (!value) {
+    errors.nik = 'NIK wajib diisi';
+  } else if (!/^\d{16}$/.test(value)) {
+    errors.nik = 'NIK harus 16 digit angka';
+  } else {
+    errors.nik = '';
+  }
+}
 
-    // Validate HP: only digits allowed; show error if contains letters
-    const validateHP = () => {
-      // Remove spaces first
-      form.no_hp = form.no_hp.replace(/\s/g, '');
-      // Check for non-digits
-      if (form.no_hp && /\D/.test(form.no_hp)) {
-        errors.no_hp = 'Nomor telepon wajib angka';
-        // strip non-digits immediately:
-        form.no_hp = form.no_hp.replace(/\D/g, '');
-      } else {
-        errors.no_hp = '';
-      }
-    };
+// Validate Name: only letters and spaces
+function validateName() {
+  form.nama_lengkap = form.nama_lengkap.replace(/[^a-zA-Z\s]/g, ''); // remove non-letters
+  const value = form.nama_lengkap.trim();
 
-    const validateForm = () => {
+  if (!value) {
+    errors.nama_lengkap = 'Nama lengkap wajib diisi';
+  } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+    errors.nama_lengkap = 'Nama lengkap wajib huruf';
+  } else {
+    errors.nama_lengkap = '';
+  }
+}
+
+// Validate HP: only digits allowed; show error if contains letters
+function validateHP() {
+  // Remove spaces first
+  form.hp = form.hp.replace(/\s/g, '');
+  // Check for non-digits
+  if (form.hp && /\D/.test(form.hp)) {
+    errors.hp = 'Nomor telepon wajib angka';
+    // strip non-digits immediately:
+    form.hp = form.hp.replace(/\D/g, '');
+  } else {
+    errors.hp = '';
+  }
+}
+
+function validateForm() {
+  Object.keys(errors).forEach(key => {
+    errors[key] = '';
+  });
+
+  let isValid = true;
+
+  // Validate nama_lengkap
+  if (!form.nama_lengkap.trim()) {
+    errors.nama_lengkap = 'Nama lengkap wajib diisi';
+    isValid = false;
+  } else if (!/^[a-zA-Z\s]+$/.test(form.nama_lengkap.trim())) {
+    errors.nama_lengkap = 'Nama lengkap wajib huruf';
+    isValid = false;
+  }
+
+  // Validate nik
+  if (!form.nik.trim()) {
+    errors.nik = 'NIK wajib diisi';
+    isValid = false;
+  } else if (!/^\d{16}$/.test(form.nik.trim())) {
+    errors.nik = 'NIK harus 16 digit angka';
+    isValid = false;
+  }
+
+  // Validate tanggal_lahir
+  if (!form.tanggal_lahir) {
+    errors.tanggal_lahir = 'Tanggal lahir wajib diisi';
+    isValid = false;
+  } else {
+    const birthDate = new Date(form.tanggal_lahir);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+  }
+
+  // Validate posisi
+  if (!form.posisi.trim()) {
+    errors.posisi = 'Posisi/jabatan wajib diisi';
+    isValid = false;
+  }
+
+  // Validate gender
+  if (!form.gender) {
+    errors.gender = 'Jenis kelamin wajib dipilih';
+    isValid = false;
+  }
+
+  // Validate hp (optional, but validate if not empty)
+  if (form.hp && /\D/.test(form.hp)) {
+    errors.hp = 'Nomor telepon wajib angka';
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+function submitForm() {
+  if (!validateForm()) {
+    const firstErrorElement = document.querySelector('.border-red-300');
+    if (firstErrorElement) {
+      firstErrorElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      firstErrorElement.focus();
+    }
+    return;
+  }
+
+  form.post('/pendaftaran-pegawai', {
+    onSuccess: () => {
+      console.log('Pendaftaran pegawai berhasil');
+      form.reset();
       Object.keys(errors).forEach(key => {
         errors[key] = '';
       });
-
-      let isValid = true;
-
-      // Validate nama_lengkap
-      if (!form.nama_lengkap.trim()) {
-        errors.nama_lengkap = 'Nama lengkap wajib diisi';
-        isValid = false;
-      } else if (!/^[a-zA-Z\s]+$/.test(form.nama_lengkap.trim())) {
-        errors.nama_lengkap = 'Nama lengkap wajib huruf';
-        isValid = false;
-      }
-
-      // Validate nik
-      if (!form.nik.trim()) {
-        errors.nik = 'NIK wajib diisi';
-        isValid = false;
-      } else if (!/^\d{16}$/.test(form.nik.trim())) {
-        errors.nik = 'NIK harus 16 digit angka';
-        isValid = false;
-      }
-
-      // Validate tanggal_lahir
-      if (!form.tanggal_lahir) {
-        errors.tanggal_lahir = 'Tanggal lahir wajib diisi';
-        isValid = false;
-      }
-
-      // Validate jenis_kelamin
-      if (!form.jenis_kelamin) {
-        errors.jenis_kelamin = 'Jenis kelamin wajib dipilih';
-        isValid = false;
-      }
-
-      // Validate keluhan
-      if (!form.keluhan.trim()) {
-        errors.keluhan = 'Keluhan wajib diisi';
-        isValid = false;
-      }
-
-      // Validate no_hp (optional, but validate if not empty)
-      if (form.no_hp && /\D/.test(form.no_hp)) {
-        errors.no_hp = 'Nomor telepon wajib angka';
-        isValid = false;
-      }
-
-      return isValid;
-    };
-
-    const submit = () => {
-      if (!validateForm()) {
-        const firstErrorElement = document.querySelector('.border-red-300');
-        if (firstErrorElement) {
-          firstErrorElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-          firstErrorElement.focus();
-        }
-        return;
-      }
-
-      form.post('/simpanpendaftar', {
-        onSuccess: () => {
-          console.log('Pendaftaran pasien berhasil');
-          form.reset();
-          Object.keys(errors).forEach(key => {
-            errors[key] = '';
-          });
-        },
-        onError: serverErrors => {
-          console.error('Server validation errors:', serverErrors);
-          Object.keys(serverErrors).forEach(key => {
-            if (errors.hasOwnProperty(key)) {
-              errors[key] = serverErrors[key];
-            }
-          });
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-        onFinish: () => {
-          console.log('Form submission finished');
-        },
-        preserveScroll: false,
-        preserveState: false
+      router.visit('/dashboarddokter', {
+        method: 'get',
+        data: { success: 'Pendaftaran pegawai berhasil' }
       });
-    };
-
-    return {
-      form,
-      submit,
-      errors,
-      validateNIK,
-      validateName,
-      validateHP
-    };
-  },
-  data() {
-    return {
-      breadcrumbPages: [
-        { label: "Dashboard", href: "/dashboardstaff" },
-        { label: "Pendaftaran Pasien", href: "/pendaftaran" }
-      ]
-    };
-  }
-};
+    },
+    onError: serverErrors => {
+      console.error('Server validation errors:', serverErrors);
+      Object.keys(serverErrors).forEach(key => {
+        if (errors.hasOwnProperty(key)) {
+          errors[key] = serverErrors[key];
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    onFinish: () => {
+      console.log('Form submission finished');
+    },
+    preserveScroll: false,
+    preserveState: false
+  });
+}
 </script>
 
 <style scoped>
@@ -456,7 +448,7 @@ input[type="radio"]:checked {
 }
 
 /* Smooth transitions for all form elements */
-input, textarea, button, select {
+input, textarea, button {
   transition: all 0.2s ease-in-out;
 }
 
@@ -489,7 +481,7 @@ button:not(:disabled):active {
 }
 
 /* Focus styles for accessibility */
-input:focus, textarea:focus, button:focus, select:focus {
+input:focus, textarea:focus, button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -506,21 +498,5 @@ input:focus, textarea:focus, button:focus, select:focus {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* Custom select styling */
-select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-select:focus {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
 }
 </style>
