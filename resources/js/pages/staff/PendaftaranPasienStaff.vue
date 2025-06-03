@@ -234,7 +234,7 @@
                       'px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2',
                       form.processing 
                         ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                        : 'bg-[#47B536] hover:bg-[#449A37] shadow-md hover:shadow-lg text-white'
+                        : 'bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg text-white'
                     ]"
                   >
                     <svg v-if="form.processing" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

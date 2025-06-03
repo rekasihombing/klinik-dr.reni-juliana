@@ -55,7 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/konfirmasi-pasien/{id}', [KonfirmasiPasienStaffController::class, 'konfirmasi']);
 });
 
-Route::get('/Pembayaran', function () {
+Route::get('/pembayaran', function () {
     return Inertia::render('staff/pembayaran');
 })->name('Pembayaran');
 

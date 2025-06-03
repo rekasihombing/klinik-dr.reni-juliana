@@ -17,7 +17,7 @@
           <!-- Header Section -->
           <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div class="flex items-center gap-4">
-              <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div class="w-14 h-14 bg-[#3674B5] rounded-xl flex items-center justify-center shadow-lg">
                 <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
@@ -40,8 +40,21 @@
                   v-model="patientName"
                   type="text" 
                   placeholder="Masukkan nama lengkap pasien"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  :class="[
+                    'w-full border rounded-lg px-4 py-3 text-sm focus:ring-2 transition-all duration-200',
+                    showNameError 
+                      ? 'border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                  ]"
+                  @input="clearNameError"
                 />
+                <!-- Error message -->
+                <div v-if="showNameError" class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                  Nama pasien wajib diisi
+                </div>
               </div>
               <div class="space-y-3">
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -67,7 +80,7 @@
               <h3 class="text-base font-semibold text-gray-900">Obat & Tindakan Medis</h3>
               <button 
                 @click="addItem"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                class="inline-flex items-center gap-2 bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max transition-all duration-200"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -79,14 +92,14 @@
             <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
               <div class="overflow-x-auto">
                 <table class="w-full">
-                  <thead class="bg-gray-100 border-b border-gray-200">
+                  <thead class="bg-[#3674B5] border-b border-gray-200">
                     <tr>
-                      <th class="text-left py-4 px-4 font-semibold text-sm text-gray-700 w-[35%]">Nama Obat/Tindakan</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[12%]">Qty</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[12%]">Satuan</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[18%]">Harga Satuan</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[15%]">Subtotal</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-gray-700 w-[8%]">Aksi</th>
+                      <th class="text-left py-4 px-4 font-semibold text-sm text-white w-[35%]">Nama Obat/Tindakan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[12%]">Qty</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[12%]">Satuan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[18%]">Harga Satuan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[15%]">Subtotal</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[8%]">Aksi</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white">
@@ -181,8 +194,8 @@
                   </div>
                   <div class="border-t border-gray-200 pt-3">
                     <div class="flex justify-between items-center">
-                      <span class="text-lg font-semibold text-gray-900">Total Pembayaran:</span>
-                      <span class="text-lg font-bold text-blue-600">Rp {{ formatCurrency(totalAmount) }}</span>
+                      <span class="text-base font-semibold text-gray-900">Total Pembayaran:</span>
+                      <span class="text-base font-semibold text-blue-600">Rp {{ formatCurrency(totalAmount) }}</span>
                     </div>
                   </div>
                 </div>
@@ -195,13 +208,13 @@
             <div class="flex justify-end gap-4">
               <button 
                 @click="resetForm"
-                class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max text-white font-medium transition-all duration-200"
               >
                 Reset Form
               </button>
               <button 
                 @click="payBill"
-                class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max font-medium transition-all duration-200"
               >
                 Proses Pembayaran
               </button>
@@ -212,7 +225,9 @@
     </main>
 
     <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="showDeleteModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    style="background-color: rgba(0, 0, 0, 0.15);">
       <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all">
         <div class="p-6 text-center">
           <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -226,16 +241,19 @@
           </p>
           <button 
             @click="closeDeleteModal"
-            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all"
+            class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max font-medium transition-all duration-200"
           >
-            OK, Mengerti
+            Kembali
           </button>
         </div>
       </div>
     </div>
 
     <!-- Payment Success Modal -->
-    <div v-if="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="showPaymentModal" 
+    class="fixed inset-0 flex items-center justify-center z-50"
+    style="background-color: rgba(0, 0, 0, 0.15);"
+    >
       <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
         <div class="p-8 text-center">
           <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -253,13 +271,13 @@
           <div class="flex gap-3 justify-center">
             <button 
               @click="closePaymentModal"
-              class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all"
+              class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max font-medium transition-all duration-200"
             >
               Tutup
             </button>
             <button 
               @click="showInvoice"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all"
+              class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max font-medium transition-all duration-200"
             >
               Lihat Struk
             </button>
@@ -269,14 +287,17 @@
     </div>
 
     <!-- Invoice Modal -->
-    <div v-if="showInvoiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="showInvoiceModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    style="background-color: rgba(0, 0, 0, 0.30);"
+    >
       <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div class="p-8">
           <!-- Invoice Header -->
           <div class="text-center border-b border-gray-200 pb-6 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">Klinik Sehat Bersama</h2>
+            <h2 class="text-2xl font-bold text-gray-900">Klinik Praktek Dr. Reni Juliana Manurung</h2>
             <p class="text-sm text-gray-600 mt-1">Jl. Kesehatan No. 123, Medan</p>
-            <p class="text-sm text-gray-600">Telp: (061) 123-4567</p>
+            <p class="text-sm text-gray-600">Telp: 0822-7484-9745</p>
             <div class="mt-4 text-right">
               <div class="text-sm text-gray-600">No. Struk: {{ invoiceNumber }}</div>
               <div class="text-sm text-gray-600">{{ formatDateTime(new Date()) }}</div>
@@ -308,13 +329,13 @@
                 <tr class="border-b border-gray-200">
                   <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">Konsultasi Dokter</td>
                   <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">1</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">kali</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
                   <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(75000) }}</td>
                 </tr>
                 <tr class="border-b border-gray-200">
                   <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">Biaya Administrasi</td>
                   <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">1</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">kali</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
                   <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(10000) }}</td>
                 </tr>
                 <tr v-for="item in paidBillData.items" :key="item.name" class="border-b border-gray-200">
@@ -330,23 +351,16 @@
           <!-- Total -->
           <div class="border-t-2 border-gray-300 pt-4 mb-6">
             <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
-              <span class="text-lg font-bold text-gray-900">TOTAL PEMBAYARAN</span>
-              <span class="text-2xl font-bold text-blue-600">Rp {{ formatCurrency(paidBillData.total) }}</span>
+              <span class="text-base font-bold text-gray-900">TOTAL PEMBAYARAN</span>
+              <span class="text-base font-bold text-blue-600">Rp {{ formatCurrency(paidBillData.total) }}</span>
             </div>
-          </div>
-
-          <!-- Status -->
-          <div class="mb-6 text-center">
-            <span class="inline-block bg-green-100 text-green-800 text-sm font-semibold px-4 py-2 rounded-full border border-green-200">
-              LUNAS
-            </span>
           </div>
 
           <!-- Action Buttons -->
           <div class="flex justify-center gap-4">
             <button 
               @click="downloadInvoice"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -392,6 +406,7 @@ export default {
       showPaymentModal: false,
       showInvoiceModal: false,
       showDeleteModal: false,
+      showNameError: false,
       paidBillData: {},
       invoiceNumber: "",
       breadcrumbPages: [
@@ -473,30 +488,47 @@ export default {
       const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
       return `INV-${year}${month}${day}-${random}`;
     },
-    payBill() {
-      if (!this.patientName.trim()) {
-        alert('Mohon lengkapi nama pasien terlebih dahulu!');
-        return;
+    clearNameError() {
+      if (this.showNameError) {
+        this.showNameError = false;
       }
-      
-      // Store paid bill data
-      this.paidBillData = {
-        patientName: this.patientName,
-        items: [...this.billItems.filter(item => item.name.trim())], // Only items with names
-        total: this.totalAmount,
-        medicineTotal: this.medicineTotal,
-        date: new Date().toISOString(),
-        status: 'paid'
-      };
-      
-      // Generate invoice number
-      this.invoiceNumber = this.generateInvoiceNumber();
-      
-      console.log('Processing payment:', this.paidBillData);
-      
-      // Show payment success modal
-      this.showPaymentModal = true;
     },
+payBill() {
+  // Reset error state
+  this.showNameError = false;
+  
+  // Validate patient name
+  if (!this.patientName.trim()) {
+    this.showNameError = true;
+    // Scroll to the error field
+    this.$nextTick(() => {
+      const errorField = document.querySelector('input[v-model="patientName"]');
+      if (errorField) {
+        errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorField.focus();
+      }
+    });
+    return;
+  }
+  
+  // Store paid bill data
+  this.paidBillData = {
+    patientName: this.patientName,
+    items: [...this.billItems.filter(item => item.name.trim())], // Only items with names
+    total: this.totalAmount,
+    medicineTotal: this.medicineTotal,
+    date: new Date().toISOString(),
+    status: 'paid'
+  };
+  
+  // Generate invoice number
+  this.invoiceNumber = this.generateInvoiceNumber();
+  
+  console.log('Processing payment:', this.paidBillData);
+  
+  // Show payment success modal
+  this.showPaymentModal = true;
+},
     closePaymentModal() {
       this.showPaymentModal = false;
       this.resetForm();
