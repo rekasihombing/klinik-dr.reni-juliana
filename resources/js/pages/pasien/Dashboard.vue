@@ -353,14 +353,14 @@
                 </div>
               </div>
               
-              <button class="w-40 bg-gradient-to-r from-[#3674B5] to-[#437BB6] hover:from-[#3B59A1] hover:to-[#3B59A1] text-white text-sm rounded-lg px-4 py-3 font-medium transition-all duration-200 shadow-md hover:shadow-lg">
+              <button class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max">
                 Lihat Rekam Medis
               </button>
             </div>
             <!-- Tombol Janji Temu -->
             <button
               @click="handleJanjiTemuClick" style="cursor:pointer;"
-              class="w-46 bg-gradient-to-r from-[#3674B5] to-[#437BB6] hover:from-[#3B59A1] hover:to-[#3B59A1] text-white text-sm rounded-lg px-4 py-3 font-medium transition-all duration-200 shadow-md hover:shadow-lg "
+              class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
             >
               Buat Janji Temu Baru
             </button>
@@ -390,12 +390,12 @@
   </div>
 
   <!-- Modal Jika Sudah Ada Janji Temu -->
-  <div
-    v-if="showInfoModal"
-     class="fixed inset-0 flex items-center justify-center z-50"
-     style="background-color: rgba(0, 0, 0, 0.15);"
-  >
-    <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
+<div
+  v-if="showInfoModal"
+  class="fixed inset-0 flex items-center justify-center z-50"
+  style="background-color: rgba(0, 0, 0, 0.15);"
+>
+  <div class="bg-white rounded-lg shadow-2xl text-center p-6 w-90">
       <div class="text-center">
         <i class="fas fa-calendar-check text-[#2D4480] text-4xl mb-4"></i>
         <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
@@ -422,7 +422,7 @@
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-xl p-6 w-80 shadow-lg">
+  <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
     <div class="text-center">
       <!-- Icon berubah berdasarkan status check-in -->
       <i 
@@ -974,4 +974,29 @@ const appointmentTitle = computed(() => {
 .fade-leave-to {
   opacity: 0;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fixed.inset-0 {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.bg-white.rounded-lg {
+  animation: slideIn 0.3s ease-out;
+}
+
 </style>

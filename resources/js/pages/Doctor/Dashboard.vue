@@ -1,8 +1,6 @@
 <template>
-  <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-      <div class="flex items-center space-x-1 cursor-pointer">
-        <span>{{ patientName }}</span>
-      </div>
+  <div class="bg-gradient-to-br from-[#1B2A4D] via-[#1e3354] to-[#243a5e] min-h-screen flex flex-col">
+        <span class="text-white font-medium">{{ patientName }}</span>
 
     <!-- Main Container -->
     <div class="flex flex-1 overflow-hidden">
@@ -10,85 +8,180 @@
       <Sidebar :patient-name="patientName" />
 
    <!-- Main content -->
-    <main class="bg-[#FFFFFF] flex-1 p-6 md:p-10">
+    <main class="bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] flex-1 p-6 md:p-10">
+      <!-- Welcome Card with enhanced styling -->
       <div
-        class="bg-gradient-to-r from-[#C4DCFE] to-[#9BC3FC] rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center"
+        class="bg-gradient-to-r from-[#C4DCFE] via-[#b3d1fe] to-[#9BC3FC] rounded-2xl shadow-lg border border-white/30 backdrop-blur-sm p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden"
       >
-        <p class="text-lg font-medium text-[#2A4482]">Selamat datang, Dr. Reni Juliana !</p>
-        <div class="text-right text-sm text-[#2A4482] mt-3 md:mt-0">
-          <p>{{ getCurrentDate() }}</p>
-          <p class="mt-1">{{ getCurrentTime() }}</p>
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+        
+        <div class="relative z-10">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-[#2A4482]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xl font-bold text-[#2A4482]">Selamat datang, Dr. Reni Juliana!</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="relative z-10 text-right text-sm text-[#2A4482] mt-4 md:mt-0 bg-white/20 rounded-xl p-4 backdrop-blur-sm">
+          <div class="flex items-center space-x-2 mb-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="font-medium">{{ getCurrentDate() }}</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="font-mono font-bold">{{ getCurrentTime() }}</p>
+          </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-4 mb-6">
-        <div class="bg-gradient-to-r from-[#94C0FF] to-[#6799DF] rounded-md shadow-md px-6 py-4 w-40 text-center">
-          <p class="text-[#F5F5F5] text-sm font-semibold mb-1">Pasien Hari ini</p>
-          <p class="text-[#F5F5F5] text-2xl font-medium">{{ displayAppointments.length }}</p>
+      <!-- Stats Cards with enhanced design -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-[#94C0FF] to-[#6799DF] rounded-2xl shadow-lg p-6 text-white relative overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-white/80 text-sm font-medium mb-2">Pasien Hari ini</p>
+                <p class="text-3xl font-bold">{{ displayAppointments.length }}</p>
+                <p class="text-white/60 text-xs mt-1">Total jadwal konsultasi</p>
+              </div>
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="bg-gradient-to-r from-[#91D8E4] to-[#42ABBD] rounded-md shadow-md px-6 py-4 w-50 text-center">
-          <p class="text-[#F5F5F5] text-sm font-semibold mb-1">Jadwal Praktek Hari Ini</p>
-          <p class="text-[#F5F5F5] text-xl font-medium">15.00 - 23.00</p>
+        
+        <div class="bg-gradient-to-br from-[#91D8E4] to-[#42ABBD] rounded-2xl shadow-lg p-6 text-white relative overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-white/80 text-sm font-medium mb-2">Jadwal Praktek Hari Ini</p>
+                <p class="text-2xl font-bold">15.00 - 23.00</p>
+                <p class="text-white/60 text-xs mt-1">8 jam praktek</p>
+              </div>
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <h2 class="text-[#000000] text-lg font-medium mb-4">Daftar Pasien Hari ini</h2>
 
-      <div class="overflow-x-auto rounded-lg shadow-md">
-        <table class="min-w-full border-collapse border border-gray-300">
-          <thead>
-            <tr class="bg-[#3674B5] text-white text-sm">
-              <th class="border border-gray-300 px-4 py-2 text-left">No Antrian</th>
-              <th class="border border-gray-300 px-4 py-2 text-left">Nama Pasien</th>
-              <th class="border border-gray-300 px-4 py-2 text-left">Waktu</th>
-              <th class="border border-gray-300 px-4 py-2 text-left">Keluhan</th>
-              <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
-              <th class="border border-gray-300 px-4 py-2 text-left">Detail</th>
-            </tr>
-          </thead>
-          <tbody class="text-sm text-black">
-            <tr v-for="(appointment, index) in displayAppointments" :key="appointment.id">
-              <td class="border border-gray-300 px-4 py-2">
-                {{ generateQueueNumber(index + 1) }}
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                {{ appointment.pasien ? appointment.pasien.nama_lengkap : 'Nama tidak tersedia' }}
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                {{ formatTime(appointment.jam_konsultasi) }}
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                {{ appointment.keluhan || 'Tidak ada keluhan' }}
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                <span 
-                  :class="getStatusClass(appointment.status)"
-                  class="px-2 py-1 rounded-md text-xs font-medium"
-                >
-                  {{ getStatusText(appointment.status) }}
-                </span>
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                <button 
-                  @click="viewDetail(appointment)"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  Lihat Detail
-                </button>
-              </td>
-            </tr>
-            <tr v-if="displayAppointments.length === 0">
-              <td colspan="6" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                Tidak ada pasien hari ini
-                <div class="text-xs mt-2 text-gray-400" v-if="debugInfo">
-                  Debug: Doctor ID {{ debugInfo.doctorId }}, 
-                  Today: {{ debugInfo.todayDate }}, 
-                  Total appointments: {{ debugInfo.appointmentsCount }},
-                  Today appointments: {{ debugInfo.todayAppointmentsCount }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Patient List Section with enhanced styling -->
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] px-6 py-4">
+          <h2 class="text-white text-xl font-bold flex items-center space-x-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <span>Daftar Pasien Hari ini</span>
+          </h2>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">No Antrian</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama Pasien</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Waktu</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Keluhan</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Detail</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="(appointment, index) in displayAppointments" :key="appointment.id" 
+                  class="hover:bg-gray-50 transition-colors duration-200">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div>
+                      <span class="text-[#000000] font-bold text-sm">{{ generateQueueNumber(index + 1) }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ appointment.pasien ? appointment.pasien.nama_lengkap : 'Nama tidak tersedia' }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-900 font-mono">{{ formatTime(appointment.jam_konsultasi) }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-gray-900 max-w-xs truncate">
+                    {{ appointment.keluhan || 'Tidak ada keluhan' }}
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span 
+                    :class="getStatusClass(appointment.status)"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                  >
+                    {{ getStatusText(appointment.status) }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <button 
+                    @click="viewDetail(appointment)"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-[#3674B5] hover:bg-[#3B59A1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    Lihat Detail
+                  </button>
+                </td>
+              </tr>
+              <tr v-if="displayAppointments.length === 0">
+                <td colspan="6" class="px-6 py-12 text-center">
+                  <div class="flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                      <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-gray-500 font-medium">Tidak ada pasien hari ini</p>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-50 rounded-lg p-3 mt-4" v-if="debugInfo">
+                      <strong class="text-gray-400">Debug Info:</strong><br>
+                      Doctor ID: {{ debugInfo.doctorId }}<br>
+                      Today: {{ debugInfo.todayDate }}<br>
+                      Total appointments: {{ debugInfo.appointmentsCount }}<br>
+                      Today appointments: {{ debugInfo.todayAppointmentsCount }}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
     </div>
@@ -204,18 +297,18 @@ function getStatusClass(status) {
   switch(status?.toLowerCase()) {
     case 'selesai':
     case 'completed':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 text-green-800 border border-green-200';
     case 'berlangsung':
     case 'ongoing':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-blue-100 text-blue-800 border border-blue-200';
     case 'menunggu':
     case 'waiting':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
     case 'dibatalkan':
     case 'cancelled':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 text-red-800 border border-red-200';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 text-gray-800 border border-gray-200';
   }
 }
 
@@ -249,5 +342,27 @@ function handleJanjiTemuClick() {
 </script>
 
 <style scoped>
-/* Tambahan styling jika perlu */
+/* Tambahan styling untuk animasi hover */
+.group:hover .group-hover\:bg-white\/30 {
+  background-color: rgb(255 255 255 / 0.3);
+}
+
+/* Custom scrollbar untuk tabel */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
 </style>

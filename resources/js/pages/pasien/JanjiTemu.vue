@@ -26,72 +26,81 @@
 
           <div class="flex flex-col md:flex-row md:space-x-8">
             <!-- Form -->
-            <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="showConfirmationModal">
-              <h2 class="text-[#2A4482] font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
-                Detail Janji Temu
-              </h2>
+          <form class="flex flex-col space-y-4 md:w-1/2" @submit.prevent="showConfirmationModal">
+            <h2 class="text-[#2A4482] font-semibold text-sm border-b border-gray-400 pb-1 mb-2">
+              Detail Janji Temu
+            </h2>
 
-              <!-- Tanggal -->
-              <label class="text-black text-sm" for="tanggal">
-                Tanggal Janji Temu<span class="text-red-600">*</span>
-              </label>
-              <input
-                id="tanggal"
-                v-model="form.tanggal"
-                type="text"
-                placeholder="Pilih tanggal janji temu"
-                :class="['border rounded px-3 py-2 text-sm w-full', errors.tanggal ? 'border-red-500' : 'border-gray-300']"
-                readonly
-              />
-              <p v-if="errors.tanggal" class="text-red-500 text-xs mt-0">Tanggal wajib diisi.</p>
+            <!-- Tanggal -->
+            <label class="text-black text-sm" for="tanggal">
+              Tanggal Janji Temu<span class="text-red-600">*</span>
+            </label>
+            <input
+              id="tanggal"
+              v-model="form.tanggal"
+              type="text"
+              placeholder="Pilih tanggal janji temu"
+              :class="[
+                'w-full border rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2',
+                errors.tanggal ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-200 focus:border-blue-400'
+              ]"
+              readonly
+            />
+            <p v-if="errors.tanggal" class="text-red-500 text-xs mt-0">Tanggal wajib diisi.</p>
 
-              <!-- Jam -->
-              <label class="text-black text-sm" for="jam">
-                Jam Konsultasi<span class="text-red-600">*</span>
-              </label>
-              <select
-                id="jam"
-                v-model="form.jam_konsultasi"
-                :class="['border rounded px-3 py-2 text-sm w-full', errors.jam_konsultasi ? 'border-red-500' : 'border-gray-300']"
-                @change="clearTimeError"
+            <!-- Jam -->
+            <label class="text-black text-sm" for="jam">
+              Jam Konsultasi<span class="text-red-600">*</span>
+            </label>
+            <select
+              id="jam"
+              v-model="form.jam_konsultasi"
+              :class="[
+                'w-full border rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2',
+                errors.jam_konsultasi ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-200 focus:border-blue-400'
+              ]"
+              @change="clearTimeError"
+            >
+              <option value="" disabled>Pilih waktu</option>
+              <option 
+                v-for="time in availableTimes" 
+                :key="time" 
+                :value="time"
+                :disabled="!isTimeAvailable(time)"
+                :class="{ 'text-gray-400': !isTimeAvailable(time) }"
               >
-                <option value="" disabled>Pilih waktu</option>
-                <option 
-                  v-for="time in availableTimes" 
-                  :key="time" 
-                  :value="time"
-                  :disabled="!isTimeAvailable(time)"
-                  :class="{ 'text-gray-400': !isTimeAvailable(time) }"
-                >
-                  {{ time }} {{ getTimeStatusText(time) }}
-                </option>
-              </select>
-              <p v-if="errors.jam_konsultasi" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
+                {{ time }} {{ getTimeStatusText(time) }}
+              </option>
+            </select>
+            <p v-if="errors.jam_konsultasi" class="text-red-500 text-xs mt-0">Jam wajib diisi.</p>
 
-              <!-- Keluhan -->
-              <label class="text-black text-sm" for="keluhan">
-                Keluhan<span class="text-red-600">*</span>
-              </label>
-              <textarea
-                id="keluhan"
-                v-model="form.keluhan"
-                rows="4"
-                placeholder="Tuliskan keluhan Anda"
-                :class="['border rounded px-3 py-2 text-sm w-full resize-none', errors.keluhan ? 'border-red-500' : 'border-gray-300']"
-              ></textarea>
-              <p v-if="errors.keluhan" class="text-red-500 text-xs mt-0">Keluhan wajib diisi.</p>
+            <!-- Keluhan -->
+            <label class="text-black text-sm" for="keluhan">
+              Keluhan<span class="text-red-600">*</span>
+            </label>
+            <textarea
+              id="keluhan"
+              v-model="form.keluhan"
+              rows="4"
+              placeholder="Tuliskan keluhan Anda"
+              :class="[
+                'w-full border rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2',
+                errors.keluhan ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-200 focus:border-blue-400'
+              ]"
+            ></textarea>
+            <p v-if="errors.keluhan" class="text-red-500 text-xs mt-0">Keluhan wajib diisi.</p>
 
-              <p class="text-xs text-gray-700 mb-1">
-                <strong>Catatan:</strong>
-                Mohon datang ke klinik pada tanggal dan sebelum jam yang ditentukan untuk
-                melakukan administrasi. Jika datang di luar tanggal dan melebihi jam tersebut, maka nomor antrian Anda
-                sudah tidak berlaku.
-              </p>
+            <p class="text-xs text-gray-700 mb-1">
+              <strong>Catatan:</strong>
+              Mohon datang ke klinik pada tanggal dan sebelum jam yang ditentukan untuk
+              melakukan administrasi. Jika datang di luar tanggal dan melebihi jam tersebut, maka nomor antrian Anda
+              sudah tidak berlaku.
+            </p>
 
-              <button type="submit" class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max">
-                Simpan
-              </button>
-            </form>
+            <button type="submit" class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max">
+              Simpan
+            </button>
+          </form>
 
             <!-- Jadwal Dokter -->
             <div class="mt-6 md:mt-0 md:w-1/2 ">
@@ -116,8 +125,8 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.15);">
-      <div class="bg-white rounded-lg max-w-sm w-full p-9 drop-shadow-lg">
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center confirmation-modal" style="background-color: rgba(0, 0, 0, 0.15);">
+      <div class="bg-white rounded-lg max-w-sm w-full p-9 drop-shadow-lg confirmation-content">
         <div class="flex justify-center mb-4">
           <i class="far fa-clock text-blue-900 text-4xl"></i>
         </div>
@@ -450,4 +459,29 @@ option:disabled {
 select option[disabled] {
   color: #9CA3AF;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fixed.inset-0.confirmation-modal {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.bg-white.rounded-lg.confirmation-content {
+  animation: slideIn 0.3s ease-out;
+}
+
 </style>

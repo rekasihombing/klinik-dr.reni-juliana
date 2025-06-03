@@ -46,14 +46,8 @@ Route::post('/kontak', [FaqController::class, 'store']);
 //Staff
 Route::get('/staff/dashboard', [StaffDashboardController::class, 'index'])->middleware(['auth', 'staff']);
 Route::post('/staff/appointment/{id}/status', [StaffDashboardController::class, 'updateStatus']);
-
-
 Route::get('/pendaftaran', [OfflineBookingController::class, 'create'])->name('pendaftaran.form');
 Route::post('/simpanpendaftar', [OfflineBookingController::class, 'store'])->name('pendaftaran.store');
-
-
-
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/konfirmasi-pasien', [KonfirmasiPasienStaffController::class, 'index'])
         ->name('konfirmasi.pasien');
@@ -61,8 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/konfirmasi-pasien/{id}', [KonfirmasiPasienStaffController::class, 'konfirmasi']);
 });
 
-
-Route::get('/Pembayaran', function () {
+Route::get('/pembayaran', function () {
     return Inertia::render('staff/pembayaran');
 })->name('Pembayaran');
 
@@ -70,6 +63,17 @@ Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
 
+Route::get('/Pasien', function () {
+    return Inertia::render('staff/PasienList');
+})->name('Pasien');
+
+Route::get('/DetailPasien', function () {
+    return Inertia::render('staff/DetailPasien');
+})->name('DetailPasien');
+
+Route::get('/listjanjitemu', function () {
+    return Inertia::render('staff/listjanjitemu');
+})->name('janjitemu');
 
 
 Route::get('/clinic-schedules', [ClinicScheduleController::class, 'index'])->name('clinic.schedules.index');
@@ -124,6 +128,15 @@ Route::middleware(['auth'])->get('/profilpasien', [ProfileController::class, 'sh
 Route::get('/dashboarddokter', function () {
     return Inertia::render('dokter/DashboardDokter');
 })->name('dashboarddokter');
+
+Route::get('/resepobat', function () {
+    return Inertia::render('Doctor/ResepObat');
+})->name('resepobat');
+
+Route::get('/pendaftaranpegawai', function () {
+    return Inertia::render('Doctor/PendaftaranPegawai');
+})->name('pendaftaranpegawai');
+
 
 // Route::get('/tambahrekammedis', function () {
 //     return Inertia::render('Doctor/TambahRekamMedis');

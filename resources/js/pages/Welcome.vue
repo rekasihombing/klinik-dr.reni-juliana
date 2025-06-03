@@ -17,12 +17,11 @@ import FooterLanding from '@/layouts/FooterLanding.vue';
     <main class="relative w-full h-screen overflow-hidden">
       <div class="relative z-10 max-w-7xl mx-auto h-full flex flex-col-reverse md:flex-row items-center px-6">
         <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left">
-          <h1 class="stroke-text text-[#2f4f8a] font-extrabold text-5xl sm:text-4xl md:text-6xl leading-tight">
-            Lorem ipsum<br />
-            <span class="stroke-text font-extrabold text-[#2a5ca8]">dolor sit amet</span>
+          <h1 class="stroke-text text-[#2f4f8a] font-extrabold text-3xl sm:text-4xl md:text-6xl leading-tight">
+            Klinik Dr. Reni Juliana Manurung<br />
           </h1>
           <p class="text-[#2f4f8a] text-sm md:text-base mt-4 mb-6 max-w-md sm:text-bas">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum leo ut risus aliquam laoreet.
+            Klinik terpercaya dengan pelayanan yang siap membantu Anda dengan konsultasi dan penanganan yang optimal.
           </p>
           <div class="flex justify-center md:justify-start space-x-3">
             <Link :href="route('login')"

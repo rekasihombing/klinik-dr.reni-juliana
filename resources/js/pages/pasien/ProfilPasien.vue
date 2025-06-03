@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-gray-100 min-h-screen flex flex-col">
+  <div class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
     <header
-      class="bg-[#F5FDFF] backdrop-blur-sm shadow-lg flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-100"
+      class="bg-white backdrop-blur-sm shadow-md flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-200"
     >
       <div class="font-semibold text-[#2D4480]">{{ clinicName }}</div>
       <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors" @click.stop="router.visit('/profilpasien')">
@@ -15,87 +15,89 @@
       <Sidebar :patient-name="patientName" />
 
       <main class="flex-grow flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-md w-full max-w-4xl p-6">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 border border-gray-100">
           <div class="text-center mb-6">
             <h1 class="text-[#2A4482] font-semibold text-xl flex items-center justify-center gap-2">
               <i class="fas fa-user-circle text-[#2A4482] text-lg"></i>
               Profil Pasien
             </h1>
-            <p class="text-black text-sm mt-1">Anda dapat melihat data diri anda.</p>
+            <p class="text-gray-600 text-sm mt-1">Anda dapat melihat data diri anda.</p>
           </div>
           
           <div>
-            <h2 class="text-[#2A4482] font-semibold text-sm mb-2 border-b border-gray-400 pb-1">Data Pasien</h2>
+            <h2 class="text-[#2A4482] font-semibold text-sm mb-4 border-b border-gray-300 pb-2 flex items-center gap-2">
+              Data Pasien
+            </h2>
 
             <!-- Show alert message if no patient data exists -->
-            <div v-if="!patientData" class="flex items-center gap-2 text-red-600 text-xs mb-3 font-medium bg-red-50 p-3 rounded">
-              <i class="fas fa-exclamation-triangle"></i>
+            <div v-if="!patientData" class="flex items-center gap-3 text-red-700 text-xs mb-4 font-medium bg-red-50 p-4 rounded-lg border-l-4 border-red-400">
+              <i class="fas fa-exclamation-triangle text-red-500"></i>
               <span>Anda belum mengisi data pasien. Mohon lengkapi data pasien terlebih dahulu.</span>
             </div>
 
             <!-- Show alert message if some data is missing -->
-            <div v-else-if="isMissingData" class="flex items-center gap-2 text-yellow-600 text-xs mb-3 font-medium bg-yellow-50 p-3 rounded">
-              <i class="fas fa-info-circle"></i>
+            <div v-else-if="isMissingData" class="flex items-center gap-3 text-yellow-700 text-xs mb-4 font-medium bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+              <i class="fas fa-info-circle text-yellow-500"></i>
               <span>Beberapa data pasien belum lengkap. Mohon lengkapi data yang masih kosong.</span>
             </div>
 
             <!-- Show success message if all data is complete -->
-            <div v-else class="flex items-center gap-2 text-green-600 text-xs mb-3 font-medium bg-green-50 p-3 rounded">
-              <i class="fas fa-check-circle"></i>
+            <div v-else class="flex items-center gap-3 text-green-700 text-xs mb-4 font-medium bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+              <i class="fas fa-check-circle text-green-500"></i>
               <span>Data pasien sudah lengkap.</span>
             </div>
 
-            <div class="space-y-3 text-black text-sm">
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+            <div class="bg-gray-50 rounded-lg p-5 space-y-4 text-black text-sm">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">Nama Lengkap</span>
                 <span>:</span>
                 <span :class="!patientData?.fullName ? 'text-gray-400 italic' : ''">
                   {{ patientData?.fullName || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">NIK</span>
                 <span>:</span>
                 <span :class="!patientData?.nik ? 'text-gray-400 italic' : ''">
                   {{ patientData?.nik || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">Tanggal Lahir</span>
                 <span>:</span>
                 <span :class="!patientData?.birthDate ? 'text-gray-400 italic' : ''">
                   {{ patientData?.birthDate || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">Jenis Kelamin</span>
                 <span>:</span>
                 <span :class="!patientData?.gender ? 'text-gray-400 italic' : ''">
                   {{ patientData?.gender || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">Golongan Darah</span>
                 <span>:</span>
                 <span :class="!patientData?.bloodType ? 'text-gray-400 italic' : ''">
                   {{ patientData?.bloodType || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">Email</span>
                 <span>:</span>
                 <span :class="!patientData?.email ? 'text-gray-400 italic' : ''">
                   {{ patientData?.email || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-center">
                 <span class="font-medium text-left">Nomor HP / Whatsapp</span>
                 <span>:</span>
                 <span :class="!patientData?.phoneNumber ? 'text-gray-400 italic' : ''">
                   {{ patientData?.phoneNumber || 'Belum diisi' }}
                 </span>
               </div>
-              <div class="grid grid-cols-[1fr_auto_2fr] gap-2">
+              <div class="grid grid-cols-[1fr_auto_2fr] gap-3 items-start">
                 <span class="font-medium text-left">Alamat</span>
                 <span>:</span>
                 <span :class="!patientData?.address ? 'text-gray-400 italic' : ''" class="break-words">
@@ -104,21 +106,21 @@
               </div>
             </div>
 
-            <div class="mt-6 flex gap-2">
+            <div class="mt-6 flex gap-3">
               <button 
                 @click="editProfile"
-                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-xs transition"
+                class="bg-[#3674B5] hover:bg-[#2A4482] shadow-md hover:shadow-lg text-white px-5 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2"
               >
-                <i class="fas fa-edit mr-1"></i>
+                <i class="fas fa-edit"></i>
                 {{ patientData ? 'Edit Profil' : 'Isi Data Pasien' }}
               </button>
               
               <button 
                 v-if="patientData"
                 @click="refreshData"
-                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-xs transition"
+                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg text-white px-5 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2"
               >
-                <i class="fas fa-sync-alt mr-1"></i>
+                <i class="fas fa-sync-alt"></i>
                 Refresh
               </button>
             </div>
@@ -181,4 +183,4 @@ select {
 .break-words {
   word-break: break-words;
 }
-</style>  
+</style>
