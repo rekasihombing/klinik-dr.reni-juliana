@@ -7,6 +7,8 @@ use App\Models\Appointment;
 use App\Models\RekamMedis;
 use Carbon\Carbon;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
 
 class RekamMedisController extends Controller
 {
@@ -18,7 +20,7 @@ class RekamMedisController extends Controller
             'patientData' => [
                 'id' => $appointment->pasien->id,
                 'nama' => $appointment->pasien->nama_lengkap,
-                'umur' => $appointment->pasien->umur, // atau hitung dari tanggal lahir
+                'umur' => $appointment->pasien->umur,
                 'tanggalLahir' => $appointment->pasien->tanggal_lahir,
                 'jenisKelamin' => $appointment->pasien->jenis_kelamin,
                 'golonganDarah' => $appointment->pasien->golongan_darah,
@@ -31,6 +33,7 @@ class RekamMedisController extends Controller
 
     public function store(Request $request)
     { 
+
         // Validasi input
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
@@ -55,7 +58,6 @@ class RekamMedisController extends Controller
             
             // Diagnosa dan Tindakan
             'diagnosa' => 'required|string',
-            // 'tindakan' => 'required|string',
             'catatan_dokter' => 'nullable|string'
         ], [
             'patient_id.required' => 'Data pasien harus ada',
@@ -64,7 +66,6 @@ class RekamMedisController extends Controller
             'tanggal_kunjungan.required' => 'Tanggal kunjungan harus diisi',
             'keluhan.required' => 'Keluhan utama harus diisi',
             'diagnosa.required' => 'Diagnosa harus diisi',
-            // 'tindakan.required' => 'Tindakan/Terapi harus diisi'
         ]);
 
         try {
@@ -74,7 +75,6 @@ class RekamMedisController extends Controller
                 'appointment_id' => $validated['appointment_id'],
                 'no_rekam_medis' => $validated['no_rekam_medis'],
                 'tanggal_kunjungan' => $validated['tanggal_kunjungan'],
-                // 'dokter_id' => auth()->id(), // ID dokter yang sedang login
                 
                 // Anamnesis
                 'keluhan' => $validated['keluhan'],
@@ -93,7 +93,6 @@ class RekamMedisController extends Controller
                 
                 // Diagnosa dan Tindakan
                 'diagnosa' => $validated['diagnosa'],
-                // 'tindakan' => $validated['tindakan'],
                 'catatan_dokter' => $validated['catatan_dokter']
             ]);
 
@@ -101,22 +100,26 @@ class RekamMedisController extends Controller
             if ($validated['appointment_id']) {
                 \App\Models\Appointment::where('id', $validated['appointment_id'])
                     ->update(['status' => 'selesai']);
+                Log::info('Appointment status updated to selesai');
             }
 
-            return redirect('/dashboarddokter')
-                ->with('success', 'Rekam medis berhasil disimpan');
+            // SOLUSI YANG BENAR: Gunakan Inertia::location untuk external redirect
+            Log::info('Using Inertia location redirect');
+            return Inertia::location(route('resep-obat.create', ['rekam_medis_id' => $rekamMedis->id]));
 
         } catch (\Exception $e) {
+            Log::error('Error saving rekam medis: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
             return back()->withErrors([
-                'error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
-            ]);
+                'error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()  
+            ])->withInput();
         }
     }
 
     public function index()
     {
         $rekamMedis = RekamMedis::with(['pasien', 'dokter'])
-            ->where('dokter_id', auth()->id())
             ->orderBy('tanggal_kunjungan', 'desc')
             ->paginate(10);
 

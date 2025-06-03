@@ -14,7 +14,8 @@ class CreateObatTable extends Migration
             $table->string('jenis_obat')->nullable();
             $table->text('deskripsi')->nullable();
             $table->decimal('harga', 10, 2)->nullable();
-            $table->string('satuan')->default('pcs'); // pcs, botol, strip, dll
+            $table->string('satuan')->default('pcs'); 
+            $table->integer('stok')->default('0');
             $table->timestamps();
         });
     }

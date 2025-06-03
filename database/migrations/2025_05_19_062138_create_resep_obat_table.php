@@ -14,6 +14,7 @@ class CreateResepObatTable extends Migration
             $table->unsignedBigInteger('obat_id')->nullable();
             $table->string('nama_obat', 100);
             $table->string('dosis', 100)->nullable();
+            $table->integer('jumlah');
             $table->text('catatan')->nullable();
             $table->date('tanggal_mulai');
             $table->date('tanggal_terakhir');

@@ -46,12 +46,16 @@
           <i class="fas fa-file-alt"></i>
           <span>Laporan</span>
         </a>
-         <a href="#"
-          class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
-        >
-          <i class="fas fa-file-alt"></i>
-          <span>obat</span>
-        </a>
+<Link
+  href="/stok-obat"
+  as="a"
+  class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+  :class="isActive('/stok-obat') ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : ''"
+>
+  <i class="fas fa-file-medical text-lg"></i>
+  <span>Obat</span>
+</Link>
+
       </nav>
     </div>
   <div class="sticky bottom-0 bg-white py-4">
@@ -68,9 +72,18 @@
 </template>
 
 <script setup>
+import { Link } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
+import { usePage } from '@inertiajs/inertia-vue3'
+
+const page = usePage()
 
 function logout() {
   Inertia.post(route('logout'))
 }
+
+function isActive(path) {
+  return page.url === path
+}
 </script>
+

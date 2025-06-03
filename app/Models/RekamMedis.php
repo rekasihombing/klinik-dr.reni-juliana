@@ -44,7 +44,7 @@ class RekamMedis extends Model
     ];
 
     // Relasi dengan Pasien
-    public function patient()
+    public function pasien()
     {
         return $this->belongsTo(Patient::class);
     }
