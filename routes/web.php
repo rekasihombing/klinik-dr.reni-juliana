@@ -20,6 +20,8 @@ use App\Http\Controllers\ScheduleExceptionController;
 use App\Http\Controllers\StokObatController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\JanjiTemuController;
+use App\Http\Controllers\LaporanKeuanganController;
+use App\Http\Controllers\LaporanOperasionalController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -222,7 +224,12 @@ Route::middleware(['auth'])->group(function () {
     */
 });
 
-Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
+// route janji-temu, laporan-operasional, laporan keuangan
+Route::middleware(['auth'])->group(function () {
+    Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
+    Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index']);
+    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index']);
+});
 
 Route::put('/appointment/{id}/mulai-konsultasi', [AppointmentController::class, 'mulaiKonsultasi'])
     ->name('appointment.mulai-konsultasi');
