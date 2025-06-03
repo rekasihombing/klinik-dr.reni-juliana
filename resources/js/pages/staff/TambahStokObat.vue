@@ -43,7 +43,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.obat_id || (showValidation && !form.obat_id),
-                    'border-green-400 bg-green-50': form.obat_id && !errors.obat_id
                   }"
                 >
                   <option value="">-- Pilih Obat --</option>
@@ -81,7 +80,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.jumlah || (showValidation && !form.jumlah),
-                    'border-green-400 bg-green-50': form.jumlah && !errors.jumlah
                   }"
                   placeholder="Masukkan jumlah stok"
                 />
@@ -115,7 +113,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.tanggal_kadaluarsa || (showValidation && !form.tanggal_kadaluarsa),
-                    'border-green-400 bg-green-50': form.tanggal_kadaluarsa && !errors.tanggal_kadaluarsa
                   }"
                 />
                 <p v-if="errors.tanggal_kadaluarsa" class="mt-2 text-sm text-red-600 flex items-center">

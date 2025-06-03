@@ -160,11 +160,21 @@
                       <span class="text-sm text-gray-900 font-mono">{{ patient.waktu }}</span>
                     </div>
                   </td>
+<!-- Ganti bagian status di tabel -->
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                      {{ patient.status }}
+                    <div v-if="patient.status === 'selesai'">
+                      <button
+                        @click="handleTagihan(patient)"
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white hover:bg-green-700 transition"
+                      >
+                        Tagihan
+                      </button>
+                    </div>
+                    <span v-else class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      {{ patient.status_display || patient.status }}
                     </span>
                   </td>
+
                   <td class="px-6 py-4 whitespace-nowrap">
                     <button 
                       @click="showDetail(patient)"
@@ -356,7 +366,12 @@ export default {
     },
     goToConfirmation() {
       router.visit('/konfirmasi-pasien')
-    }
+    },
+    handleTagihan(patient) {
+    // arahkan ke halaman tagihan, atau munculkan modal, dll.
+    this.$inertia.visit(`/tagihan/${patient.id}`);
+  }
+
   }
 }
 </script>

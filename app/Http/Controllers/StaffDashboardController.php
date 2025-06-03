@@ -14,10 +14,10 @@ class StaffDashboardController extends Controller
     {
         try {
             // Ambil pasien yang telah dikonfirmasi hari ini
-            $pasienHariIni = Appointment::where('status', 'dikonfirmasi')
-                ->whereDate('tanggal', Carbon::today())
-                ->with('pasien')
-                ->get();
+                $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'selesai'])
+                    ->whereDate('tanggal', Carbon::today())
+                    ->with('pasien')
+                    ->get();
 
             // Generate nomor antrian untuk pasien yang dikonfirmasi
             $pasienHariIniWithQueue = $pasienHariIni->map(function($appointment, $index) {
@@ -26,7 +26,8 @@ class StaffDashboardController extends Controller
                     'no_antrian' => 'A' . str_pad($index + 1, 2, '0', STR_PAD_LEFT),
                     'nama_pasien' => $appointment->pasien->nama_lengkap ?? 'N/A',
                     'waktu' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : '-',
-                    'status' => $this->getStatusDisplay($appointment->status),
+                    'status' => $appointment->status, // Status asli dari database
+                    'status_display' => $this->getStatusDisplay($appointment->status), // Untuk tampilan
                     'registrasi_number' => 'REG - ' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT),
                     'nik' => $appointment->pasien->nik ?? 'N/A',
                     'tanggal_lahir' => $appointment->pasien->tanggal_lahir ? 
