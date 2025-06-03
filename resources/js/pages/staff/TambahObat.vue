@@ -46,7 +46,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.nama_obat,
-                    'border-green-400 bg-green-50': form.nama_obat && !errors.nama_obat
                   }"
                   placeholder="Contoh: Paracetamol"
                 />
@@ -71,7 +70,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.jenis_obat,
-                    'border-green-400 bg-green-50': form.jenis_obat && !errors.jenis_obat
                   }"
                 >
                   <option value="">-- Pilih Jenis Obat --</option>
@@ -106,7 +104,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.satuan,
-                    'border-green-400 bg-green-50': form.satuan && !errors.satuan
                   }"
                 >
                   <option value="">-- Pilih Satuan --</option>
@@ -142,7 +139,6 @@
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
                     'border-red-400 focus:ring-red-500 bg-red-50': errors.harga,
-                    'border-green-400 bg-green-50': form.harga && !errors.harga
                   }"
                   placeholder="0"
                 />
@@ -167,8 +163,7 @@
                   rows="3"
                   class="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700"
                   :class="{ 
-                    'border-red-400 focus:ring-red-500 bg-red-50': errors.deskripsi,
-                    'border-green-400 bg-green-50': form.deskripsi && !errors.deskripsi
+                    'border-red-400 focus:ring-red-500 bg-red-50': errors.deskripsi
                   }"
                   placeholder="Deskripsi obat (opsional)"
                 ></textarea>
