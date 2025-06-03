@@ -27,7 +27,7 @@ class PatientDashboardController extends Controller
         if ($patient) {
             // PERBAIKAN: Cari appointment yang akan datang terlebih dahulu
             $nextAppointment = Appointment::where('pasien_id', $patient->id)
-                ->whereIn('status', ['menunggu', 'dikonfirmasi'])
+                ->whereIn('status', ['menunggu', 'dikonfirmasi', 'diproses'])
                 ->whereRaw('CONCAT(tanggal, " ", jam_konsultasi) > NOW()') // Appointment masa depan
                 ->orderBy('tanggal')
                 ->orderBy('jam_konsultasi')
