@@ -1,19 +1,10 @@
 <template>
+    <div class="flex min-h-screen bg-gray-50">
+  <SidebarStaff class="w-64 bg-white shadow-md" />
   <div class="bg-white font-sans min-h-screen">
     <div class="max-w-4xl mx-auto p-4 pb-8">
       <!-- Header with breadcrumb and datetime -->
-      <div class="flex justify-between items-center bg-sky-200 rounded-md px-4 py-3 mb-4">
-        <div class="flex items-center space-x-2 text-sm text-slate-900">
-          <i class="fas fa-home"></i>
-          <a href="#" class="hover:underline">Dashboard</a>
-          <span class="select-none text-slate-700">&gt;</span>
-          <span class="text-slate-700">Pasien</span>
-        </div>
-        <div class="text-right text-slate-900 text-sm leading-none">
-          <div>{{ currentDate }}</div>
-          <div class="tracking-widest">{{ currentTime }}</div>
-        </div>
-      </div>
+              <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
       <!-- Main content card -->
       <div class="border border-slate-300 rounded-md shadow-sm p-6 mb-6" >
@@ -105,57 +96,46 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
+import SidebarStaff from '@/layouts/staff/SidebarStaff.vue';
+import HeaderStaff from '@/layouts/staff/HeaderStaff.vue';
+
 export default {
-  name: 'PatientDetail',
+  name: 'DetailPasien',
+    components: {
+    SidebarStaff,
+    HeaderStaff
+  },
+  props: {
+
+    breadcrumbPages: {
+        type: Array,
+        default: () => ([
+          { label: 'Dashboard', href: '/dashboardstaff' },
+          { label: 'Detail Pasien', href: '/DetailPasien' }
+        ])
+      }
+  },
   data() {
     return {
       activeTab: 'identitas',
-      currentDate: 'Senin, 12 Mei 2025',
-      currentTime: '12 : 55 : 20',
-      patientData: [
-        { label: 'No Registrasi', value: 'REG 008' },
-        { label: 'Nama', value: 'Marvitha Khairani' },
-        { label: 'NIK', value: '0000000000000000000' },
-        { label: 'Tanggal Lahir', value: '19 - 09 - 2005' },
-        { label: 'Umur', value: '20' },
-        { label: 'Jenis Kelamin', value: 'Perempuan' },
-        { label: 'Golongan Darah', value: 'B' },
-        { label: 'Email', value: 'marvitha@gmail.com' },
-        { label: 'No HP', value: '089876898876' },
-        { label: 'Alamat', value: 'Medan' },
-        { label: 'Status', value: 'Aktif' }
-      ],
-      appointmentData: [
-        {
-          id: 1,
-          date: '01 - 02 - 2025',
-          time: '15.00',
-          complaint: 'Demam Tinggi',
-          status: 'Selesai',
-          notes: 'Diagnosa : Demam Berdarah'
-        },
-        {
-          id: 2,
-          date: 'A02',
-          time: '15.00',
-          complaint: '',
-          status: 'Selesai',
-          notes: ''
-        },
-        {
-          id: 3,
-          date: 'A03',
-          time: '19.00',
-          complaint: '',
-          status: 'Dibatalkan Pasien',
-          notes: ''
-        }
-      ]
-    }
+    };
   },
+props: {
+ patientData: Array,
+    appointmentData: Array,
+  breadcrumbPages: {
+    type: Array,
+    default: () => ([
+      { label: 'Dashboard', href: '/dashboardstaff' },
+      { label: 'Detail Pasien', href: '/patients' }
+    ])
+  }
+},
+
   mounted() {
     this.updateDateTime();
     // Update time every second
