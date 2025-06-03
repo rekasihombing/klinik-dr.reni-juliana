@@ -116,12 +116,20 @@
         </div>
       </div>
       
-      <div class="bg-orange-50 rounded-lg p-3 mb-3">
-        <div class="text-xs font-medium text-[#FF8A00] flex items-center">
-          <i class="fas fa-hourglass-half mr-2"></i>
-          Janji temu Anda sedang menunggu konfirmasi dari klinik
-        </div>
-      </div>
+     <div class="bg-orange-50 rounded-lg p-3 mb-3 cursor-pointer hover:bg-orange-100 transition" v-if="canCheckInToday && !isCheckedIn">
+  <div class="text-xs font-medium text-[#FF8A00] flex items-center">
+    <i class="fas fa-mouse-pointer mr-2"></i>
+    Check-in di sini
+  </div>
+</div>
+
+<div class="bg-orange-50 rounded-lg p-3 mb-3" v-else>
+  <div class="text-xs font-medium text-[#FF8A00] flex items-center">
+    <i class="fas fa-hourglass-half mr-2"></i>
+    Janji temu Anda sedang menunggu konfirmasi dari klinik
+  </div>
+</div>
+
 
       <button
         @click.stop="handleCancelAppointmentFromModal"
@@ -247,14 +255,14 @@
           <i class="fas fa-file-medical mr-1"></i>
           Lihat Hasil
         </button>
-        <button
-          @click.stop="router.visit('/janjitemu')"
-          class="flex-1 bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm rounded-lg px-3 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg"
-          style="cursor:pointer;"
-        >
-          <i class="fas fa-plus mr-1"></i>
-          Buat Baru
-        </button>
+        <!-- Tombol untuk menyembunyikan janji temu yang selesai -->
+<button
+  @click.stop="hideFinishedAppointment"
+  class="mt-3 w-full bg-gray-300 hover:bg-gray-400 text-gray-700 text-sm rounded-lg px-3 py-2 font-medium transition-all duration-200"
+>
+  <i class="fas fa-times mr-1"></i>
+  Selesai
+</button>
       </div>
     </template>
 
@@ -962,6 +970,12 @@ const appointmentTitle = computed(() => {
       return 'Jadwal Konsultasi';
   }
 });
+
+const nextAppointment = ref(props.nextAppointment)
+
+function hideFinishedAppointment() {
+  nextAppointment.value = null
+}
 
 </script>
 
