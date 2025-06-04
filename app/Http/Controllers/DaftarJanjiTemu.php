@@ -52,14 +52,14 @@ class DaftarJanjiTemu extends Controller
                 'nama' => $appointment->pasien->nama_lengkap ?? 'N/A',
                 'antrian' => 'A' . str_pad($appointment->id, 3, '0', STR_PAD_LEFT),
                 'registrasi_number' => 'REG-' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT),
-                'tanggal' => $appointment->tanggal ? $appointment->tanggal->format('d/m/Y') : 'N/A',
+                'tanggal' => $appointment->tanggal ?? 'N/A',
                 'waktu' => $appointment->jam_konsultasi ?? 'N/A',
                 'keluhan' => $appointment->keluhan ?? '-',
                 'status' => $appointment->status ?? 'pending',
                 // Include patient data for detail modal
                 'patient_data' => [
                     'nik' => $appointment->pasien->nik ?? 'N/A',
-                    'tanggal_lahir' => $appointment->pasien->tanggal_lahir ? $appointment->pasien->tanggal_lahir->format('d/m/Y') : 'N/A',
+                    'tanggal_lahir' => $appointment->pasien->tanggal_lahir ?? 'N/A',
                     'jenis_kelamin' => $appointment->pasien->jenis_kelamin ?? 'N/A',
                     'golongan_darah' => $appointment->pasien->golongan_darah ?? 'N/A',
                     'email' => $appointment->pasien->email ?? 'N/A',

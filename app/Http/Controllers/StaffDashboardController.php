@@ -14,7 +14,7 @@ class StaffDashboardController extends Controller
     {
         try {
             // Ambil pasien yang telah dikonfirmasi hari ini
-                $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'selesai'])
+                $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'selesai', 'diproses'])
                     ->whereDate('tanggal', Carbon::today())
                     ->with('pasien')
                     ->get();
@@ -76,6 +76,8 @@ class StaffDashboardController extends Controller
         switch ($status) {
             case 'dikonfirmasi':
                 return 'Menunggu Antrian';
+            case 'diproses':
+                return 'Konsultasi Berlangsung';
             case 'selesai':
                 return 'Selesai';
             case 'dibatalkan':

@@ -20,13 +20,21 @@ use App\Http\Controllers\ScheduleExceptionController;
 use App\Http\Controllers\StokObatController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\JanjiTemuController;
+use App\Http\Controllers\PatientController;
+use App\Http\Controllers\DetailPasienController;
+use App\Http\Controllers\DaftarJanjiTemu;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\LaporanOperasionalController;
 use App\Http\Controllers\ResepObatController;
 
+
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
+
+// Route::get('/tagihan', function () {
+//     return Inertia::render('staff/Tagihan');
+// })->name('tagihan');
 
 Route::get('/login', function () {
     return Inertia::render('auth/Login');
@@ -141,6 +149,7 @@ Route::get('/resepobat', function () {
 Route::get('/pendaftaranpegawai', function () {
     return Inertia::render('Doctor/PendaftaranPegawai');
 })->name('pendaftaranpegawai');
+
 
 // Route::get('/tambahrekammedis', function () {
 //     return Inertia::render('Doctor/TambahRekamMedis');

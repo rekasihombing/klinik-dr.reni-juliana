@@ -626,6 +626,7 @@ const getStatusText = (status) => {
   const statusTexts = {
     'menunggu': 'Menunggu',
     'dikonfirmasi': 'Dikonfirmasi',
+    'diproses': 'Konsultasi Berlangsung',
     'selesai': 'Selesai',
     'dibatalkan': 'Dibatalkan'
   }

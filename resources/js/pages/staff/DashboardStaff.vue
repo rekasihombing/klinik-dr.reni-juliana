@@ -369,7 +369,7 @@ export default {
     },
     handleTagihan(patient) {
     // arahkan ke halaman tagihan, atau munculkan modal, dll.
-    this.$inertia.visit(`/tagihan/${patient.id}`);
+    this.$inertia.visit(`/pembayaran/${patient.id}`);
   }
 
   }
