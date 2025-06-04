@@ -109,15 +109,18 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="(appointment, index) in displayAppointments" :key="appointment.id" 
-                  class="hover:bg-gray-50 transition-colors duration-200">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div>
-                      <span class="text-[#000000] font-bold text-sm">{{ generateQueueNumber(index + 1) }}</span>
-                    </div>
+            <tr v-for="(appointment, index) in displayAppointments" :key="appointment.id" 
+                class="hover:bg-gray-50 transition-colors duration-200">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div>
+                    <!-- Gunakan appointment data, bukan index -->
+                    <span class="text-[#000000] font-bold text-sm">
+                      {{ generateQueueNumber(appointment, index) }}
+                    </span>
                   </div>
-                </td>
+                </div>
+              </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                     <div>
@@ -168,6 +171,13 @@
                     </div>
                     <div>
                       <p class="text-gray-500 font-medium">Tidak ada pasien hari ini</p>
+                    </div>
+                    <div class="text-xs text-gray-300 bg-gray-50 rounded-lg p-3 mt-4" v-if="debugInfo">
+                      <strong class="text-gray-400">Debug Info:</strong><br>
+                      Doctor ID: {{ debugInfo.doctorId }}<br>
+                      Today: {{ debugInfo.todayDate }}<br>
+                      Total appointments: {{ debugInfo.appointmentsCount }}<br>
+                      Today appointments: {{ debugInfo.todayAppointmentsCount }}
                     </div>
                   </div>
                 </td>
@@ -282,8 +292,25 @@ function formatTime(timeStr) {
   return timeStr.substring(0, 5);
 }
 
-function generateQueueNumber(index) {
-  return 'A' + index.toString().padStart(2, '0');
+function generateQueueNumber(appointment, index) {
+  // Jika appointment belum dikonfirmasi, tidak ada nomor antrian
+  if (appointment.status !== 'dikonfirmasi') {
+    return '-';
+  }
+
+   // Hitung posisi berdasarkan appointments yang dikonfirmasi
+  const confirmedAppointments = displayAppointments.value
+    .filter(app => app.status === 'dikonfirmasi')
+    .sort((a, b) => {
+      // Urutkan berdasarkan waktu update (konfirmasi)
+      const dateA = new Date(a.updated_at || a.created_at);
+      const dateB = new Date(b.updated_at || b.created_at);
+      return dateA - dateB;
+    });
+  
+  const position = confirmedAppointments.findIndex(app => app.id === appointment.id) + 1;
+  
+  return position > 0 ? 'A' + position.toString().padStart(2, '0') : '-';
 }
 
 function getStatusClass(status) {

@@ -56,9 +56,6 @@
             <span>Rekam Medis Sudah Ada</span>
           </button>
           
-          <button class="bg-[#FF9500] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-orange-700 transition" type="button">
-            <span>Resep Obat</span>
-          </button>
           
           <button
             v-if="status === 'dikonfirmasi'"

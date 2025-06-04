@@ -23,7 +23,7 @@
                 </svg>
               </div>
               <div>
-                <h1 class="text-lg font-bold text-gray-900">Klinik Dr. Reni Juliana Manurung</h1>
+                <h1 class="text-lg font-bold text-[#3674B5]">Klinik Dr. Reni Juliana Manurung</h1>
                 <p class="text-sm text-gray-600 mt-1">Tagihan Pembayaran Pasien</p>
                 <p class="text-xs text-gray-500">No: {{ generateBillNumber() }}</p>
               </div>
@@ -57,29 +57,17 @@
                 </div>
               </div>
               <div class="space-y-3">
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 class="text-sm font-medium text-blue-900 mb-2">Biaya Layanan</h4>
-                  <div class="text-xs text-blue-700 space-y-1">
-                    <div class="flex justify-between">
-                      <span>• Biaya Konsultasi Dokter</span>
-                      <span>Rp 75.000</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span>• Biaya Administrasi</span>
-                      <span>Rp 10.000</span>
-                    </div>
-                  </div>
-                </div>
+                <!-- Removed biaya layanan as per instructions -->
               </div>
             </div>
           </div>
 
-          <!-- Medicine & Treatment Table -->
+          <!-- Medicine Table -->
           <div class="px-8 py-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-semibold text-gray-900">Obat & Tindakan Medis</h3>
+              <h3 class="text-base font-semibold text-gray-900">Obat</h3>
               <button 
-                @click="addItem"
+                @click="addMedicineItem"
                 class="inline-flex items-center gap-2 bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max transition-all duration-200"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,11 +82,10 @@
                 <table class="w-full">
                   <thead class="bg-[#3674B5] border-b border-gray-200">
                     <tr>
-                      <th class="text-left py-4 px-4 font-semibold text-sm text-white w-[35%]">Nama Obat/Tindakan</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[12%]">Qty</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[12%]">Satuan</th>
+                      <th class="text-left py-4 px-4 font-semibold text-sm text-white w-[50%]">Nama Obat</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[18%]">Qty</th>
                       <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[18%]">Harga Satuan</th>
-                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[15%]">Subtotal</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[12%]">Subtotal</th>
                       <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[8%]">Aksi</th>
                     </tr>
                   </thead>
@@ -123,23 +110,6 @@
                         />
                       </td>
                       <td class="py-4 px-3 text-center">
-                        <select 
-                          v-model="item.unit"
-                          class="w-full text-center border border-gray-300 rounded-md px-2 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
-                        >
-                          <option value="">Pilih</option>
-                          <option value="tablet">Tablet</option>
-                          <option value="kapsul">Kapsul</option>
-                          <option value="botol">Botol</option>
-                          <option value="tube">Tube</option>
-                          <option value="strip">Strip</option>
-                          <option value="ampul">Ampul</option>
-                          <option value="vial">Vial</option>
-                          <option value="sachet">Sachet</option>
-                          <option value="pcs">Pcs</option>
-                        </select>
-                      </td>
-                      <td class="py-4 px-3 text-center">
                         <div class="relative">
                           <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
                           <input 
@@ -159,7 +129,73 @@
                       </td>
                       <td class="py-4 px-3 text-center">
                         <button 
-                          @click="confirmRemoveItem(index)"
+                          @click="confirmRemoveItem(index, 'medicine')"
+                          class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                          title="Hapus item"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Treatment Table -->
+          <div class="px-8 py-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-semibold text-gray-900">Tindakan</h3>
+              <button 
+                @click="addActionItem"
+                class="inline-flex items-center gap-2 bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max transition-all duration-200"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Tambah Tindakan
+              </button>
+            </div>
+            
+            <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-[#3674B5] border-b border-gray-200">
+                    <tr>
+                      <th class="text-left py-4 px-4 font-semibold text-sm text-white w-[70%]">Nama Tindakan</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[25%]">Biaya</th>
+                      <th class="text-center py-4 px-3 font-semibold text-sm text-white w-[15%]">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white">
+                    <tr v-for="(action, index) in actionItems" :key="index" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td class="py-4 px-4">
+                        <input 
+                          v-model="action.name"
+                          type="text" 
+                          placeholder="Contoh: Pemeriksaan Umum"
+                          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        />
+                      </td>
+                      <td class="py-4 px-3 text-center">
+                        <div class="relative">
+                          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                          <input 
+                            v-model="action.price"
+                            type="number" 
+                            min="0"
+                            placeholder="0"
+                            class="w-full text-center border border-gray-300 rounded-md pl-8 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            @input="calculateTotal"
+                          />
+                        </div>
+                      </td>
+                      <td class="py-4 px-3 text-center">
+                        <button 
+                          @click="confirmRemoveItem(index, 'action')"
                           class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
                           title="Hapus item"
                         >
@@ -182,20 +218,12 @@
                 <div class="space-y-3">
                   <div class="flex justify-between items-center text-sm">
                     <span class="text-gray-600">Biaya Obat & Tindakan:</span>
-                    <span class="font-medium">Rp {{ formatCurrency(medicineTotal) }}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-600">Biaya Konsultasi:</span>
-                    <span class="font-medium">Rp {{ formatCurrency(75000) }}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-600">Biaya Administrasi:</span>
-                    <span class="font-medium">Rp {{ formatCurrency(10000) }}</span>
+                    <span class="font-medium">Rp {{ formatCurrency(medicineTotal + actionTotal) }}</span>
                   </div>
                   <div class="border-t border-gray-200 pt-3">
                     <div class="flex justify-between items-center">
                       <span class="text-base font-semibold text-gray-900">Total Pembayaran:</span>
-                      <span class="text-base font-semibold text-blue-600">Rp {{ formatCurrency(totalAmount) }}</span>
+                      <span class="text-base font-semibold text-[#3674B5]">Rp {{ formatCurrency(totalAmount) }}</span>
                     </div>
                   </div>
                 </div>
@@ -237,7 +265,7 @@
           </div>
           <h3 class="text-lg font-semibold text-gray-900 mb-2">Tidak Dapat Menghapus</h3>
           <p class="text-gray-600 mb-6">
-            Minimal harus memiliki 1 item obat dalam daftar pembayaran.
+            Minimal harus memiliki 1 item obat/tindakan dalam daftar pembayaran.
           </p>
           <button 
             @click="closeDeleteModal"
@@ -295,7 +323,7 @@
         <div class="p-8">
           <!-- Invoice Header -->
           <div class="text-center border-b border-gray-200 pb-6 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">Klinik Praktek Dr. Reni Juliana Manurung</h2>
+            <h2 class="text-2xl font-bold text-[#2A4482]">Klinik Praktek Dr. Reni Juliana Manurung</h2>
             <p class="text-sm text-gray-600 mt-1">Jl. Kesehatan No. 123, Medan</p>
             <p class="text-sm text-gray-600">Telp: 0822-7484-9745</p>
             <div class="mt-4 text-right">
@@ -326,23 +354,17 @@
                 </tr>
               </thead>
               <tbody class="bg-white">
-                <tr class="border-b border-gray-200">
-                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">Konsultasi Dokter</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">1</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
-                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(75000) }}</td>
-                </tr>
-                <tr class="border-b border-gray-200">
-                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">Biaya Administrasi</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">1</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
-                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(10000) }}</td>
-                </tr>
                 <tr v-for="item in paidBillData.items" :key="item.name" class="border-b border-gray-200">
                   <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">{{ item.name }}</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.quantity }}</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.unit }}</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.quantity || '-' }}</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.unit || '-' }}</td>
                   <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(getItemSubtotal(item)) }}</td>
+                </tr>
+                <tr v-for="action in paidBillData.actions" :key="action.name" class="border-b border-gray-200">
+                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">{{ action.name }}</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
+                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
+                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(parseFloat(action.price) || 0) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -352,12 +374,12 @@
           <div class="border-t-2 border-gray-300 pt-4 mb-6">
             <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
               <span class="text-base font-bold text-gray-900">TOTAL PEMBAYARAN</span>
-              <span class="text-base font-bold text-blue-600">Rp {{ formatCurrency(paidBillData.total) }}</span>
+              <span class="text-base font-bold text-[#2A4482]">Rp {{ formatCurrency(paidBillData.total) }}</span>
             </div>
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex justify-center gap-4">
+          <div class="flex justify-left gap-4">
             <button 
               @click="downloadInvoice"
               class="inline-flex items-center gap-2 px-6 py-3 bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
@@ -401,7 +423,14 @@ export default {
           price: 0
         },
       ],
+      actionItems: [
+        {
+          name: "",
+          price: 0
+        },
+      ],
       medicineTotal: 0,
+      actionTotal: 0,
       totalAmount: 85000, // Base cost (consultation + admin)
       showPaymentModal: false,
       showInvoiceModal: false,
@@ -432,7 +461,7 @@ export default {
       const time = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
       return `KSB-${year}${month}${day}-${time}`;
     },
-    addItem() {
+    addMedicineItem() {
       this.billItems.push({
         name: "",
         quantity: 1,
@@ -440,18 +469,36 @@ export default {
         price: 0
       });
     },
-    confirmRemoveItem(index) {
-      if (this.billItems.length === 1) {
-        this.showDeleteModal = true;
-      } else {
-        this.removeItem(index);
+    addActionItem() {
+      this.actionItems.push({
+        name: "",
+        price: 0
+      });
+    },
+    confirmRemoveItem(index, type) {
+      if (type === 'medicine') {
+        if (this.billItems.length === 1) {
+          this.showDeleteModal = true;
+        } else {
+          this.removeItem(index, 'medicine');
+        }
+      } else if (type === 'action') {
+        if (this.actionItems.length === 1) {
+          this.showDeleteModal = true;
+        } else {
+          this.removeItem(index, 'action');
+        }
       }
     },
     closeDeleteModal() {
       this.showDeleteModal = false;
     },
-    removeItem(index) {
-      this.billItems.splice(index, 1);
+    removeItem(index, type) {
+      if (type === 'medicine') {
+        this.billItems.splice(index, 1);
+      } else if (type === 'action') {
+        this.actionItems.splice(index, 1);
+      }
       this.calculateTotal();
     },
     getItemSubtotal(item) {
@@ -464,8 +511,12 @@ export default {
         return total + this.getItemSubtotal(item);
       }, 0);
       
-      // Base costs: consultation (75k) + admin (10k) + medicine total
-      this.totalAmount = 85000 + this.medicineTotal;
+      this.actionTotal = this.actionItems.reduce((total, action) => {
+        return total + (parseFloat(action.price) || 0);
+      }, 0);
+      
+      // Base costs: consultation (75k) + admin (10k) + medicine total + action total
+      this.totalAmount = this.medicineTotal + this.actionTotal;
     },
     formatCurrency(amount) {
       return new Intl.NumberFormat('id-ID').format(amount);
@@ -493,42 +544,44 @@ export default {
         this.showNameError = false;
       }
     },
-payBill() {
-  // Reset error state
-  this.showNameError = false;
-  
-  // Validate patient name
-  if (!this.patientName.trim()) {
-    this.showNameError = true;
-    // Scroll to the error field
-    this.$nextTick(() => {
-      const errorField = document.querySelector('input[v-model="patientName"]');
-      if (errorField) {
-        errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        errorField.focus();
+    payBill() {
+      // Reset error state
+      this.showNameError = false;
+      
+      // Validate patient name
+      if (!this.patientName.trim()) {
+        this.showNameError = true;
+        // Scroll to the error field
+        this.$nextTick(() => {
+          const errorField = document.querySelector('input[v-model="patientName"]');
+          if (errorField) {
+            errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            errorField.focus();
+          }
+        });
+        return;
       }
-    });
-    return;
-  }
-  
-  // Store paid bill data
-  this.paidBillData = {
-    patientName: this.patientName,
-    items: [...this.billItems.filter(item => item.name.trim())], // Only items with names
-    total: this.totalAmount,
-    medicineTotal: this.medicineTotal,
-    date: new Date().toISOString(),
-    status: 'paid'
-  };
-  
-  // Generate invoice number
-  this.invoiceNumber = this.generateInvoiceNumber();
-  
-  console.log('Processing payment:', this.paidBillData);
-  
-  // Show payment success modal
-  this.showPaymentModal = true;
-},
+      
+      // Store paid bill data
+      this.paidBillData = {
+        patientName: this.patientName,
+        items: [...this.billItems.filter(item => item.name.trim())], // Only items with names
+        actions: [...this.actionItems.filter(action => action.name.trim())], // Actions with names
+        total: this.totalAmount,
+        medicineTotal: this.medicineTotal,
+        actionTotal: this.actionTotal,
+        date: new Date().toISOString(),
+        status: 'paid'
+      };
+      
+      // Generate invoice number
+      this.invoiceNumber = this.generateInvoiceNumber();
+      
+      console.log('Processing payment:', this.paidBillData);
+      
+      // Show payment success modal
+      this.showPaymentModal = true;
+    },
     closePaymentModal() {
       this.showPaymentModal = false;
       this.resetForm();
@@ -553,6 +606,12 @@ payBill() {
           unit: "",
           price: 0
         },
+      ];
+      this.actionItems = [
+        {
+          name: "",
+          price: 0
+        }
       ];
       this.calculateTotal();
     }

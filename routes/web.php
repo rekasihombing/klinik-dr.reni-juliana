@@ -20,13 +20,21 @@ use App\Http\Controllers\ScheduleExceptionController;
 use App\Http\Controllers\StokObatController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\JanjiTemuController;
+use App\Http\Controllers\PatientController;
+use App\Http\Controllers\DetailPasienController;
+use App\Http\Controllers\DaftarJanjiTemu;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\LaporanOperasionalController;
 use App\Http\Controllers\ResepObatController;
 
+
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
+
+// Route::get('/tagihan', function () {
+//     return Inertia::render('staff/Tagihan');
+// })->name('tagihan');
 
 Route::get('/login', function () {
     return Inertia::render('auth/Login');
@@ -58,7 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/konfirmasi-pasien/{id}', [KonfirmasiPasienStaffController::class, 'konfirmasi']);
 });
 
-Route::get('/pembayaran', function () {
+Route::get('/Pembayaran', function () {
     return Inertia::render('staff/pembayaran');
 })->name('Pembayaran');
 
@@ -66,22 +74,24 @@ Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
 
-Route::get('/Pasien', function () {
-    return Inertia::render('staff/PasienList');
-})->name('Pasien');
+Route::get('/Pasien', [PatientController::class, 'index'])->name('patients.index');
 
-Route::get('/DetailPasien', function () {
-    return Inertia::render('staff/DetailPasien');
-})->name('DetailPasien');
+Route::get('/patients/{id}', [DetailPasienController::class, 'show'])->name('patients.show');
 
-Route::get('/listjanjitemu', function () {
-    return Inertia::render('staff/listjanjitemu');
-})->name('janjitemu');
 
 
 Route::get('/clinic-schedules', [ClinicScheduleController::class, 'index'])->name('clinic.schedules.index');
 Route::put('/clinic-schedules/bulk-update', [ClinicScheduleController::class, 'bulkUpdate'])->name('clinic.schedules.bulk-update');
 Route::get('/schedule-exceptions', [ScheduleExceptionController::class, 'index'])->name('schedule.exceptions.index');
+
+// Daftar Janji Temu routes
+Route::get('/daftar-janji-temu', [DaftarJanjiTemu::class, 'index'])->name('daftar-janji-temu.index');
+Route::get('/daftar-janji-temu/{id}', [DaftarJanjiTemu::class, 'show'])->name('daftar-janji-temu.show');
+Route::patch('/daftar-janji-temu/{id}/confirm', [DaftarJanjiTemu::class, 'confirm'])->name('daftar-janji-temu.confirm');
+Route::patch('/daftar-janji-temu/{id}/complete', [DaftarJanjiTemu::class, 'complete'])->name('daftar-janji-temu.complete');
+
+// Dashboard route
+Route::get('/dashboard/daftar-janji-temu', [DaftarJanjiTemu::class, 'dashboard'])->name('dashboard.daftar-janji-temu');
 
 
 //Pasien

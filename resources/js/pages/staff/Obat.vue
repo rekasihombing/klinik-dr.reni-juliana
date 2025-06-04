@@ -393,7 +393,6 @@ export default {
     executeDelete() {
       if (this.deleteItem) {
         Inertia.delete(`/obat/${this.deleteItem.id}`, {
-
           onSuccess: () => {
             this.showDeleteConfirm = false;
             this.deleteItem = null;

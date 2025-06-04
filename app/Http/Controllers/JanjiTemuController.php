@@ -17,5 +17,3 @@ public function index()
         ]);
     }
 }
-
-// gw tuh :v

@@ -11,8 +11,8 @@
 
     <nav class="flex flex-col space-y-1 px-3 py-4 flex-1 overflow-y-auto">
       <!-- Dashboard Dokter -->
-      <Link
-        href="/dashboarddokter"
+      <Link 
+        href="/dashboarddokter" 
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/dashboarddokter') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
@@ -21,8 +21,8 @@
       </Link>
 
       <!-- Pasien -->
-      <Link
-        href="/tambahrekammedis"
+      <Link 
+        href="/tambahrekammedis" 
         class="flex items-center space-x-2 rounded px-3 py-2"
         :class="isActive('/tambahrekammedis') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
@@ -31,31 +31,30 @@
       </Link>
 
       <!-- Janji Temu -->
-<Link
-  href="/janji-temu"
-  class="flex items-center space-x-2 rounded px-3 py-2"
-  :class="isActive('/janji-temu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
->
-  <i class="fas fa-calendar-alt text-lg"></i>
-  <span>Janji Temu</span>
-</Link>
-
+      <Link 
+        href="/janji-temu" 
+        class="flex items-center space-x-2 rounded px-3 py-2"
+        :class="isActive('/riwayatjanjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+      >
+        <i class="fas fa-calendar-alt text-lg"></i>
+        <span>Janji Temu</span>
+      </Link>
 
       <!-- Pegawai -->
-      <Link
-        href="/laporan-keuangan"
+      <Link 
+        href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/laporan-keuangan') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-users text-lg"></i>
         <span>Pegawai</span>
       </Link>
 
       <!-- Laporan -->
-      <Link
-        href="/laporan-operasional"
+      <Link 
+        href="/" 
         class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/laporan-operasional') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+        :class="isActive('/') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
       >
         <i class="fas fa-file-alt text-lg"></i>
         <span>Laporan</span>
@@ -63,13 +62,13 @@
     </nav>
 
     <!-- Logout -->
-    <div
+    <div 
       @click="handleLogout"
       class="px-4 py-3 border-t border-[#1B2A4D] flex items-center space-x-2 cursor-pointer hover:bg-[#3B59A1]"
     >
       <i class="fas fa-sign-out-alt text-lg"></i>
       <span>Logout</span>
-    </div>  
+    </div>
   </aside>
 </template>
 
@@ -80,7 +79,7 @@ import { computed } from 'vue'
 // Function to check if current route is active
 const isActive = (route) => {
   return computed(() => {
-    return window.location.pathname === route ||
+    return window.location.pathname === route || 
            window.location.pathname.startsWith(route + '/')
   }).value
 }

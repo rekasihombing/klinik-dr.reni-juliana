@@ -40,7 +40,6 @@
                   <option value="selesai">Selesai</option>
                   <option value="menunggu">Menunggu</option>
                   <option value="dikonfirmasi">Dikonfirmasi</option>
-                  <option value="diproses">Sedang Konsultasi</option>
                   <option value="dibatalkan">Dibatalkan</option>
                 </select>
                 <select 
@@ -133,17 +132,6 @@
                     </div>
                   </div>
 
-                  <!-- Progress Bar for In Progress -->
-                  <div v-else-if="appointment.originalStatus === 'diproses'" class="mt-4 pt-4 border-t border-gray-100">
-                    <div class="flex items-center text-sm text-purple-600">
-                      <i class="fas fa-user-md mr-2"></i>
-                      <span>Sedang dalam konsultasi dengan dokter</span>
-                    </div>
-                    <div class="w-full bg-purple-100 rounded-full h-2 mt-2">
-                      <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full w-4/5 animate-pulse"></div>
-                    </div>
-                  </div>
-
                   <!-- Progress Bar for Waiting -->
                   <div v-else-if="['menunggu', 'dikonfirmasi'].includes(appointment.originalStatus)" class="mt-4 pt-4 border-t border-gray-100">
                     <div class="flex items-center text-sm text-orange-600">
@@ -156,15 +144,7 @@
                   </div>
 
                   <!-- Cancelled Status -->
-                  <div v-else-if="appointment.originalStatus === 'dibatalkan'" class="mt-4 pt-4 border-t border-gray-100">
-                    <div class="flex items-center text-sm text-red-600">
-                      <i class="fas fa-times-circle mr-2"></i>
-                      <span>Janji temu dibatalkan</span>
-                    </div>
-                    <div class="w-full bg-red-100 rounded-full h-2 mt-2">
-                      <div class="bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full w-1/4"></div>
-                    </div>
-                  </div>
+                 
                 </div>
               </div>
             </TransitionGroup>
@@ -310,49 +290,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Timeline for in-progress appointments -->
-              <div v-else-if="selectedAppointment.originalStatus === 'diproses'" class="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Timeline Kunjungan</h3>
-                <div class="space-y-4">
-                  <div class="flex items-center space-x-4">
-                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center animate-pulse">
-                      <i class="fas fa-user-md text-white text-sm"></i>
-                    </div>
-                    <div>
-                      <p class="font-medium text-purple-900">Sedang Konsultasi</p>
-                      <p class="text-sm text-purple-600">Pasien sedang bertemu dengan dokter</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-4">
-                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <i class="fas fa-check text-white text-sm"></i>
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-900">Antrian Dipanggil</p>
-                      <p class="text-sm text-gray-600">Antrian no. {{ selectedAppointment.queueNumber }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-4">
-                    <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                      <i class="fas fa-clock text-white text-sm"></i>
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-900">Menunggu Antrian</p>
-                      <p class="text-sm text-gray-600">Menunggu giliran dipanggil</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-4">
-                    <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
-                      <i class="fas fa-calendar-check text-white text-sm"></i>
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-900">Janji Temu Dibuat</p>
-                      <p class="text-sm text-gray-600">{{ selectedAppointment.date }} {{ selectedAppointment.time }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -400,10 +337,6 @@ const pendingCount = computed(() => {
   return props.appointments?.filter(app => ['menunggu', 'dikonfirmasi'].includes(app.originalStatus)).length || 0
 })
 
-const inProgressCount = computed(() => {
-  return props.appointments?.filter(app => app.originalStatus === 'diproses').length || 0
-})
-
 // Filtered and sorted appointments
 const filteredAppointments = computed(() => {
   if (!props.appointments) return []
@@ -436,7 +369,6 @@ const getStatusClass = (status) => {
     dibatalkan: 'bg-red-100 text-red-700 border border-red-200',
     menunggu: 'bg-orange-100 text-orange-700 border border-orange-200',
     dikonfirmasi: 'bg-blue-100 text-blue-700 border border-blue-200',
-    diproses: 'bg-purple-100 text-purple-700 border border-purple-200',
   }
   return statusClasses[status] || 'bg-gray-100 text-gray-700 border border-gray-200'
 }
@@ -448,7 +380,6 @@ const getStatusDescription = (status) => {
     dibatalkan: 'Janji temu dibatalkan',
     menunggu: 'Menunggu konfirmasi dari klinik',
     dikonfirmasi: 'Dikonfirmasi, siap untuk kunjungan',
-    diproses: 'Sedang dalam konsultasi dengan dokter',
   }
   return descriptions[status] || 'Status tidak diketahui'
 }
@@ -464,6 +395,7 @@ function formatDate(dateStr) {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return date.toLocaleDateString('id-ID', options); // Contoh: 1 Juni 2025
 }
+
 
 // Modal functions
 const viewDetail = (appointment) => {
@@ -544,18 +476,4 @@ select:focus {
 .card-enter-active:nth-child(2) { transition-delay: 0.1s; }
 .card-enter-active:nth-child(3) { transition-delay: 0.2s; }
 .card-enter-active:nth-child(4) { transition-delay: 0.3s; }
-
-/* Pulse animation for in-progress status */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: .5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
 </style>
