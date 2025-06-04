@@ -437,6 +437,7 @@ function updateTime() {
   currentTime.value = `${hours}:${minutes}:${seconds}`;
 }
 
+/// Submit form ke database - diperbaiki
 // Submit form ke database - diperbaiki
 function submitForm() {
   // Validasi data sebelum submit
@@ -455,32 +456,24 @@ function submitForm() {
     return;
   }
 
-  // if (!form.tindakan.trim()) {
-  //   alert('Tindakan/Terapi harus diisi.');
-  //   return;
-  // }
-
   // Submit menggunakan Inertia form
   form.post('/rekam-medis', {
     onSuccess: (page) => {
-      console.log('Medical record saved successfully');
-      // Redirect ke dashboard dengan pesan sukses
-      router.visit('/dashboarddokter', {
-        method: 'get',
-        data: { success: 'Rekam medis berhasil disimpan' }
-      });
+      // Success handler - Inertia akan handle redirect otomatis
+      console.log('Rekam medis berhasil disimpan');
+      // Redirect sudah ditangani oleh controller dengan Inertia::location()
     },
     onError: (errors) => {
       console.error('Validation errors:', errors);
-      // Error akan otomatis ditampilkan di template
-      // Scroll ke atas untuk melihat pesan error
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onFinish: () => {
       console.log('Form submission finished');
     },
-    preserveScroll: false, // Ubah ke false agar bisa scroll ke atas saat error
-    preserveState: false   // Ubah ke false untuk refresh state saat sukses
+    preserveScroll: false,
+    preserveState: false,
+    // Pastikan untuk tidak mencegah redirect
+    replace: false
   });
 }
 
