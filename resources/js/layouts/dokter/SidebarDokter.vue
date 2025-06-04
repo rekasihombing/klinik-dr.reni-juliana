@@ -1,5 +1,5 @@
 <template>
-  <aside class="bg-[#2A4482] w-56 flex flex-col text-white text-xs font-sans">
+  <aside class="bg-[#2A4482] w-56 flex flex-col text-white text-xs font-sans rounded-xl">
     <!-- Bagian Info Dokter -->
     <div class="flex items-center space-x-2 border-b border-[#1B2A4D] px-4 py-3">
       <i class="fas fa-user text-lg"></i>
