@@ -46,15 +46,13 @@
           <i class="fas fa-file-alt"></i>
           <span>Laporan</span>
         </a>
-<Link
-  href="/stok-obat"
-  as="a"
-  class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
-  :class="isActive('/stok-obat') ? 'bg-blue-100 text-blue-700 font-semibold shadow-sm' : ''"
->
-  <i class="fas fa-file-medical text-lg"></i>
-  <span>Obat</span>
-</Link>
+        <a href="/obat"
+          class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+        >
+          <i class="fas fa-file-invoice-dollar"></i>
+          <span>obat</span>
+        </a>
+
 
       </nav>
     </div>

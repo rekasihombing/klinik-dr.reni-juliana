@@ -107,29 +107,30 @@
         <div class="text-base font-bold text-[#1B2A4D]">
           {{ formatDate(nextAppointment.tanggal) }}
         </div>
-        <div class="text-base font-semibold text-[#FF8A00]">
+        <div class="text-base font-semibold" :class="canCheckInToday && !isCheckedIn ? 'text-[#47B536]' : 'text-[#FF8A00]'">
           {{ nextAppointment.jam_konsultasi }} WIB
         </div>
-        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#FFF4E6] text-[#FF8A00] border border-[#FF8A00]/20">
+        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
+             :class="canCheckInToday && !isCheckedIn ? 'bg-[#E8F5E8] text-[#47B536] border border-[#47B536]/20' : 'bg-[#FFF4E6] text-[#FF8A00] border border-[#FF8A00]/20'">
           <i class="fas fa-clock mr-2"></i>
           Menunggu Konfirmasi
         </div>
       </div>
       
-     <div class="bg-orange-50 rounded-lg p-3 mb-3 cursor-pointer hover:bg-orange-100 transition" v-if="canCheckInToday && !isCheckedIn">
-  <div class="text-xs font-medium text-[#FF8A00] flex items-center">
-    <i class="fas fa-mouse-pointer mr-2"></i>
-    Check-in di sini
-  </div>
-</div>
+      <!-- Check-in section dengan warna hijau jika bisa check-in hari ini -->
+      <div v-if="canCheckInToday && !isCheckedIn" class="bg-green-50 rounded-lg p-3 mb-3 cursor-pointer hover:bg-green-100 transition">
+        <div class="text-xs font-medium text-[#47B536] flex items-center">
+          <i class="fas fa-mouse-pointer mr-2"></i>
+          Check-in di sini
+        </div>
+      </div>
 
-<div class="bg-orange-50 rounded-lg p-3 mb-3" v-else>
-  <div class="text-xs font-medium text-[#FF8A00] flex items-center">
-    <i class="fas fa-hourglass-half mr-2"></i>
-    Janji temu Anda sedang menunggu konfirmasi dari klinik
-  </div>
-</div>
-
+      <div v-else class="bg-orange-50 rounded-lg p-3 mb-3">
+        <div class="text-xs font-medium text-[#FF8A00] flex items-center">
+          <i class="fas fa-hourglass-half mr-2"></i>
+          Janji temu Anda sedang menunggu konfirmasi dari klinik
+        </div>
+      </div>
 
       <button
         @click.stop="handleCancelAppointmentFromModal"
@@ -147,20 +148,21 @@
         <div class="text-base font-bold text-[#1B2A4D]">
           {{ formatDate(nextAppointment.tanggal) }}
         </div>
-        <div class="text-base font-semibold text-[#3674B5]">
+        <div class="text-base font-semibold" :class="canCheckInToday && !isCheckedIn ? 'text-[#47B536]' : 'text-[#3674B5]'">
           {{ nextAppointment.jam_konsultasi }} WIB
         </div>
-        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#E3F2FD] text-[#3674B5] border border-[#3674B5]/20">
+        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
+             :class="canCheckInToday && !isCheckedIn ? 'bg-[#E8F5E8] text-[#47B536] border border-[#47B536]/20' : 'bg-[#E3F2FD] text-[#3674B5] border border-[#3674B5]/20'">
           <i class="fas fa-check-circle mr-2"></i>
           Dikonfirmasi
         </div>
       </div>
       
-      <!-- Check-in info berdasarkan tanggal -->
-      <div v-if="canCheckInToday && !isCheckedIn" class="bg-blue-50 rounded-lg p-3 mb-3">
-        <div class="text-xs font-medium text-[#3674B5] flex items-center">
+      <!-- Check-in info berdasarkan tanggal dengan warna hijau -->
+      <div v-if="canCheckInToday && !isCheckedIn" class="bg-green-50 rounded-lg p-3 mb-3 cursor-pointer hover:bg-green-100 transition">
+        <div class="text-xs font-medium text-[#47B536] flex items-center">
           <i class="fas fa-mouse-pointer mr-2"></i>
-          Klik untuk check-in (Hari ini adalah hari appointment Anda)
+          Check-in di sini (Hari ini adalah hari appointment Anda)
         </div>
       </div>
       
