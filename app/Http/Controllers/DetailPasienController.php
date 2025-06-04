@@ -26,7 +26,7 @@ class DetailPasienController extends Controller
                 ['label' => 'No Registrasi', 'value' => $patient->id],
                 ['label' => 'Nama', 'value' => $patient->nama_lengkap],
                 ['label' => 'NIK', 'value' => $patient->nik],
-                ['label' => 'Tanggal Lahir', 'value' => $patient->tanggal_lahir->format('d - m - Y')],
+                ['label' => 'Tanggal Lahir', 'value' => $patient->tanggal_lahir],
                 ['label' => 'Jenis Kelamin', 'value' => $patient->jenis_kelamin],
                 ['label' => 'Golongan Darah', 'value' => $patient->golongan_darah],
                 ['label' => 'Email', 'value' => $patient->email],
@@ -36,7 +36,7 @@ class DetailPasienController extends Controller
             'appointmentData' => $appointments->map(function ($a) {
                 return [
                     'id' => $a->id,
-                    'date' => $a->tanggal->format('d - m - Y'),
+                    'date' => $a->tanggal,
                     'time' => $a->jam_konsultasi,
                     'complaint' => $a->keluhan,
                     'status' => $a->status,

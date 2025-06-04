@@ -24,25 +24,14 @@ class Patient extends Model
 
     public $timestamps = false;
 
-    // **Tambahkan ini supaya tanggal_lahir jadi objek Carbon**
-    protected $casts = [
-        'tanggal_lahir' => 'datetime',
-    ];
-
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function rekamMedis()
-    {
-        return $this->hasMany(RekamMedis::class, 'patient_id');
-    }
-
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class, 'pasien_id');
-    }
+{
+    return $this->belongsTo(User::class);  // Relasi balik ke model User
 }
 
+public function rekamMedis()
+{
+    return $this->hasMany(RekamMedis::class, 'patient_id');
+}
+}
 
