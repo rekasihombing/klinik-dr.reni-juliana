@@ -26,15 +26,23 @@ use App\Http\Controllers\DaftarJanjiTemu;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\LaporanOperasionalController;
 use App\Http\Controllers\ResepObatController;
+use App\Http\Controllers\TindakanController;
+use App\Http\Controllers\TagihanController;
 
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-// Route::get('/tagihan', function () {
-//     return Inertia::render('staff/Tagihan');
-// })->name('tagihan');
+
+    Route::get('/rekam-medis/{rekamMedis}/tindakan/create', [TindakanController::class, 'create'])->name('tindakan.create');
+
+    // Menyimpan tindakan baru untuk rekam medis tertentu
+    Route::post('/rekam-medis/{rekamMedis}/tindakan', [TindakanController::class, 'store'])->name('tindakan.store');
+
+Route::get('/tagihan', function () {
+    return Inertia::render('staff/Tagihan');
+})->name('tagihan');
 
 Route::get('/login', function () {
     return Inertia::render('auth/Login');
@@ -55,8 +63,9 @@ Route::get('/kontak', function () {
 Route::post('/kontak', [FaqController::class, 'store']);   
 
 //Staff
-Route::get('/staff/dashboard', [StaffDashboardController::class, 'index'])->middleware(['auth', 'staff']);
-Route::post('/staff/appointment/{id}/status', [StaffDashboardController::class, 'updateStatus']);
+    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff');
+    Route::patch('/appointment/{id}/status', [StaffDashboardController::class, 'updateStatus'])->name('appointment.status');
+    Route::post('/appointment/{id}/queue', [StaffDashboardController::class, 'generateQueueNumber'])->name('appointment.queue');
 Route::get('/pendaftaran', [OfflineBookingController::class, 'create'])->name('pendaftaran.form');
 Route::post('/simpanpendaftar', [OfflineBookingController::class, 'store'])->name('pendaftaran.store');
 Route::middleware(['auth'])->group(function () {
@@ -84,14 +93,13 @@ Route::get('/clinic-schedules', [ClinicScheduleController::class, 'index'])->nam
 Route::put('/clinic-schedules/bulk-update', [ClinicScheduleController::class, 'bulkUpdate'])->name('clinic.schedules.bulk-update');
 Route::get('/schedule-exceptions', [ScheduleExceptionController::class, 'index'])->name('schedule.exceptions.index');
 
-// Daftar Janji Temu routes
-Route::get('/daftar-janji-temu', [DaftarJanjiTemu::class, 'index'])->name('daftar-janji-temu.index');
-Route::get('/daftar-janji-temu/{id}', [DaftarJanjiTemu::class, 'show'])->name('daftar-janji-temu.show');
-Route::patch('/daftar-janji-temu/{id}/confirm', [DaftarJanjiTemu::class, 'confirm'])->name('daftar-janji-temu.confirm');
-Route::patch('/daftar-janji-temu/{id}/complete', [DaftarJanjiTemu::class, 'complete'])->name('daftar-janji-temu.complete');
 
-// Dashboard route
-Route::get('/dashboard/daftar-janji-temu', [DaftarJanjiTemu::class, 'dashboard'])->name('dashboard.daftar-janji-temu');
+   Route::get('/daftar-janji-temu', [DaftarJanjiTemu::class, 'index'])->name('appointments.index');
+    Route::patch('/daftar-janji-temu/{id}/confirm', [DaftarJanjiTemu::class, 'confirm'])->name('appointments.confirm');
+    Route::patch('/daftar-janji-temu/{id}/complete', [DaftarJanjiTemu::class, 'complete'])->name('appointments.complete');
+    
+    // Reset antrian harian (untuk cron job)
+    Route::post('/queue/reset', [DaftarJanjiTemu::class, 'resetDailyQueue'])->name('queue.reset');
 
 
 //Pasien
@@ -172,7 +180,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard'); // pasien
-    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff'); // staff
     Route::get('/dashboarddokter', [DoctorDashboardController::class, 'index'])->name('dashboarddokter'); // dokter
 });
 
@@ -265,5 +272,36 @@ Route::get('/resep-obat/create', [ResepObatController::class, 'create'])->name('
 Route::post('/resep-obat/store', [ResepObatController::class, 'store'])->name('resep-obat.store');
 
 
+
+
+
+
+    // Display billing form with auto-populated items
+    Route::get('/tagihan/create', [TagihanController::class, 'create'])->name('tagihan.create');
+    
+    // Process billing/payment
+    Route::post('/tagihan', [TagihanController::class, 'store'])->name('tagihan.store');
+    
+    // Show invoice
+    Route::get('/tagihan/{tagihan}/invoice', [TagihanController::class, 'invoice'])->name('tagihan.invoice');
+    
+    // Billing history
+    Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
+    
+    // Additional routes you might need:
+    
+    // Show specific billing details
+    Route::get('/tagihan/{tagihan}', [TagihanController::class, 'show'])->name('tagihan.show');
+    
+    // Edit billing (if needed)
+    Route::get('/tagihan/{tagihan}/edit', [TagihanController::class, 'edit'])->name('tagihan.edit');
+    Route::put('/tagihan/{tagihan}', [TagihanController::class, 'update'])->name('tagihan.update');
+    
+    // Delete billing (if needed)
+    Route::delete('/tagihan/{tagihan}', [TagihanController::class, 'destroy'])->name('tagihan.destroy');
+
+    Route::get('/tagihan/{tagihan}/invoice', [TagihanController::class, 'invoice'])->name('tagihan.invoice');
+    Route::resource('tagihan', TagihanController::class)->except(['create']);
+    
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

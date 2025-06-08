@@ -306,6 +306,7 @@
 <script setup>
 import { defineProps, ref, computed, onMounted } from "vue";
 import { router } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia'
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
 import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
 
@@ -438,7 +439,7 @@ async function savePrescription() {
   }
 
   isSubmitting.value = true;
-  
+
   try {
     const prescriptionData = {
       rekam_medis_id: props.rekamMedisId,
@@ -446,7 +447,7 @@ async function savePrescription() {
         obat_id: item.obat_id || null,
         nama_obat: item.nama_obat.trim(),
         dosis: item.dosis.trim(),
-        jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah, // Pastikan number
+        jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
         tanggal_mulai: item.tanggal_mulai,
         tanggal_terakhir: item.tanggal_terakhir,
         catatan: item.catatan.trim() || null,
@@ -454,38 +455,35 @@ async function savePrescription() {
       }))
     };
 
-    router.post('/resep-obat/store', prescriptionData, {
-      onSuccess: () => {
-        showSuccessAlert.value = true;
-        // Reset form after successful submission
-        prescriptionItems.value = [
-          { 
-            obat_id: null, 
-            nama_obat: '', 
-            dosis: '',
-            jumlah: 1, // Ubah ke number
-            tanggal_mulai: getCurrentDate(), 
-            tanggal_terakhir: '', 
-            catatan: '' 
-          }
-        ];
-      },
-      onError: (errors) => {
-        console.error('Validation errors:', errors); // Tambahkan logging
-        errorMessage.value = errors.message || 'Terjadi kesalahan saat menyimpan resep';
-        showErrorAlert.value = true;
-      },
-      onFinish: () => {
-        isSubmitting.value = false;
+    await router.post('/resep-obat/store', prescriptionData);
+
+    showSuccessAlert.value = true;
+
+    // Reset form after success
+    prescriptionItems.value = [
+      { 
+        obat_id: null, 
+        nama_obat: '', 
+        dosis: '',
+        jumlah: 1,
+        tanggal_mulai: getCurrentDate(), 
+        tanggal_terakhir: '', 
+        catatan: '' 
       }
-    });
+    ];
+
+    // Redirect setelah berhasil simpan
+    Inertia.visit(route('tindakan.create', { rekamMedis: props.rekamMedisId }));
+
   } catch (error) {
-    console.error('Save error:', error); // Tambahkan logging
-    errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
+    console.error('Save error:', error);
+    errorMessage.value = error.message || 'Terjadi kesalahan saat menyimpan resep';
     showErrorAlert.value = true;
+  } finally {
     isSubmitting.value = false;
   }
 }
+
 
 // Cancel form
 function cancelForm() {
