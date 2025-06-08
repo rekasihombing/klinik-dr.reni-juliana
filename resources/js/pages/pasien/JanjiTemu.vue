@@ -145,8 +145,8 @@
           <button @click="showModal = false" class="text-[#3674B5] shadow-md hover:shadow-lg p-4 border border-[#3674B5] rounded-lg px-4 py-1 hover:bg-blue-50 transition text-sm w-max">
             Batal
           </button>
-          <button @click="confirmSubmit" class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max">
-            Selesai
+          <button @click="confirmSubmit" :disabled="isSubmitting" class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-1 rounded-lg text-sm w-max disabled:opacity-50">
+            {{ isSubmitting ? 'Menyimpan...' : 'Selesai' }}
           </button>
         </div>
       </div>
@@ -176,16 +176,23 @@
     <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.5);">
       <div class="bg-white rounded-lg max-w-sm w-full p-6 mx-4 drop-shadow-lg">
         <div class="flex justify-center mb-4">
-          <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+          <i class="fas fa-check-circle text-green-500 text-5xl"></i>
         </div>
-        <h2 class="text-green-600 font-bold text-center text-lg mb-4">
+        <h2 class="text-green-600 font-bold text-center text-xl mb-4">
           Berhasil!
         </h2>
-        <p class="text-gray-700 text-sm text-center mb-6">
-          {{ successMessage }}
+        <p class="text-gray-700 text-sm text-center mb-2 font-semibold">
+          Janji Temu Berhasil Dibuat
+        </p>
+        <div class="text-gray-600 text-xs text-center mb-6 space-y-1">
+          <p><i class="far fa-calendar-alt text-green-500 mr-2"></i>{{ form.tanggal }}</p>
+          <p><i class="far fa-clock text-green-500 mr-2"></i>{{ form.jam_konsultasi }}</p>
+        </div>
+        <p class="text-gray-600 text-xs text-center mb-6">
+          Mohon datang tepat waktu pada jadwal yang telah ditentukan.
         </p>
         <div class="flex justify-center">
-          <button @click="showSuccessModal = false" class="bg-green-500 text-white text-sm rounded px-4 py-2 hover:bg-green-600 transition">
+          <button @click="closeSuccessModal" class="bg-green-500 text-white text-sm rounded-lg px-6 py-2 hover:bg-green-600 transition shadow-md hover:shadow-lg">
             Tutup
           </button>
         </div>
@@ -206,7 +213,8 @@ const props = defineProps({
   patientName: String,
   patientId: Number,
   doctorId: Number,
-  existingAppointments: Array, // Tambahan: data appointment yang sudah ada
+  existingAppointments: Array,
+  flash: Object, // Tambahan untuk flash messages
 })
 
 // Form
@@ -230,6 +238,7 @@ const showErrorModal = ref(false)
 const errorMessage = ref('')
 const showSuccessModal = ref(false)
 const successMessage = ref('')
+const isSubmitting = ref(false)
 
 // Available times
 const availableTimes = ['15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
@@ -241,24 +250,26 @@ const currentDateTime = ref(new Date())
 onMounted(() => {
   const interval = setInterval(() => {
     currentDateTime.value = new Date()
-  }, 60000) // Update every minute
+  }, 60000)
 
-  // Clean up interval on component unmount
+  // Check for flash success message
+  if (props.flash?.success) {
+    showSuccessModal.value = true
+  }
+
   return () => clearInterval(interval)
 })
 
 // Check if a time slot is available
 const isTimeAvailable = (timeString) => {
-  if (!form.tanggal) return true // If no date selected, show all times
+  if (!form.tanggal) return true
   
   const selectedDate = new Date(form.tanggal)
   const currentDate = new Date()
   
-  // Remove time from current date for comparison
   currentDate.setHours(0, 0, 0, 0)
   selectedDate.setHours(0, 0, 0, 0)
   
-  // Check if this date and time combination already exists in database
   const isAlreadyBooked = props.existingAppointments?.some(appointment => {
     return appointment.tanggal === form.tanggal && appointment.jam_konsultasi === timeString
   })
@@ -267,12 +278,10 @@ const isTimeAvailable = (timeString) => {
     return false
   }
   
-  // If selected date is in the future, check only database availability
   if (selectedDate > currentDate) {
     return true
   }
   
-  // If selected date is today, check if time has passed AND database availability
   if (selectedDate.getTime() === currentDate.getTime()) {
     const [hours, minutes] = timeString.split(':').map(Number)
     const timeSlot = new Date()
@@ -281,7 +290,6 @@ const isTimeAvailable = (timeString) => {
     return timeSlot > currentDateTime.value
   }
   
-  // If selected date is in the past, no times are available
   return false
 }
 
@@ -289,7 +297,6 @@ const isTimeAvailable = (timeString) => {
 const getTimeStatusText = (timeString) => {
   if (!form.tanggal) return ''
   
-  // Check if already booked
   const isAlreadyBooked = props.existingAppointments?.some(appointment => {
     return appointment.tanggal === form.tanggal && appointment.jam_konsultasi === timeString
   })
@@ -298,7 +305,6 @@ const getTimeStatusText = (timeString) => {
     return '(Sudah dipesan)'
   }
   
-  // Check if time has passed (only for today)
   const selectedDate = new Date(form.tanggal)
   const currentDate = new Date()
   currentDate.setHours(0, 0, 0, 0)
@@ -324,7 +330,6 @@ const clearTimeError = () => {
 
 // Show confirmation modal
 const showConfirmationModal = () => {
-  // Validate form before showing modal
   errors.tanggal = !form.tanggal
   errors.jam_konsultasi = !form.jam_konsultasi
   errors.keluhan = !form.keluhan
@@ -334,7 +339,6 @@ const showConfirmationModal = () => {
     return
   }
 
-  // Additional validation: check if selected time is still available
   if (!isTimeAvailable(form.jam_konsultasi)) {
     errors.jam_konsultasi = true
     showError('Waktu yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.')
@@ -350,15 +354,27 @@ const showError = (message) => {
   showErrorModal.value = true
 }
 
-// Show success message
-const showSuccess = (message) => {
-  successMessage.value = message
-  showSuccessModal.value = true
+// Close success modal and redirect to dashboard
+const closeSuccessModal = () => {
+  showSuccessModal.value = false
+  
+  // Reset form
+  form.reset()
+  form.clearErrors()
+  
+  // Reset validation errors
+  Object.keys(errors).forEach(key => {
+    errors[key] = false
+  })
+  
+  // Redirect to dashboard after modal closed
+  setTimeout(() => {
+    window.location.href = route('dashboard')
+  }, 300)
 }
 
 // Confirm submit
 const confirmSubmit = () => {
-  // Final check before submitting
   if (!isTimeAvailable(form.jam_konsultasi)) {
     showModal.value = false
     errors.jam_konsultasi = true
@@ -366,13 +382,16 @@ const confirmSubmit = () => {
     return
   }
 
-  // Submit form
+  isSubmitting.value = true
+
   form.post(route('appointments.store'), {
+    preserveState: true,
+    preserveScroll: true,
     onError: (backendErrors) => {
       console.log('VALIDATION ERRORS', backendErrors)
-      showModal.value = false // Tutup modal saat ada error
+      showModal.value = false
+      isSubmitting.value = false
       
-      // Handle specific errors
       if (backendErrors.jam_konsultasi) {
         errors.jam_konsultasi = true
         showError(backendErrors.jam_konsultasi)
@@ -389,17 +408,15 @@ const confirmSubmit = () => {
       }
     },
     onSuccess: () => {
-      console.log('SUKSES')
-      showModal.value = false // Close modal after success
-      showSuccess('Janji temu berhasil dibuat!')
+      console.log('SUKSES - Modal success akan muncul')
+      showModal.value = false
+      isSubmitting.value = false
       
-      // Reset form after success
-      setTimeout(() => {
-        form.reset()
-        errors.tanggal = false
-        errors.jam_konsultasi = false
-        errors.keluhan = false
-      }, 2000)
+      // Show success modal first, redirect will happen when modal is closed
+      showSuccessModal.value = true
+    },
+    onFinish: () => {
+      isSubmitting.value = false
     }
   })
 }
@@ -413,7 +430,6 @@ onMounted(() => {
       form.tanggal = dateStr
       errors.tanggal = false
       
-      // Reset jam konsultasi if previously selected time is no longer available
       if (form.jam_konsultasi && !isTimeAvailable(form.jam_konsultasi)) {
         form.jam_konsultasi = ''
       }

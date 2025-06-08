@@ -47,4 +47,6 @@ class CreateRekamMedisTable extends Migration
     {
         Schema::dropIfExists('rekam_medis');
     }
+
+    
 }

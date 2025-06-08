@@ -12,9 +12,10 @@ class CreateStaffTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('nama_lengkap', 100);
-
+            $table->string('telepon')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index('user_id');
+            $table->timestamps();
         });
     }
 

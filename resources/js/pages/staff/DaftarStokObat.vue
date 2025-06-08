@@ -289,7 +289,7 @@ import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
 import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
 export default {
-  name: "KonfirmasiiPasienStaff",
+  name: "DaftarStokObat",
   components: { 
     SidebarStaff, 
     HeaderStaff,
