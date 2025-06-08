@@ -317,6 +317,8 @@
 <script setup>
 import { defineProps, ref, computed } from "vue";
 import { router } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia';
+import axios from 'axios';
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
 import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
 import VueSelect from "vue3-select";
@@ -678,7 +680,7 @@ async function savePrescription() {
   }
 
   isSubmitting.value = true;
-  
+
   try {
     const prescriptionData = {
       rekam_medis_id: props.rekamMedisId,
@@ -686,6 +688,7 @@ async function savePrescription() {
         obat_id: item.obat_id || null,
         nama_obat: item.nama_obat.trim(),
         dosis: item.dosis.trim(),
+        jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
         jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
         tanggal_mulai: item.tanggal_mulai,
         tanggal_terakhir: item.tanggal_terakhir,
@@ -729,10 +732,14 @@ async function savePrescription() {
   } catch (error) {
     console.error('Save error:', error);
     errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
+    console.error('Save error:', error);
+    errorMessage.value = error.message || 'Terjadi kesalahan saat menyimpan resep';
     showErrorAlert.value = true;
+  } finally {
     isSubmitting.value = false;
   }
 }
+
 
 // Update checkStok method to use API
 function checkStok(index) {

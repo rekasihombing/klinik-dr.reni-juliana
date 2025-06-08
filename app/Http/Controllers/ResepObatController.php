@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\ResepObat;
 use App\Models\RekamMedis;
 use App\Models\Obat;
+use App\Models\TagihanObat;
+use App\Models\Tagihan;
+use App\Services\TagihanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -126,77 +129,117 @@ class ResepObatController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info('Data request:', $request->all());
+        Log::info('=== DEBUG RESEP OBAT ===');
+        Log::info('Raw request data:', $request->all());
         
-        // Enhanced validation with custom rules
-        $validated = $request->validate([
-            'rekam_medis_id' => 'required|exists:rekam_medis,id',
-            'prescription_items' => 'required|array|min:1',
-            'prescription_items.*.obat_id' => 'nullable|exists:obat,id',
-            'prescription_items.*.nama_obat' => 'required|string|max:100',
-            'prescription_items.*.dosis' => 'required|string|max:100',
-            'prescription_items.*.jumlah' => 'required|integer|min:1|max:1000',
-            'prescription_items.*.tanggal_mulai' => 'required|date',
-            'prescription_items.*.tanggal_terakhir' => 'required|date|after_or_equal:prescription_items.*.tanggal_mulai',
-            'prescription_items.*.catatan' => 'nullable|string|max:500',
-            'prescription_items.*.dari_klinik' => 'boolean'
-        ], [
-            'prescription_items.*.nama_obat.required' => 'Nama obat wajib diisi',
-            'prescription_items.*.dosis.required' => 'Dosis obat wajib diisi',
-            'prescription_items.*.jumlah.required' => 'Jumlah obat wajib diisi',
-            'prescription_items.*.jumlah.integer' => 'Jumlah obat harus berupa angka',
-            'prescription_items.*.jumlah.min' => 'Jumlah obat minimal 1',
-            'prescription_items.*.tanggal_mulai.required' => 'Tanggal mulai wajib diisi',
-            'prescription_items.*.tanggal_terakhir.required' => 'Tanggal berakhir wajib diisi',
-            'prescription_items.*.tanggal_terakhir.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai',
-        ]);
+        // Debug: Cek apakah ada prescription_items
+        if (!$request->has('prescription_items')) {
+            Log::error('prescription_items tidak ada dalam request');
+            return redirect()->back()->with('error', 'Data resep tidak ditemukan dalam request');
+        }
+        
+        $prescriptionItems = $request->get('prescription_items', []);
+        Log::info('Prescription items count: ' . count($prescriptionItems));
+        Log::info('Prescription items data:', $prescriptionItems);
+        
+        // Cek apakah array kosong
+        if (empty($prescriptionItems)) {
+            Log::error('prescription_items kosong');
+            return redirect()->back()->with('error', 'Tidak ada item resep yang dikirim');
+        }
+        
+        // Validasi dengan debug
+        try {
+            $validated = $request->validate([
+                'rekam_medis_id' => 'required|exists:rekam_medis,id',
+                'prescription_items' => 'required|array|min:1',
+                'prescription_items.*.obat_id' => 'nullable|exists:obat,id',
+                'prescription_items.*.nama_obat' => 'required|string|max:100',
+                'prescription_items.*.dosis' => 'required|string|max:100',
+                'prescription_items.*.jumlah' => 'required|integer|min:1|max:1000',
+                'prescription_items.*.tanggal_mulai' => 'required|date',
+                'prescription_items.*.tanggal_terakhir' => 'required|date|after_or_equal:prescription_items.*.tanggal_mulai',
+                'prescription_items.*.catatan' => 'nullable|string|max:500',
+                'prescription_items.*.dari_klinik' => 'boolean'
+            ], [
+                'prescription_items.*.nama_obat.required' => 'Nama obat wajib diisi',
+                'prescription_items.*.dosis.required' => 'Dosis obat wajib diisi',
+                'prescription_items.*.jumlah.required' => 'Jumlah obat wajib diisi',
+                'prescription_items.*.jumlah.integer' => 'Jumlah obat harus berupa angka',
+                'prescription_items.*.jumlah.min' => 'Jumlah obat minimal 1',
+                'prescription_items.*.tanggal_mulai.required' => 'Tanggal mulai wajib diisi',
+                'prescription_items.*.tanggal_terakhir.required' => 'Tanggal berakhir wajib diisi',
+                'prescription_items.*.tanggal_terakhir.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai',
+            ]);
 
-        // PRE-VALIDATION: Check stock before starting transaction
-        $stockErrors = [];
-        foreach ($validated['prescription_items'] as $index => $item) {
-            if (($item['dari_klinik'] ?? true) && !empty($item['obat_id'])) {
-                $obat = Obat::find($item['obat_id']);
-                
-                if (!$obat) {
-                    $stockErrors[] = "Obat tidak ditemukan pada item resep ke-" . ($index + 1);
-                    continue;
-                }
+            // PRE-VALIDATION: Check stock before starting transaction
+            $stockErrors = [];
+            foreach ($validated['prescription_items'] as $index => $item) {
+                if (($item['dari_klinik'] ?? true) && !empty($item['obat_id'])) {
+                    $obat = Obat::find($item['obat_id']);
+                    
+                    if (!$obat) {
+                        $stockErrors[] = "Obat tidak ditemukan pada item resep ke-" . ($index + 1);
+                        continue;
+                    }
 
-                if ($obat->stok < $item['jumlah']) {
-                    $stockErrors[] = "Stok tidak cukup untuk obat '{$obat->nama_obat}' pada item ke-" . ($index + 1) . ". Stok tersedia: {$obat->stok}, dibutuhkan: {$item['jumlah']}";
+                    if ($obat->stok < $item['jumlah']) {
+                        $stockErrors[] = "Stok tidak cukup untuk obat '{$obat->nama_obat}' pada item ke-" . ($index + 1) . ". Stok tersedia: {$obat->stok}, dibutuhkan: {$item['jumlah']}";
+                    }
                 }
             }
-        }
 
-        // If there are stock errors, return them immediately
-        if (!empty($stockErrors)) {
-            return back()->withErrors([
-                'stock_error' => $stockErrors
-            ])->with('error', 'Terdapat masalah stok pada beberapa obat. Silakan periksa kembali.');
+            // If there are stock errors, return them immediately
+            if (!empty($stockErrors)) {
+                return back()->withErrors([
+                    'stock_error' => $stockErrors
+                ])->with('error', 'Terdapat masalah stok pada beberapa obat. Silakan periksa kembali.');
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error:', $e->errors());
+            
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
         }
 
         DB::beginTransaction();
-
+        
         try {
             // Check if rekam medis exists
             $rekamMedis = RekamMedis::findOrFail($validated['rekam_medis_id']);
+            Log::info('Rekam medis found:', $rekamMedis->toArray());
+            
+            // Cari atau buat tagihan menggunakan service
+            $tagihan = TagihanService::findOrCreateTagihan($validated['rekam_medis_id']);
+            Log::info('Tagihan created/found:', $tagihan->toArray());
+
             $savedPrescriptions = [];
+            $totalTagihanObat = 0;
 
             foreach ($validated['prescription_items'] as $index => $item) {
-                // Double-check stock again inside transaction (for race condition protection)
+                Log::info("Processing item {$index}:", $item);
+                
+                $hargaSatuan = 0;
+
                 if (($item['dari_klinik'] ?? true) && !empty($item['obat_id'])) {
-                    $obat = Obat::lockForUpdate()->find($item['obat_id']);
+                    Log::info("Processing obat dari klinik dengan ID: " . $item['obat_id']);
+                    
+                    $obat = Obat::find($item['obat_id']);
 
                     if (!$obat) {
                         throw new \Exception("Obat tidak ditemukan pada item resep ke-" . ($index + 1));
                     }
 
-                    // Recheck stock after lock
                     if ($obat->stok < $item['jumlah']) {
                         throw new \Exception("Stok tidak cukup untuk obat '{$obat->nama_obat}' pada item ke-" . ($index + 1) . ". Stok tersedia: {$obat->stok}, dibutuhkan: {$item['jumlah']}");
                     }
 
-                    // Reduce stock from stok_obat table (FIFO)
+                    // Set harga satuan dari data obat
+                    $hargaSatuan = $obat->harga ?? 0;
+                    Log::info("Harga satuan: {$hargaSatuan}");
+
+                    // Proses pengurangan stok
                     $sisaJumlah = $item['jumlah'];
 
                     $stokBatch = DB::table('stok_obat')
@@ -222,7 +265,7 @@ class ResepObatController extends Controller
                     }
 
                     if ($sisaJumlah > 0) {
-                        throw new \Exception("Stok tidak mencukupi meski telah dicoba kurangi dari batch kadaluarsa untuk obat '{$obat->nama_obat}'");
+                        throw new \Exception("Stok tidak mencukupi meski telah dicoba kurangi dari batch kadaluarsa.");
                     }
 
                     // Reduce total stock in obat table
@@ -233,13 +276,13 @@ class ResepObatController extends Controller
                     Log::info("Stock reduced for obat_id {$item['obat_id']}: -{$item['jumlah']}, remaining: {$obat->stok}");
                 }
 
-                // Additional validation
+                // Validasi tambahan
                 if (empty($item['obat_id']) && empty(trim($item['nama_obat']))) {
                     throw new \Exception("Item resep ke-" . ($index + 1) . " harus memiliki nama obat");
                 }
 
-                // Save prescription
-                $prescription = ResepObat::create([
+                // Data untuk disimpan ke ResepObat
+                $resepData = [
                     'rekam_medis_id' => $validated['rekam_medis_id'],
                     'obat_id' => $item['obat_id'] ?? null,
                     'nama_obat' => trim($item['nama_obat']),
@@ -249,29 +292,62 @@ class ResepObatController extends Controller
                     'tanggal_mulai' => $item['tanggal_mulai'],
                     'tanggal_terakhir' => $item['tanggal_terakhir'],
                     'dari_klinik' => $item['dari_klinik'] ?? true
-                ]);
+                ];
+                
+                Log::info("Saving ResepObat with data:", $resepData);
+
+                // Simpan resep
+                $prescription = ResepObat::create($resepData);
+                Log::info("ResepObat saved with ID: " . $prescription->id);
 
                 $savedPrescriptions[] = $prescription;
+
+                // Hitung subtotal untuk tagihan
+                $subtotal = $hargaSatuan * (int)$item['jumlah'];
+                $totalTagihanObat += $subtotal;
+
+                // Simpan ke tagihan_obat jika obat dari klinik dan ada harga
+                if (($item['dari_klinik'] ?? true) && $hargaSatuan > 0) {
+                    $tagihanObatData = [
+                        'tagihan_id' => $tagihan->id,
+                        'resep_obat_id' => $prescription->id,
+                        'nama_obat' => trim($item['nama_obat']),
+                        'dosis' => trim($item['dosis']),
+                        'jumlah' => (int)$item['jumlah'],
+                        'harga_satuan' => $hargaSatuan,
+                        'subtotal' => $subtotal,
+                        'catatan' => !empty($item['catatan']) ? trim($item['catatan']) : null,
+                    ];
+                    
+                    Log::info("Saving TagihanObat with data:", $tagihanObatData);
+                    
+                    TagihanObat::create($tagihanObatData);
+                }
+            }
+
+            // Update total biaya tagihan jika ada tagihan obat
+            if ($totalTagihanObat > 0) {
+                Log::info("Updating total tagihan dengan jumlah: {$totalTagihanObat}");
+                TagihanService::updateTotalBiaya($tagihan->id, $totalTagihanObat);
             }
 
             DB::commit();
+            Log::info("Transaction committed successfully");
 
-            return back()->with('success', 'Resep obat berhasil disimpan')->with('message', 'Resep obat telah berhasil disimpan dan stok obat telah diperbarui.');
+            $message = 'Resep obat berhasil disimpan';
+            if ($totalTagihanObat > 0) {
+                $message .= ' dan tagihan obat senilai Rp ' . number_format($totalTagihanObat, 0, ',', '.') . ' telah ditambahkan';
+            }
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollback();
-            Log::error('Validation error:', $e->errors());
-            
-            return back()
-                ->withErrors($e->errors())
-                ->withInput();
-                
+            return redirect()->back()->with('success', $message);
+
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error saving prescription: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             
-            return back()
-                ->with('error', $e->getMessage())
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan resep: ' . $e->getMessage())
                 ->withInput();
         }
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\RekamMedis;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -13,16 +14,22 @@ class StaffDashboardController extends Controller
     public function index()
     {
         try {
-            // Ambil pasien yang telah dikonfirmasi hari ini
-                $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'selesai', 'diproses'])
-                    ->whereDate('tanggal', Carbon::today())
-                    ->with('pasien')
-                    ->get();
+            // Ambil pasien yang telah dikonfirmasi hari ini dengan rekam medis (jika ada)
+            $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'selesai', 'diproses'])
+                ->whereDate('tanggal', Carbon::today())
+                ->with(['pasien']) // Load relasi pasien
+                ->get();
 
             // Generate nomor antrian untuk pasien yang dikonfirmasi
             $pasienHariIniWithQueue = $pasienHariIni->map(function($appointment, $index) {
+                // Cari rekam medis yang sudah ada untuk appointment ini
+                $rekamMedis = RekamMedis::where('appointment_id', $appointment->id)->first();
+                
                 return [
                     'id' => $appointment->id,
+                    'appointment_id' => $appointment->id, // ID appointment
+                    'rekam_medis_id' => $rekamMedis ? $rekamMedis->id : null, // ID rekam medis (bisa null untuk pasien baru)
+                    'has_rekam_medis' => $rekamMedis ? true : false, // Flag untuk cek apakah sudah ada rekam medis
                     'no_antrian' => 'A' . str_pad($index + 1, 2, '0', STR_PAD_LEFT),
                     'nama_pasien' => $appointment->pasien->nama_lengkap ?? 'N/A',
                     'waktu' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : '-',
@@ -36,7 +43,11 @@ class StaffDashboardController extends Controller
                     'golongan_darah' => $appointment->pasien->golongan_darah ?? 'N/A',
                     'nomor_hp' => $appointment->pasien->nomor_hp ?? 'N/A',
                     'alamat' => $appointment->pasien->alamat ?? 'N/A',
-                    'keluhan' => $appointment->keluhan ?? 'N/A'
+                    'keluhan' => $appointment->keluhan ?? 'N/A',
+                    // TAMBAHAN: Data yang diperlukan untuk tagihan
+                    'tanggal_appointment' => $appointment->tanggal,
+                    'waktu_appointment' => $appointment->waktu,
+                    'pasien_id' => $appointment->pasien->id ?? null,
                 ];
             });
 
