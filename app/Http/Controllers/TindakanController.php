@@ -7,6 +7,7 @@ use App\Models\TindakanMedis;
 use App\Models\TindakanPasien;
 use App\Models\TagihanTindakan;
 use App\Models\Tagihan;
+use App\Models\Appointment;
 use App\Services\TagihanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +45,6 @@ class TindakanController extends Controller
         ]);
     }
 
-
-
     // Simpan tindakan yang dipilih untuk pasien
     public function store(Request $request, RekamMedis $rekamMedis)
     {
@@ -66,27 +65,25 @@ class TindakanController extends Controller
         DB::beginTransaction();
         
         try {
-
-
-                  Log::info('=== DEBUG REKAM MEDIS ===');
-        Log::info('Rekam Medis ID: ' . $rekamMedis->id);
-        Log::info('Rekam Medis Data: ', $rekamMedis->toArray());
-        
-        // DEBUG: Cek apakah ada pasien_id di rekam_medis
-        $rekamMedisFromDB = RekamMedis::find($rekamMedis->id);
-        Log::info('Rekam Medis from DB: ', $rekamMedisFromDB->toArray());
-        
-        // DEBUG: Cek relasi pasien
-        try {
-            $pasienData = $rekamMedis->pasien;
-            Log::info('Pasien Data: ', $pasienData ? $pasienData->toArray() : ['null']);
-        } catch (\Exception $e) {
-            Log::error('Error loading pasien: ' . $e->getMessage());
-        }
+            Log::info('=== DEBUG REKAM MEDIS ===');
+            Log::info('Rekam Medis ID: ' . $rekamMedis->id);
+            Log::info('Rekam Medis Data: ', $rekamMedis->toArray());
+            
+            // DEBUG: Cek apakah ada pasien_id di rekam_medis
+            $rekamMedisFromDB = RekamMedis::find($rekamMedis->id);
+            Log::info('Rekam Medis from DB: ', $rekamMedisFromDB->toArray());
+            
+            // DEBUG: Cek relasi pasien
+            try {
+                $pasienData = $rekamMedis->pasien;
+                Log::info('Pasien Data: ', $pasienData ? $pasienData->toArray() : ['null']);
+            } catch (\Exception $e) {
+                Log::error('Error loading pasien: ' . $e->getMessage());
+            }
+            
             // Cari atau buat tagihan menggunakan service
             $tagihan = TagihanService::findOrCreateTagihan($rekamMedis->id);
             
-
             $totalTagihanTindakan = 0;
 
             foreach ($validated['tindakan'] as $item) {
@@ -122,11 +119,31 @@ class TindakanController extends Controller
             // Update total biaya tagihan
             TagihanService::updateTotalBiaya($tagihan->id, $totalTagihanTindakan);
 
+            // ===== UPDATE STATUS APPOINTMENT MENJADI SELESAI =====
+            // Cek apakah rekam medis ini punya appointment_id
+            if (!empty($rekamMedis->appointment_id)) {
+                $appointmentUpdated = Appointment::where('id', $rekamMedis->appointment_id)
+                    ->update(['status' => 'selesai']);
+                
+                if ($appointmentUpdated) {
+                    Log::info('Appointment status updated to selesai for appointment_id: ' . $rekamMedis->appointment_id);
+                } else {
+                    Log::warning('Failed to update appointment status for appointment_id: ' . $rekamMedis->appointment_id);
+                }
+            } else {
+                Log::info('No appointment_id found in rekam_medis, skipping appointment status update');
+            }
+
             DB::commit();
             
             $message = 'Tindakan berhasil disimpan';
             if ($totalTagihanTindakan > 0) {
                 $message .= ' dan tagihan tindakan senilai Rp ' . number_format($totalTagihanTindakan, 0, ',', '.') . ' telah ditambahkan';
+            }
+
+            // Tambahkan info status appointment jika berhasil diupdate
+            if (!empty($rekamMedis->appointment_id)) {
+                $message .= '. Status appointment telah diubah menjadi selesai';
             }
 
             return redirect()->route('dashboarddokter', $rekamMedis->id)

@@ -35,7 +35,7 @@
                   Anda belum melengkapi data profil
                 </span>
                 <p class="text-[#666] text-xs mt-1">
-                  Lengkapi data profil Anda untuk pengalaman yang lebih baik
+                  Lengkapi data profil Anda untuk dapat membuat janji temu
                 </p>
               </div>
             </div>
@@ -291,7 +291,7 @@
       </div>
 
       <button
-        @click.stop="router.visit('/janjitemu')"
+        @click.stop="handleCreateAppointment"
         class="w-full bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg"
         style="cursor:pointer;"
       >
@@ -310,7 +310,7 @@
       </div>
       <div class="flex gap-2">
         <button style="cursor:pointer;"
-          @click.stop="router.visit('/janjitemu')"
+          @click.stop="handleCreateAppointment"
           class="bg-[#314169] hover:bg-[#26324D] text-white rounded px-3 py-1 text-xs transition"
         >
           Buat Janji Temu Baru
@@ -337,7 +337,7 @@
         Buat janji temu baru untuk konsultasi dengan dokter
       </div>
       <button
-        @click.stop="router.visit('/janjitemu')"
+        @click.stop="handleCreateAppointment"
         class="bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg"
         style="cursor:pointer;"
       >
@@ -369,7 +369,7 @@
             </div>
             <!-- Tombol Janji Temu -->
             <button
-              @click="handleJanjiTemuClick" style="cursor:pointer;"
+              @click="handleCreateAppointment" style="cursor:pointer;"
               class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
             >
               Buat Janji Temu Baru
@@ -541,6 +541,50 @@
   </div>
 </div>
 
+<!-- Modal Peringatan Profil Belum Lengkap -->
+<div
+  v-if="showProfileWarningModal"
+  class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+  style="background-color: rgba(0, 0, 0, 0.15);"
+>
+  <div class="bg-white rounded-xl p-6 w-96 shadow-lg">
+    <div class="text-center">
+      <i class="fas fa-exclamation-triangle text-[#FF8A00] text-4xl mb-4"></i>
+      
+      <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
+        Lengkapi Profil Dulu
+      </h2>
+      
+      <p class="text-sm text-gray-700 mb-4">
+        Anda harus melengkapi data profil terlebih dahulu sebelum dapat membuat janji temu.
+      </p>
+      
+      <div class="bg-orange-50 rounded-lg p-3 mb-4">
+        <div class="text-xs text-[#FF8A00] font-medium">
+          <i class="fas fa-info-circle mr-2"></i>
+          Data profil yang lengkap membantu dokter memberikan pelayanan terbaik
+        </div>
+      </div>
+      
+      <div class="flex gap-2 justify-center">
+        <button
+          @click="router.visit('/datapasien')"
+          class="bg-[#FF8A00] hover:bg-[#E67700] text-white px-4 py-2 rounded-lg text-sm font-medium"
+        >
+          <i class="fas fa-user-edit mr-2"></i>
+          Lengkapi Profil
+        </button>
+        
+        <button
+          @click="showProfileWarningModal = false"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm"
+        >
+          Nanti Saja
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </template>
 
@@ -573,6 +617,7 @@ const hideProfileNotification = ref(false);
 const cancelLoading = ref(false);
 const checkInLoading = ref(false);
 const showCancelConfirm = ref(false);
+const showProfileWarningModal = ref(false); // Modal peringatan profil
 
 // Computed untuk mengecek kelengkapan profil
 // Anda bisa menyesuaikan logika ini berdasarkan field yang diperlukan
@@ -652,6 +697,26 @@ function handleCompleteProfile() {
   router.visit('/profile/edit'); // Sesuaikan dengan route profil Anda
 }
 
+// Function untuk handle create appointment dengan validasi profil
+function handleCreateAppointment() {
+  // Cek apakah profil sudah lengkap
+  if (!isProfileComplete.value) {
+    showProfileWarningModal.value = true;
+    return;
+  }
+  
+  // Jika profil sudah lengkap, lanjutkan seperti biasa
+  const hasPendingAppointment =
+    props.nextAppointment &&
+    ['menunggu', 'dikonfirmasi'].includes(props.nextAppointment.status);
+
+  if (hasPendingAppointment) {
+    showInfoModal.value = true;
+  } else {
+    router.visit("/janjitemu");
+  }
+}
+
 // Cek apakah janji temu masih di masa depan
 function isAppointmentInFuture(tanggal, jam) {
   if (!tanggal || !jam) return false;
@@ -716,15 +781,7 @@ const isAppointmentPassed = computed(() => {
 
 
 function handleJanjiTemuClick() {
-  const hasPendingAppointment =
-    props.nextAppointment &&
-    ['menunggu', 'dikonfirmasi'].includes(props.nextAppointment.status);
-
-  if (hasPendingAppointment) {
-    showInfoModal.value = true;
-  } else {
-    router.visit("/janjitemu");
-  }
+  handleCreateAppointment(); // Gunakan function yang sudah ada validasi profil
 }
 
 // Function untuk membatalkan janji temu yang sudah lewat (tetap digunakan untuk notifikasi yang sudah lewat)
@@ -817,6 +874,7 @@ async function confirmCancelAppointment() {
 onMounted(() => {
   console.log('Props received:', props);
   console.log('Next Appointment:', props.nextAppointment);
+  console.log('Is Profile Complete:', isProfileComplete.value);
   
   if (props.nextAppointment) {
     console.log('Appointment Date:', props.nextAppointment.tanggal);

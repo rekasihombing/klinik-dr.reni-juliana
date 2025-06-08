@@ -96,13 +96,6 @@ class RekamMedisController extends Controller
                 'catatan_dokter' => $validated['catatan_dokter']
             ]);
 
-            // Update status appointment jika ada
-            if ($validated['appointment_id']) {
-                \App\Models\Appointment::where('id', $validated['appointment_id'])
-                    ->update(['status' => 'selesai']);
-                Log::info('Appointment status updated to selesai');
-            }
-
             // SOLUSI YANG BENAR: Gunakan Inertia::location untuk external redirect
             Log::info('Using Inertia location redirect');
             return Inertia::location(route('resep-obat.create', ['rekam_medis_id' => $rekamMedis->id]));
