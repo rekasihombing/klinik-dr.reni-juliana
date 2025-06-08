@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\TindakanMedis;
+use Illuminate\Support\Facades\DB;
 
 class TindakanMedisSeeder extends Seeder
 {

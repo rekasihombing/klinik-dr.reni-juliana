@@ -307,6 +307,9 @@ Route::post('/resep-obat/store', [ResepObatController::class, 'store'])->name('r
  Route::post('/resep-obat/check-stock', [ResepObatController::class, 'checkStock'])->name('resep-obat.check-stock');
     Route::get('/resep-obat/get-stock/{obatId}', [ResepObatController::class, 'getStock'])->name('resep-obat.get-stock');
 
+    Route::get('/tindakan/create/{rekamMedis}', [TindakanController::class, 'create'])->name('tindakan.create');
+
+
 Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class)->only(['index', 'store', 'update', 'destroy']);
 });

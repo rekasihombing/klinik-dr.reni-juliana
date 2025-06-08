@@ -317,7 +317,6 @@
 <script setup>
 import { defineProps, ref, computed } from "vue";
 import { router } from '@inertiajs/vue3';
-import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
 import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
@@ -397,16 +396,6 @@ function isStokTidakCukup(item) {
 const hasStokTidakCukup = computed(() => {
   return prescriptionItems.value.some(item => isStokTidakCukup(item));
 });
-
-// Check stock when quantity changes
-// function checkStok(index) {
-//   const item = prescriptionItems.value[index];
-//   if (isStokTidakCukup(item)) {
-//     const obatInfo = getObatInfo(item.obat_id);
-//     stockAlertMessage.value = `Stok obat "${obatInfo.nama_obat}" tidak mencukupi. Stok tersedia: ${obatInfo.stok}, diminta: ${item.jumlah}`;
-//     showStokAlert.value = true;
-//   }
-// }
 
 // Add new prescription item
 function addItem() {
@@ -488,73 +477,18 @@ function validateForm() {
   });
 }
 
-// Save prescription
-// async function savePrescription() {
-//   if (!validateForm()) {
-//     if (!hasStokTidakCukup.value) {
-//       showIncompleteAlert.value = true;
-//     }
-//     return;
-//   }
-
-//   isSubmitting.value = true;
-  
-//   try {
-//     const prescriptionData = {
-//       rekam_medis_id: props.rekamMedisId,
-//       prescription_items: prescriptionItems.value.map(item => ({
-//         obat_id: item.obat_id || null,
-//         nama_obat: item.nama_obat.trim(),
-//         dosis: item.dosis.trim(),
-//         jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
-//         tanggal_mulai: item.tanggal_mulai,
-//         tanggal_terakhir: item.tanggal_terakhir,
-//         catatan: item.catatan.trim() || null,
-//         dari_klinik: true
-//       }))
-//     };
-
-//     router.post('/resep-obat/store', prescriptionData, {
-//       onSuccess: () => {
-//         showSuccessAlert.value = true;
-//         // Reset form after successful submission
-//         prescriptionItems.value = [
-//           { 
-//             obat_id: null, 
-//             nama_obat: '', 
-//             dosis: '',
-//             jumlah: 1,
-//             tanggal_mulai: getCurrentDate(), 
-//             tanggal_terakhir: '', 
-//             catatan: '' 
-//           }
-//         ];
-//       },
-//       onError: (errors) => {
-//         console.error('Validation errors:', errors);
-//         errorMessage.value = errors.message || 'Terjadi kesalahan saat menyimpan resep';
-//         showErrorAlert.value = true;
-//       },
-//       onFinish: () => {
-//         isSubmitting.value = false;
-//       }
-//     });
-//   } catch (error) {
-//     console.error('Save error:', error);
-//     errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
-//     showErrorAlert.value = true;
-//     isSubmitting.value = false;
-//   }
-// }
-
 // Cancel form
 function cancelForm() {
   router.get('/dashboarddokter');
 }
 
-// Modal handlers
+// Modal handlers - PERBAIKAN UTAMA ADA DI SINI
 function closeSuccessAlert() {
   showSuccessAlert.value = false;
+  // Perbaikan: gunakan router.visit atau router.get dengan URL yang benar
+  router.visit(`/tindakan/create/${props.rekamMedisId}`);
+  // Atau alternatif lain:
+  // router.get('/tindakan/create', { rekamMedis: props.rekamMedisId });
 }
 
 function closeErrorAlert() {
@@ -689,7 +623,6 @@ async function savePrescription() {
         nama_obat: item.nama_obat.trim(),
         dosis: item.dosis.trim(),
         jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
-        jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
         tanggal_mulai: item.tanggal_mulai,
         tanggal_terakhir: item.tanggal_terakhir,
         catatan: item.catatan.trim() || null,
@@ -713,6 +646,7 @@ async function savePrescription() {
           }
         ];
       },
+
       onError: (errors) => {
         console.error('Validation errors:', errors);
         
@@ -729,9 +663,8 @@ async function savePrescription() {
         isSubmitting.value = false;
       }
     });
+
   } catch (error) {
-    console.error('Save error:', error);
-    errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
     console.error('Save error:', error);
     errorMessage.value = error.message || 'Terjadi kesalahan saat menyimpan resep';
     showErrorAlert.value = true;
@@ -739,7 +672,6 @@ async function savePrescription() {
     isSubmitting.value = false;
   }
 }
-
 
 // Update checkStok method to use API
 function checkStok(index) {
