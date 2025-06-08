@@ -176,6 +176,7 @@ class AppointmentController extends Controller
         $appointment = Appointment::create($validated);
 
         return redirect()->route('dashboard')->with('success', 'Janji temu berhasil dibuat!');
+        // return back()->with('success', 'Janji temu berhasil dibuat!');
     }
 
     /**

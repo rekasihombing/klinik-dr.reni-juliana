@@ -30,32 +30,6 @@
             </div>
 
             <form class="max-w-4xl space-y-6" @submit.prevent="savePrescription">
-              <!-- Patient Info Card -->
-              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-                <h3 class="text-[#2A4482] font-semibold text-sm mb-3 flex items-center">
-                  Informasi Pasien
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pasien</label>
-                    <div class="bg-white border border-gray-300 rounded-md px-3 py-2 text-gray-800 font-medium">
-                      {{ patientData.nama || patientName || '-' }}
-                    </div>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
-                    <div class="bg-white border border-gray-300 rounded-md px-3 py-2 text-gray-800 font-medium">
-                      {{ patientData.jenisKelamin || '-' }}
-                    </div>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Umur</label>
-                    <div class="bg-white border border-gray-300 rounded-md px-3 py-2 text-gray-800 font-medium">
-                      {{ patientData.umur ? patientData.umur + ' tahun' : '-' }}
-                    </div>
-                  </div>
-                </div>
-              </div>
 
               <!-- Prescription Table -->
               <div class="bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm">
@@ -71,7 +45,7 @@
                       <tr class="border-b-2 border-gray-200">
                         <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Nama Obat</th>
                         <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Dosis</th>
-                        <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">jumlah</th>
+                        <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Jumlah</th>
                         <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Tanggal Mulai</th>
                         <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Tanggal Berakhir</th>
                         <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Catatan</th>
@@ -85,24 +59,21 @@
                         :key="index"
                       >
                         <td class="border-r border-gray-200 px-4 py-3">
-                          <select 
-                            v-model="item.obat_id" 
-                            class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                            @change="updateObatName(index)"
-                          >
-                            <option value="">Pilih Obat</option>
-                            <option v-for="obat in availableObat" :key="obat.id" :value="obat.id">
-                              {{ obat.nama_obat }}
-                            </option>
-                          </select>
-                          <input 
-                            v-if="!item.obat_id"
-                            type="text" 
-                            v-model="item.nama_obat" 
-                            class="border border-gray-300 rounded-md px-3 py-2 w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
-                            placeholder="Atau ketik nama obat manual"
+                          <VueSelect
+                            v-model="item.obat_id"
+                            :options="availableObat"
+                            label="nama_obat"
+                            :reduce="obat => obat.id"
+                            placeholder="Pilih Obat"
+                            class="w-full"
+                            @update:modelValue="() => updateObatName(index)"
                           />
+                          <!-- Tampilkan stok tersedia -->
+                          <div v-if="item.obat_id && getObatInfo(item.obat_id)" class="text-xs text-gray-500 mt-1">
+                            Stok tersedia: {{ getObatInfo(item.obat_id).stok }}
+                          </div>
                         </td>
+
                         <td class="border-r border-gray-200 px-4 py-3">
                           <input 
                             type="text" 
@@ -111,16 +82,27 @@
                             placeholder="Contoh: 3x1 tablet"
                           />
                         </td>
-                         <td class="border-r border-gray-200 px-4 py-3">
-  <input 
-    type="number" 
-    v-model.number="item.jumlah"
-    min="1"
-    step="1"
-    class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
-    placeholder="Jumlah obat"
-  />
-</td>
+                        
+                        <td class="border-r border-gray-200 px-4 py-3">
+                          <input 
+                            type="number" 
+                            v-model.number="item.jumlah"
+                            min="1"
+                            step="1"
+                            :class="[
+                              'border rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
+                              isStokTidakCukup(item) ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            ]"
+                            placeholder="Jumlah obat"
+                            @input="checkStok(index)"
+                          />
+                          <!-- Warning stok tidak cukup -->
+                          <div v-if="isStokTidakCukup(item)" class="text-xs text-red-600 mt-1 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Stok tidak cukup! Tersedia: {{ getObatInfo(item.obat_id)?.stok || 0 }}
+                          </div>
+                        </td>
+                        
                         <td class="border-r border-gray-200 px-4 py-3">
                           <input 
                             type="date" 
@@ -182,10 +164,15 @@
                   </button>
                   <button
                     type="submit"
-                    :disabled="isSubmitting"
-                    class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max disabled:opacity-50"
+                    :disabled="isSubmitting || hasStokTidakCukup"
+                    :class="[
+                      'shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max transition-all',
+                      hasStokTidakCukup ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#3674B5] hover:bg-[#3B59A1]',
+                      'disabled:opacity-50'
+                    ]"
                   >
                     <span v-if="isSubmitting">Menyimpan...</span>
+                    <span v-else-if="hasStokTidakCukup">Stok Tidak Cukup</span>
                     <span v-else>Simpan Resep</span>
                   </button>
                 </div>
@@ -241,6 +228,30 @@
           class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-2 rounded-lg text-sm font-medium transition-all"
         >
           Tutup
+        </button>
+      </div>
+    </div>
+
+    <!-- Stok Tidak Cukup Alert -->
+    <div 
+      v-if="showStokAlert" 
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="closeStokAlert"
+      style="background-color: rgba(0, 0, 0, 0.15);"
+    >
+      <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 text-center">
+        <div class="mb-4">
+          <div class="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-exclamation-triangle text-orange-600 text-2xl"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-[#2A4482] mb-2">Stok Tidak Mencukupi!</h3>
+          <p class="text-gray-600 text-sm">{{ stockAlertMessage }}</p>
+        </div>
+        <button
+          @click="closeStokAlert"
+          class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-2 rounded-lg text-sm font-medium transition-all"
+        >
+          Mengerti
         </button>
       </div>
     </div>
@@ -304,10 +315,12 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed, onMounted } from "vue";
+import { defineProps, ref, computed } from "vue";
 import { router } from '@inertiajs/vue3';
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
 import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
+import VueSelect from "vue3-select";
+import "vue3-select/dist/vue3-select.css";
 
 const props = defineProps({
   patientName: String,
@@ -342,7 +355,7 @@ const prescriptionItems = ref([
     obat_id: null, 
     nama_obat: '', 
     dosis: '',
-    jumlah: 1, // Ubah ke number dan minimal 1
+    jumlah: 1,
     tanggal_mulai: getCurrentDate(), 
     tanggal_terakhir: '', 
     catatan: '' 
@@ -354,9 +367,11 @@ const showSuccessAlert = ref(false);
 const showErrorAlert = ref(false);
 const showIncompleteAlert = ref(false);
 const showDeleteConfirm = ref(false);
+const showStokAlert = ref(false);
 const itemToDelete = ref(null);
 const isSubmitting = ref(false);
 const errorMessage = ref('');
+const stockAlertMessage = ref('');
 
 // Helper function to get current date
 function getCurrentDate() {
@@ -364,18 +379,46 @@ function getCurrentDate() {
   return today.toISOString().split('T')[0];
 }
 
+// Get obat info including stock
+function getObatInfo(obatId) {
+  return props.availableObat.find(obat => obat.id == obatId);
+}
+
+// Check if stock is insufficient
+function isStokTidakCukup(item) {
+  if (!item.obat_id || !item.jumlah) return false;
+  const obatInfo = getObatInfo(item.obat_id);
+  return obatInfo && obatInfo.stok < item.jumlah;
+}
+
+// Computed property to check if any item has insufficient stock
+const hasStokTidakCukup = computed(() => {
+  return prescriptionItems.value.some(item => isStokTidakCukup(item));
+});
+
+// Check stock when quantity changes
+// function checkStok(index) {
+//   const item = prescriptionItems.value[index];
+//   if (isStokTidakCukup(item)) {
+//     const obatInfo = getObatInfo(item.obat_id);
+//     stockAlertMessage.value = `Stok obat "${obatInfo.nama_obat}" tidak mencukupi. Stok tersedia: ${obatInfo.stok}, diminta: ${item.jumlah}`;
+//     showStokAlert.value = true;
+//   }
+// }
+
 // Add new prescription item
 function addItem() {
   prescriptionItems.value.push({ 
     obat_id: null, 
     nama_obat: '', 
     dosis: '',
-    jumlah: 1, // Ubah ke number 
+    jumlah: 1,
     tanggal_mulai: getCurrentDate(), 
     tanggal_terakhir: '', 
     catatan: '' 
   });
 }
+
 // Remove prescription item
 function removeItem(index) {
   if (prescriptionItems.value.length === 1) {
@@ -384,7 +427,7 @@ function removeItem(index) {
       obat_id: null, 
       nama_obat: '', 
       dosis: '', 
-      jumlah: 1, // Ubah ke number
+      jumlah: 1,
       tanggal_mulai: getCurrentDate(), 
       tanggal_terakhir: '', 
       catatan: '' 
@@ -400,22 +443,35 @@ function updateObatName(index) {
   const selectedObat = props.availableObat.find(obat => obat.id == prescriptionItems.value[index].obat_id);
   if (selectedObat) {
     prescriptionItems.value[index].nama_obat = selectedObat.nama_obat;
+    // Check stock immediately when obat is selected
+    checkStok(index);
   } else {
     prescriptionItems.value[index].nama_obat = '';
   }
 }
 
 function validateForm() {
+  // Check for insufficient stock first
+  if (hasStokTidakCukup.value) {
+    const insufficientItems = prescriptionItems.value
+      .filter(item => isStokTidakCukup(item))
+      .map(item => {
+        const obatInfo = getObatInfo(item.obat_id);
+        return `${obatInfo.nama_obat} (tersedia: ${obatInfo.stok}, diminta: ${item.jumlah})`;
+      });
+    
+    stockAlertMessage.value = `Stok tidak mencukupi untuk obat berikut:\n${insufficientItems.join('\n')}`;
+    showStokAlert.value = true;
+    return false;
+  }
+
   return prescriptionItems.value.every(item => {
-    // Convert jumlah ke number jika masih string
     const jumlahValue = typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah;
     const jumlahValid = !isNaN(jumlahValue) && jumlahValue > 0;
     
-    // Validasi tanggal
     const tanggalValid = item.tanggal_mulai && item.tanggal_terakhir && 
                         new Date(item.tanggal_mulai) <= new Date(item.tanggal_terakhir);
     
-    // Validasi obat (harus ada obat_id ATAU nama_obat manual)
     const isObatValid = (item.obat_id !== null && item.obat_id !== '') || 
                        (item.nama_obat?.trim().length > 0);
 
@@ -431,61 +487,63 @@ function validateForm() {
 }
 
 // Save prescription
-async function savePrescription() {
-  if (!validateForm()) {
-    showIncompleteAlert.value = true;
-    return;
-  }
+// async function savePrescription() {
+//   if (!validateForm()) {
+//     if (!hasStokTidakCukup.value) {
+//       showIncompleteAlert.value = true;
+//     }
+//     return;
+//   }
 
-  isSubmitting.value = true;
+//   isSubmitting.value = true;
   
-  try {
-    const prescriptionData = {
-      rekam_medis_id: props.rekamMedisId,
-      prescription_items: prescriptionItems.value.map(item => ({
-        obat_id: item.obat_id || null,
-        nama_obat: item.nama_obat.trim(),
-        dosis: item.dosis.trim(),
-        jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah, // Pastikan number
-        tanggal_mulai: item.tanggal_mulai,
-        tanggal_terakhir: item.tanggal_terakhir,
-        catatan: item.catatan.trim() || null,
-        dari_klinik: true
-      }))
-    };
+//   try {
+//     const prescriptionData = {
+//       rekam_medis_id: props.rekamMedisId,
+//       prescription_items: prescriptionItems.value.map(item => ({
+//         obat_id: item.obat_id || null,
+//         nama_obat: item.nama_obat.trim(),
+//         dosis: item.dosis.trim(),
+//         jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
+//         tanggal_mulai: item.tanggal_mulai,
+//         tanggal_terakhir: item.tanggal_terakhir,
+//         catatan: item.catatan.trim() || null,
+//         dari_klinik: true
+//       }))
+//     };
 
-    router.post('/resep-obat/store', prescriptionData, {
-      onSuccess: () => {
-        showSuccessAlert.value = true;
-        // Reset form after successful submission
-        prescriptionItems.value = [
-          { 
-            obat_id: null, 
-            nama_obat: '', 
-            dosis: '',
-            jumlah: 1, // Ubah ke number
-            tanggal_mulai: getCurrentDate(), 
-            tanggal_terakhir: '', 
-            catatan: '' 
-          }
-        ];
-      },
-      onError: (errors) => {
-        console.error('Validation errors:', errors); // Tambahkan logging
-        errorMessage.value = errors.message || 'Terjadi kesalahan saat menyimpan resep';
-        showErrorAlert.value = true;
-      },
-      onFinish: () => {
-        isSubmitting.value = false;
-      }
-    });
-  } catch (error) {
-    console.error('Save error:', error); // Tambahkan logging
-    errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
-    showErrorAlert.value = true;
-    isSubmitting.value = false;
-  }
-}
+//     router.post('/resep-obat/store', prescriptionData, {
+//       onSuccess: () => {
+//         showSuccessAlert.value = true;
+//         // Reset form after successful submission
+//         prescriptionItems.value = [
+//           { 
+//             obat_id: null, 
+//             nama_obat: '', 
+//             dosis: '',
+//             jumlah: 1,
+//             tanggal_mulai: getCurrentDate(), 
+//             tanggal_terakhir: '', 
+//             catatan: '' 
+//           }
+//         ];
+//       },
+//       onError: (errors) => {
+//         console.error('Validation errors:', errors);
+//         errorMessage.value = errors.message || 'Terjadi kesalahan saat menyimpan resep';
+//         showErrorAlert.value = true;
+//       },
+//       onFinish: () => {
+//         isSubmitting.value = false;
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Save error:', error);
+//     errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
+//     showErrorAlert.value = true;
+//     isSubmitting.value = false;
+//   }
+// }
 
 // Cancel form
 function cancelForm() {
@@ -506,6 +564,11 @@ function closeIncompleteAlert() {
   showIncompleteAlert.value = false;
 }
 
+function closeStokAlert() {
+  showStokAlert.value = false;
+  stockAlertMessage.value = '';
+}
+
 function closeDeleteConfirm() {
   showDeleteConfirm.value = false;
   itemToDelete.value = null;
@@ -518,7 +581,164 @@ function confirmDelete() {
   }
 }
 
+// Enhanced stock checking with API call
+async function checkStokWithAPI(index) {
+  const item = prescriptionItems.value[index];
+  
+  if (!item.obat_id || !item.jumlah) return;
 
+  try {
+    const response = await axios.post('/resep-obat/check-stock', {
+      items: [{
+        obat_id: item.obat_id,
+        jumlah: item.jumlah
+      }]
+    });
+
+    if (response.data.success && response.data.has_insufficient_stock) {
+      const insufficientItem = response.data.insufficient_items[0];
+      stockAlertMessage.value = `Stok obat "${insufficientItem.nama_obat}" tidak mencukupi. Stok tersedia: ${insufficientItem.available_stock}, diminta: ${insufficientItem.requested}`;
+      showStokAlert.value = true;
+    }
+  } catch (error) {
+    console.error('Error checking stock:', error);
+    // Fallback to local checking
+    if (isStokTidakCukup(item)) {
+      const obatInfo = getObatInfo(item.obat_id);
+      stockAlertMessage.value = `Stok obat "${obatInfo.nama_obat}" tidak mencukupi. Stok tersedia: ${obatInfo.stok}, diminta: ${item.jumlah}`;
+      showStokAlert.value = true;
+    }
+  }
+}
+
+// Enhanced form validation with comprehensive stock checking
+async function validateFormWithAPI() {
+  const itemsToCheck = prescriptionItems.value
+    .filter(item => item.obat_id && item.jumlah && (item.dari_klinik ?? true))
+    .map(item => ({
+      obat_id: item.obat_id,
+      jumlah: item.jumlah
+    }));
+
+  if (itemsToCheck.length > 0) {
+    try {
+      const response = await axios.post('/resep-obat/check-stock', {
+        items: itemsToCheck
+      });
+
+      if (response.data.success && response.data.has_insufficient_stock) {
+        const insufficientItems = response.data.insufficient_items
+          .map(item => `${item.nama_obat} (tersedia: ${item.available_stock}, diminta: ${item.requested})`)
+          .join('\n');
+        
+        stockAlertMessage.value = `Stok tidak mencukupi untuk obat berikut:\n${insufficientItems}`;
+        showStokAlert.value = true;
+        return false;
+      }
+    } catch (error) {
+      console.error('Error validating stock:', error);
+      // Fallback to local validation
+      if (hasStokTidakCukup.value) {
+        return false;
+      }
+    }
+  }
+
+  // Basic form validation
+  return prescriptionItems.value.every(item => {
+    const jumlahValue = typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah;
+    const jumlahValid = !isNaN(jumlahValue) && jumlahValue > 0;
+    
+    const tanggalValid = item.tanggal_mulai && item.tanggal_terakhir && 
+                        new Date(item.tanggal_mulai) <= new Date(item.tanggal_terakhir);
+    
+    const isObatValid = (item.obat_id !== null && item.obat_id !== '') || 
+                       (item.nama_obat?.trim().length > 0);
+
+    return (
+      isObatValid &&
+      item.dosis?.trim().length > 0 &&
+      item.tanggal_mulai &&
+      item.tanggal_terakhir &&
+      tanggalValid &&
+      jumlahValid
+    );
+  });
+}
+
+// Enhanced save prescription with better error handling
+async function savePrescription() {
+  const isValid = await validateFormWithAPI();
+  
+  if (!isValid) {
+    if (!hasStokTidakCukup.value && !showStokAlert.value) {
+      showIncompleteAlert.value = true;
+    }
+    return;
+  }
+
+  isSubmitting.value = true;
+  
+  try {
+    const prescriptionData = {
+      rekam_medis_id: props.rekamMedisId,
+      prescription_items: prescriptionItems.value.map(item => ({
+        obat_id: item.obat_id || null,
+        nama_obat: item.nama_obat.trim(),
+        dosis: item.dosis.trim(),
+        jumlah: typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah,
+        tanggal_mulai: item.tanggal_mulai,
+        tanggal_terakhir: item.tanggal_terakhir,
+        catatan: item.catatan.trim() || null,
+        dari_klinik: true
+      }))
+    };
+
+    router.post('/resep-obat/store', prescriptionData, {
+      onSuccess: () => {
+        showSuccessAlert.value = true;
+        // Reset form after successful submission
+        prescriptionItems.value = [
+          { 
+            obat_id: null, 
+            nama_obat: '', 
+            dosis: '',
+            jumlah: 1,
+            tanggal_mulai: getCurrentDate(), 
+            tanggal_terakhir: '', 
+            catatan: '' 
+          }
+        ];
+      },
+      onError: (errors) => {
+        console.error('Validation errors:', errors);
+        
+        // Handle specific stock errors
+        if (errors.stock_error) {
+          stockAlertMessage.value = errors.stock_error.join('\n');
+          showStokAlert.value = true;
+        } else {
+          errorMessage.value = errors.message || 'Terjadi kesalahan saat menyimpan resep';
+          showErrorAlert.value = true;
+        }
+      },
+      onFinish: () => {
+        isSubmitting.value = false;
+      }
+    });
+  } catch (error) {
+    console.error('Save error:', error);
+    errorMessage.value = 'Terjadi kesalahan saat menyimpan resep';
+    showErrorAlert.value = true;
+    isSubmitting.value = false;
+  }
+}
+
+// Update checkStok method to use API
+function checkStok(index) {
+  // Use API-based checking for better accuracy
+  checkStokWithAPI(index);
+}
 </script>
 
 <style scoped>

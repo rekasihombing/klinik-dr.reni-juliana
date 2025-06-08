@@ -26,6 +26,7 @@ use App\Http\Controllers\DaftarJanjiTemu;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\LaporanOperasionalController;
 use App\Http\Controllers\ResepObatController;
+use App\Http\Controllers\StaffController;
 
 
 Route::get('/', function () {
@@ -264,6 +265,12 @@ Route::get('/resep-obat/create', [ResepObatController::class, 'create'])->name('
 // Menyimpan data resep obat (POST)
 Route::post('/resep-obat/store', [ResepObatController::class, 'store'])->name('resep-obat.store');
 
+ Route::post('/resep-obat/check-stock', [ResepObatController::class, 'checkStock'])->name('resep-obat.check-stock');
+    Route::get('/resep-obat/get-stock/{obatId}', [ResepObatController::class, 'getStock'])->name('resep-obat.get-stock');
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('staff', StaffController::class)->only(['index', 'store', 'update', 'destroy']);
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

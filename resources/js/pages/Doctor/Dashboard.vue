@@ -172,13 +172,6 @@
                     <div>
                       <p class="text-gray-500 font-medium">Tidak ada pasien hari ini</p>
                     </div>
-                    <div class="text-xs text-gray-300 bg-gray-50 rounded-lg p-3 mt-4" v-if="debugInfo">
-                      <strong class="text-gray-400">Debug Info:</strong><br>
-                      Doctor ID: {{ debugInfo.doctorId }}<br>
-                      Today: {{ debugInfo.todayDate }}<br>
-                      Total appointments: {{ debugInfo.appointmentsCount }}<br>
-                      Today appointments: {{ debugInfo.todayAppointmentsCount }}
-                    </div>
                   </div>
                 </td>
               </tr>

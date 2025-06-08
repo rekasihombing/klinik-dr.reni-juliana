@@ -7,9 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Staff extends Model
 {
     protected $table = 'staff';
-    public $timestamps = false; // jika tabel staff gak ada kolom timestamps
 
-    protected $fillable = ['user_id', 'nama_lengkap'];
+    protected $fillable = [
+        'user_id',
+        'nama_lengkap',
+        'telepon',
+    ];
+
+     public function getInitialAttribute()
+    {
+        return strtoupper(substr($this->nama_lengkap, 0, 1));
+    }
+
 
     public function user()
     {
@@ -20,4 +29,14 @@ class Staff extends Model
 {
     return $this->hasOne(Staff::class);
 }
+
+public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('nama_lengkap', 'like', "%{$search}%")
+              ->orWhere('user_id', 'like', "%{$search}%")
+              ->orWhere('posisi', 'like', "%{$search}%")
+              ->orWhere('spesialisasi', 'like', "%{$search}%");
+        });
+    }
 }
