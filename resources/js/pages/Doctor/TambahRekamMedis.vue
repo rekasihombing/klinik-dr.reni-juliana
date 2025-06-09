@@ -340,7 +340,7 @@ const props = defineProps({
     type: Object,
     default: () => ({
       tanggalKunjungan: '',
-      keluhanUtama: '',
+      keluhan: '',
       rps: '',
       rpd: '',
       riwayatAlergi: '',

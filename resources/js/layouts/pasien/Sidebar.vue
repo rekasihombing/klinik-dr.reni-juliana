@@ -16,16 +16,6 @@
         <span>Dashboard</span>
       </Link>
       
-      <!-- Buat Janji Temu -->
-      <Link 
-        href="/janjitemu" 
-        class="flex items-center space-x-2 rounded px-3 py-2"
-        :class="isActive('/janjitemu') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
-      >
-        <i class="fas fa-calendar-alt text-lg"></i>
-        <span>Buat Janji Temu</span>
-      </Link>
-      
       <!-- Riwayat Janji Temu -->
       <Link 
         href="/riwayat-janji-temu" 
@@ -36,7 +26,6 @@
         <span>Riwayat Janji Temu</span>
       </Link>
       
-      <!-- Data Pasien -->
       <Link 
         href="/riwayat-rekam-medis" 
         class="flex items-center space-x-2 rounded px-3 py-2"
@@ -44,6 +33,15 @@
       >
         <i class="fas fa-file-medical text-lg"></i>
         <span>Rekam Medis</span>
+      </Link>
+
+      <Link 
+        href="/riwayat-resep-obat" 
+        class="flex items-center space-x-2 rounded px-3 py-2"
+        :class="isActive('/riwayat-resep-obat') ? 'bg-[#3B59A1]' : 'hover:bg-[#3B59A1]'"
+      >
+        <i class="fas fa-file-medical text-lg"></i>
+        <span>Resep Obat</span>
       </Link>
       
       <!-- Konfirmasi Janji Temu -->

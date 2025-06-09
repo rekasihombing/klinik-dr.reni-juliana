@@ -31,32 +31,31 @@
         </section>
 
         <section class="px-10 pb-8 flex space-x-4">
-          <button class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max" type="button">
-            <i class="fas fa-file-alt"></i>
-            <span>Lihat Rekam Medis</span>
-          </button>
           
-          <!-- Tombol Tambah Rekam Medis dengan validasi -->
-          <button 
-            v-if="!hasRekamMedis" 
-            @click="handleTambahRekamMedisClick" 
-            class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-green-700 transition" 
-            type="button"
-          >
-            <span>Tambah Rekam Medis</span>
-          </button>
+          <!-- Tombol Tambah Rekam Medis hanya muncul saat status 'diproses' (sedang konsultasi) -->
+          <template v-if="status === 'diproses'">
+            <!-- Tombol Tambah Rekam Medis dengan validasi -->
+            <button 
+              v-if="!hasRekamMedis" 
+              @click="handleTambahRekamMedisClick" 
+              class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-green-700 transition" 
+              type="button"
+            >
+              <span>Tambah Rekam Medis</span>
+            </button>
+            
+            <!-- Tombol disabled jika sudah ada rekam medis -->
+            <button 
+              v-else 
+              class="bg-gray-400 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed" 
+              disabled
+              title="Rekam medis sudah pernah diinput untuk appointment ini"
+            >
+              <span>Rekam Medis Sudah Ada</span>
+            </button>
+          </template>
           
-          <!-- Tombol disabled jika sudah ada rekam medis -->
-          <button 
-            v-else 
-            class="bg-gray-400 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed" 
-            disabled
-            title="Rekam medis sudah pernah diinput untuk appointment ini"
-          >
-            <span>Rekam Medis Sudah Ada</span>
-          </button>
-          
-          
+          <!-- Tombol Mulai Konsultasi - hanya muncul saat status 'dikonfirmasi' -->
           <button
             v-if="status === 'dikonfirmasi'"
             @click="mulaiKonsultasi"
