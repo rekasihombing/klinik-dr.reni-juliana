@@ -29,6 +29,7 @@ use App\Http\Controllers\ResepObatController;
 use App\Http\Controllers\TindakanController;
 use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\DaftarPembayaranController;
 
 
 Route::get('/', function () {
@@ -281,7 +282,7 @@ Route::post('/resep-obat/store', [ResepObatController::class, 'store'])->name('r
     Route::get('/tagihan/create', [TagihanController::class, 'create'])->name('tagihan.create');
     
     // Process billing/payment
-    Route::post('/tagihan', [TagihanController::class, 'store'])->name('tagihan.store');
+    Route::post('/tagihan/store', [TagihanController::class, 'store'])->name('tagihan.store');
     
     // Show invoice
     Route::get('/tagihan/{tagihan}/invoice', [TagihanController::class, 'invoice'])->name('tagihan.invoice');
@@ -301,7 +302,7 @@ Route::post('/resep-obat/store', [ResepObatController::class, 'store'])->name('r
     // Delete billing (if needed)
     Route::delete('/tagihan/{tagihan}', [TagihanController::class, 'destroy'])->name('tagihan.destroy');
 
-    Route::get('/tagihan/{tagihan}/invoice', [TagihanController::class, 'invoice'])->name('tagihan.invoice');
+Route::get('/tagihan/invoice/{id}', [TagihanController::class, 'invoice'])->name('tagihan.invoice');
     Route::resource('tagihan', TagihanController::class)->except(['create']);
     
  Route::post('/resep-obat/check-stock', [ResepObatController::class, 'checkStock'])->name('resep-obat.check-stock');
@@ -313,6 +314,11 @@ Route::post('/resep-obat/store', [ResepObatController::class, 'store'])->name('r
 Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class)->only(['index', 'store', 'update', 'destroy']);
 });
+
+Route::get('/pembayaran', [DaftarPembayaranController::class, 'index'])->name('pembayaran');
+Route::get('/pembayaran/{id}', [DaftarPembayaranController::class, 'show'])->name('pembayaran.show');
+Route::post('/pembayaran/{id}/store', [DaftarPembayaranController::class, 'store'])->name('pembayaran.store');
+Route::get('/pembayaran/invoice/{id}', [DaftarPembayaranController::class, 'invoice'])->name('pembayaran.invoice');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

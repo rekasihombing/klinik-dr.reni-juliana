@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-50 font-sans text-gray-800 flex">
-    
     <!-- Sidebar -->
     <SidebarStaff class="w-64 bg-white shadow-md" />
 
@@ -141,17 +140,56 @@
                 Reset Form
               </button>
               <button 
-                @click="payBill"
+                v-if="!isPaid"
+                @click="showConfirmModal = true"
                 :disabled="!canPay"
                 class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Proses Pembayaran
+              </button>
+              <button 
+                v-else
+                @click="printBill"
+                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
+              >
+                Cetak Struk
               </button>
             </div>
           </div>
         </div>
       </div>
     </main>
+
+    <!-- Confirmation Modal -->
+    <div v-if="showConfirmModal" 
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         style="background-color: rgba(0, 0, 0, 0.15);">
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+        <div class="p-8 text-center">
+          <h3 class="text-xl font-bold text-gray-900 mb-3">Konfirmasi Pembayaran</h3>
+          <p class="text-gray-600 mb-6">
+            Apakah Anda yakin ingin memproses pembayaran sebesar 
+            <span class="font-bold text-[#3674B5]">Rp {{ formatCurrency(totalAmount) }}</span>
+            atas nama <span class="font-semibold text-gray-900">{{ form.patient_name || 'Nama tidak tersedia' }}</span>?
+          </p>
+          <div class="flex gap-3 justify-center">
+            <button 
+              @click="showConfirmModal = false"
+              class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
+            >
+              Batal
+            </button>
+            <button 
+              @click="confirmPayment"
+              :disabled="isProcessing"
+              class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {{ isProcessing ? 'Memproses...' : 'Konfirmasi' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Payment Success Modal -->
     <div v-if="showPaymentModal" 
@@ -179,95 +217,10 @@
               Tutup
             </button>
             <button 
-              @click="showInvoice"
+              @click="printBill"
               class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
             >
-              Lihat Struk
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Invoice Modal -->
-    <div v-if="showInvoiceModal" 
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-         style="background-color: #2c3e50">
-      <div class="bg-white rounded-xl shadow-2xl max-w-2xl mx-auto max-h-[90vh] overflow-y-auto">
-        <div class="p-8">-->
-          <!-- Invoice Header -->
-          <div class="text-center py-4 border-b border-gray-200 mb-6">
-            <h2 class="text-xl font-bold text-[#2A4482]">{{ clinicInfo.name }}</h2>
-            <p class="text-sm text-gray-600 mt-1">{{ clinicInfo.address }}</p>
-            <p class="text-sm text-gray-600">{{ clinicInfo.phone }}</p>
-            <div class="mt-4 text-right">
-              <div class="text-sm text-gray-600">No. Struk: {{ invoiceNumber || billNumber }}</div>
-              <div class="text-sm text-gray-600">{{ formatDate }}</div>
-            </div>
-          </div>
-
-          <!-- Patient Info -->
-          <div class="p-4 mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Detail Pasien</h3>
-            <div class="bg-gray-50 rounded-lg p-4">
-              <div class="text-sm text-gray-600 mb-1">Nama Pasien:</div>
-              <div class="font-semibold text-gray-900">{{ form.patient_name || 'Nama tidak tersedia' }}</div>
-            </div>
-          </div>
-
-          <!-- Items Table -->
-          <div class="p-4 mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Rincian Pembayaran</h3>
-            <table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
-              <thead class="bg-gray-100">
-                <tr>
-                  <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 border-r border-gray-300">Item</th>
-                  <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700 border-r border-gray-300">Jumlah</th>
-                  <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700 border-r border-gray-300">Satuan</th>
-                  <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white">
-                <tr v-for="item in paidBillData.items" :key="item.id" class="border-b border-gray-200">
-                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">{{ item.name }}</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.quantity }}</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ item.unit }}</td>
-                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(item.subtotal) }}</td>
-                </tr>
-                <tr v-for="action in paidBillData.actions" :key="action.id" class="border-b border-gray-200">
-                  <td class="py-3 px-4 text-sm text-gray-900 border-r border-gray-200">{{ action.name }}</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">{{ action.quantity }}</td>
-                  <td class="py-3 px-4 text-center text-sm text-gray-900 border-r border-gray-200">-</td>
-                  <td class="py-3 px-4 text-right text-sm text-gray-900">Rp {{ formatCurrency(action.subtotal) }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Total -->
-          <div class="p-4 border-t-2 border-gray-300 pt-4 mb-6">
-            <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
-              <span class="text-base font-bold text-gray-900">TOTAL PEMBAYARAN</span>
-              <span class="text-base font-bold text-[#2A4482]">Rp {{ formatCurrency(paidBillData.total) }}</span>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="p-4 flex justify-left gap-4">
-            <button 
-              @click="downloadInvoice"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              Unduh Struk
-            </button>
-            <button 
-              @click="closeInvoiceModal"
-              class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
-            >
-              Tutup
+              Cetak Struk
             </button>
           </div>
         </div>
@@ -323,6 +276,14 @@ export default {
       default: false,
     },
     billNumber: [String, null],
+    tagihanStatus: {
+      type: String,
+      default: 'menunggu_pembayaran',
+    },
+    flash: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
     const form = useForm({
@@ -334,7 +295,6 @@ export default {
       notes: '',
     });
 
-    // Log props to debug patient name issue
     console.log('Tagihan.vue props:', {
       patientData: props.patientData,
       patientName: props.patientData?.nama,
@@ -347,14 +307,18 @@ export default {
       medicineTotal: props.medicineTotal,
       treatmentTotal: props.treatmentTotal,
       totalAmount: props.totalAmount,
+      tagihanStatus: props.tagihanStatus,
+      flash: props.flash,
     });
 
     return { form };
   },
   data() {
     return {
+      showConfirmModal: false,
       showPaymentModal: false,
-      showInvoiceModal: false,
+      isPaid: this.tagihanStatus === 'sudah_dibayar',
+      isProcessing: false,
       paidBillData: {},
       invoiceNumber: '',
       breadcrumbPages: [
@@ -363,6 +327,110 @@ export default {
       ],
     };
   },
+ watch: {
+    '$page.props.flash': {
+        handler(newFlash) {
+            if (newFlash?.success) {
+                this.showPaymentModal = true;
+                this.isPaid = true; // Set langsung ke true karena pembayaran berhasil
+                // Update tagihan_id dari flash response atau props
+                if (newFlash.tagihan_id) {
+                    this.form.tagihan_id = newFlash.tagihan_id;
+                } else if (this.tagihanId) {
+                    this.form.tagihan_id = this.tagihanId;
+                }
+                this.invoiceNumber = newFlash.invoice_number || this.billNumber;
+                this.paidBillData = {
+                    patientName: this.form.patient_name,
+                    items: [...this.medicineItems],
+                    actions: [...this.treatmentItems],
+                    total: this.form.total_amount,
+                    medicineTotal: this.medicineTotal,
+                    actionTotal: this.treatmentTotal,
+                    date: new Date().toISOString(),
+                    status: 'sudah_dibayar',
+                };
+                console.log('Flash success received:', newFlash);
+                console.log('Updated tagihan_id:', this.form.tagihan_id);
+            } else if (newFlash?.message && !newFlash.success) {
+                console.error('Flash error:', newFlash.message);
+                alert('Error: ' + newFlash.message);
+            }
+        },
+        immediate: true,
+    },
+  },
+
+  methods: {
+    // ... existing methods ...
+
+    printBill() {
+        const tagihanId = this.form.tagihan_id || this.tagihanId;
+        console.log('Printing bill with tagihan_id:', tagihanId);
+        
+        if (!tagihanId) {
+            alert('ID Tagihan tidak ditemukan. Silakan refresh halaman.');
+            return;
+        }
+
+        // Tutup modal dulu
+        this.showPaymentModal = false;
+        
+        // Buka PDF invoice
+        const url = `/tagihan/invoice/${tagihanId}`;
+        console.log('Opening URL:', url);
+        
+        try {
+            const win = window.open(url, '_blank', 'noopener,noreferrer');
+            if (!win || win.closed || typeof win.closed === 'undefined') {
+                // Popup blocked, fallback to direct navigation
+                alert('Popup diblokir. Membuka di tab yang sama...');
+                window.location.href = url;
+            }
+        } catch (error) {
+            console.error('Error opening PDF:', error);
+            alert('Gagal membuka PDF. Error: ' + error.message);
+        }
+    },
+
+    confirmPayment() {
+        if (!this.canPay) {
+            alert('Lengkapi data tagihan atau pastikan tagihan telah dibuat.');
+            this.showConfirmModal = false;
+            return;
+        }
+
+        this.isProcessing = true;
+
+        this.form.post('/tagihan/store', {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: (response) => {
+                this.isProcessing = false;
+                this.showConfirmModal = false;
+                console.log('Payment success response:', response);
+                // Flash handler akan mengurus update UI
+            },
+            onError: (errors) => {
+                console.error('Payment error:', errors);
+                alert('Terjadi kesalahan saat memproses pembayaran: ' + (errors.message || 'Unknown error'));
+                this.showConfirmModal = false;
+                this.isProcessing = false;
+            },
+        });
+    },
+
+    closePaymentModal() {
+        this.showPaymentModal = false;
+        // Jangan reset form di sini agar tagihan_id tetap tersimpan
+    },
+
+    resetForm() {
+        this.form.payment_method = 'cash';
+        this.form.notes = '';
+        // Jangan reset tagihan_id dan patient_name
+    },
+  },
   computed: {
     canPay() {
       return (
@@ -370,52 +438,37 @@ export default {
         this.form.patient_name.trim() &&
         this.form.total_amount > 0 &&
         this.form.tagihan_id &&
-        this.hasExistingTagihan
+        this.hasExistingTagihan &&
+        !this.isPaid
       );
     },
-    formatDate() {
-      const date = new Date();
-      return date.toLocaleString('id-ID', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    }
   },
   methods: {
     formatCurrency(amount) {
       return new Intl.NumberFormat('id-ID').format(amount || 0);
     },
-    payBill() {
+    confirmPayment() {
       if (!this.canPay) {
-        this.$page.props.flash.message = 'Lengkapi data tagihan atau pastikan tagihan telah dibuat.';
+        this.$page.props.flash = { success: false, message: 'Lengkapi data tagihan atau pastikan tagihan telah dibuat.' };
+        this.showConfirmModal = false;
         return;
       }
+
+      this.isProcessing = true;
 
       this.form.post('/tagihan/store', {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
-          this.paidBillData = {
-            patientName: this.form.patient_name,
-            items: [...this.medicineItems],
-            actions: [...this.treatmentItems],
-            total: this.form.total_amount,
-            medicineTotal: this.medicineTotal,
-            actionTotal: this.treatmentTotal,
-            date: new Date().toISOString(),
-            status: 'paid',
-          };
-          this.invoiceNumber = this.$page.props.flash.invoice_number || this.billNumber;
-          this.showPaymentModal = true;
-          console.log('Payment successful:', this.paidBillData);
+          this.isProcessing = false;
+          this.showConfirmModal = false;
+          // Success handling is moved to the flash watcher
         },
         onError: (errors) => {
-          this.$page.props.flash.message = errors.message || 'Terjadi kesalahan saat memproses pembayaran.';
+          this.$page.props.flash = { success: false, message: errors.message || 'Terjadi kesalahan saat memproses pembayaran.' };
           console.error('Payment error:', errors);
+          this.showConfirmModal = false;
+          this.isProcessing = false;
         },
       });
     },
@@ -423,17 +476,15 @@ export default {
       this.showPaymentModal = false;
       this.resetForm();
     },
-    showInvoice() {
-      this.showPaymentModal = false;
-      this.showInvoiceModal = true;
-    },
-    closeInvoiceModal() {
-      this.showInvoiceModal = false;
-      this.$inertia.visit('/dashboardstaff');
-    },
-    downloadInvoice() {
-      window.print();
-    },
+printBill() {
+    console.log('Printing bill with tagihan_id:', this.form.tagihan_id);
+    this.showPaymentModal = false;
+    const url = `/tagihan/invoice/${this.form.tagihan_id}`;
+    const win = window.open(url, '_blank');
+    if (!win) {
+        alert('Gagal membuka PDF. Pastikan popup blocker dimatikan.');
+    }
+},
     resetForm() {
       this.form.payment_method = 'cash';
       this.form.notes = '';
@@ -479,38 +530,6 @@ button:active:not(:disabled) {
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-/* Print styles for invoice */
-@media print {
-  .fixed {
-    position: static !important;
-  }
-
-  .bg-black {
-    background: white !important;
-  }
-
-  .shadow-2xl,
-  .shadow-xl {
-    box-shadow: none !important;
-  }
-
-  .rounded-xl {
-    border-radius: 0 !important;
-  }
-
-  button {
-    display: none !important;
-  }
-
-  .border-gray-300 {
-    border-color: #000 !important;
-  }
-
-  .text-blue-600 {
-    color: #000 !important;
-  }
 }
 
 /* Animation for modals */
