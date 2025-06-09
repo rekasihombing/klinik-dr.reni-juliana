@@ -10,14 +10,22 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;  
 use Carbon\Carbon;
 
-
 class AppointmentController extends Controller 
 { 
     public function create() 
     {      
-        // dd(Auth::user());     
         $user = Auth::user();     
         $patient = $user->patient;     
+        
+        if (!$patient) {
+            return redirect()->back()->with('error', 'Data pasien tidak ditemukan.');
+        }
+
+        // VALIDASI PROFIL - WAJIB SEBELUM BUAT JANJI TEMU
+        if (!$this->isProfileComplete($patient)) {
+            return redirect()->route('patient.profile.edit')
+                ->with('error', 'Anda harus melengkapi data profil terlebih dahulu sebelum membuat janji temu.');
+        }
         
         // Ambil dokter_id yang akan digunakan (sesuai dengan logic di store method)
         $doctorId = 1; // Sesuai dengan yang ada di store method
@@ -54,6 +62,12 @@ class AppointmentController extends Controller
 
         if (!$patient) {
             return redirect()->back()->withErrors(['error' => 'Data pasien tidak ditemukan']);
+        }
+
+        // VALIDASI PROFIL JUGA UNTUK RIWAYAT
+        if (!$this->isProfileComplete($patient)) {
+            return redirect()->route('patient.profile.edit')
+                ->with('error', 'Silakan lengkapi profil Anda terlebih dahulu.');
         }
 
         // Ambil semua riwayat appointment milik pasien ini, urutkan berdasarkan tanggal terbaru
@@ -125,18 +139,24 @@ class AppointmentController extends Controller
     
     public function store(Request $request) 
     {
-        $validated = $request->validate([
-            'tanggal' => 'required|date',
-            'jam_konsultasi' => 'required|date_format:H:i',
-            'keluhan' => 'required|string|max:1000',
-        ]);
-
         $user = Auth::user();
         $patient = $user->patient;
 
         if (!$patient) {
             return redirect()->back()->withErrors(['pasien_id' => 'Data pasien tidak ditemukan untuk user ini.']);
         }
+
+        // VALIDASI PROFIL - WAJIB SEBELUM SIMPAN APPOINTMENT
+        if (!$this->isProfileComplete($patient)) {
+            return redirect()->route('patient.profile.edit')
+                ->with('error', 'Profil belum lengkap. Silakan lengkapi data profil terlebih dahulu.');
+        }
+
+        $validated = $request->validate([
+            'tanggal' => 'required|date',
+            'jam_konsultasi' => 'required|date_format:H:i',
+            'keluhan' => 'required|string|max:1000',
+        ]);
 
         // Cek jika sudah ada janji temu aktif
         $existingAppointment = Appointment::where('pasien_id', $patient->id)
@@ -176,7 +196,6 @@ class AppointmentController extends Controller
         $appointment = Appointment::create($validated);
 
         return redirect()->route('dashboard')->with('success', 'Janji temu berhasil dibuat!');
-        // return back()->with('success', 'Janji temu berhasil dibuat!');
     }
 
     /**
@@ -206,9 +225,10 @@ class AppointmentController extends Controller
                 return back()->withErrors(['error' => 'Janji temu tidak ditemukan']);
             }
 
-            // Cek apakah appointment memang sudah lewat
-            $appointmentDateTime = \Carbon\Carbon::parse($appointment->tanggal . ' ' . $appointment->jam_konsultasi);
-            $now = \Carbon\Carbon::now();
+            // Cek apakah bisa dibatalkan (tidak boleh setelah check-in)
+            if ($appointment->checked_in_at) {
+                return back()->withErrors(['error' => 'Janji temu tidak dapat dibatalkan setelah check-in']);
+            }
 
             // Update status menjadi 'dibatalkan' (sesuai enum yang sudah ada)
             $appointment->update([
@@ -237,6 +257,12 @@ class AppointmentController extends Controller
                 return back()->withErrors(['error' => 'Data pasien tidak ditemukan']);
             }
 
+            // VALIDASI PROFIL JUGA UNTUK CHECK-IN
+            if (!$this->isProfileComplete($patient)) {
+                return redirect()->route('patient.profile.edit')
+                    ->with('error', 'Silakan lengkapi profil Anda terlebih dahulu sebelum check-in.');
+            }
+
             // Cari appointment berdasarkan ID dan pastikan milik pasien yang login
             $appointment = Appointment::where('id', $request->appointment_id)
                                     ->where('pasien_id', $patient->id)
@@ -249,6 +275,11 @@ class AppointmentController extends Controller
             // Cek apakah sudah check-in sebelumnya
             if ($appointment->checked_in_at) {
                 return back()->withErrors(['error' => 'Anda sudah melakukan check-in sebelumnya']);
+            }
+
+            // Cek apakah hari ini adalah hari appointment
+            if (!$this->canCheckInToday($appointment->tanggal)) {
+                return back()->withErrors(['error' => 'Check-in hanya dapat dilakukan pada hari appointment Anda']);
             }
 
             // Simpan jam check-in sekarang
@@ -264,12 +295,62 @@ class AppointmentController extends Controller
     }
 
     public function mulaiKonsultasi($id)
-{
-    $appointment = Appointment::findOrFail($id);
-    $appointment->status = 'diproses';
-    $appointment->save();
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->status = 'diproses';
+        $appointment->save();
 
-    return back()->with('success', 'Status pasien diubah menjadi Diproses.');
-}
+        return back()->with('success', 'Status pasien diubah menjadi Diproses.');
+    }
 
+    /**
+     * Cek apakah profil sudah lengkap
+     */
+    private function isProfileComplete($patient)
+    {
+        if (!$patient) {
+            return false;
+        }
+
+        // Field-field yang wajib diisi
+        $requiredFields = [
+            'nama_lengkap',
+            'nik',
+            'no_hp', 
+            'alamat',
+            'tanggal_lahir',
+            'jenis_kelamin'
+        ];
+
+        // Cek setiap field
+        foreach ($requiredFields as $field) {
+            $value = $patient->{$field};
+            
+            // Jika kosong atau hanya whitespace
+            if (empty($value) || (is_string($value) && trim($value) === '')) {
+                return false;
+            }
+        }
+
+        // Validasi khusus tanggal lahir (tidak boleh hari ini = default registrasi)
+        if ($patient->tanggal_lahir == now()->toDateString()) {
+            return false;
+        }
+
+        // Validasi khusus jenis kelamin (tidak boleh default 'L')
+        if ($patient->jenis_kelamin === 'L') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Cek apakah bisa check-in hari ini
+     */
+    private function canCheckInToday($appointmentDate)
+    {
+        $today = now()->toDateString();
+        return $appointmentDate === $today;
+    }
 }
