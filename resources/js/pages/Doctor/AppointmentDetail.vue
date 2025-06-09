@@ -1,6 +1,5 @@
 <template>
   <div class="bg-[#1f2d3d] font-sans min-h-screen flex flex-col">
-    <header class="text-gray-400 text-sm px-4 py-2">PDFT Pasien</header>
     <main class="flex-grow flex justify-center items-start p-6">
       <div class="relative bg-white w-full max-w-4xl rounded-sm shadow-md min-h-[480px]">
         <div class="flex justify-between items-center bg-[#b9def9] rounded-sm px-6 py-3 ">
@@ -31,7 +30,7 @@
         </section>
 
         <section class="px-10 pb-8 flex space-x-4">
-          <button class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max" type="button">
+          <button class="bg-[#3F86D0] hover:bg-[#3B59A1] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm" type="button">
             <i class="fas fa-file-alt"></i>
             <span>Lihat Rekam Medis</span>
           </button>
@@ -40,7 +39,7 @@
           <button 
             v-if="!hasRekamMedis" 
             @click="handleTambahRekamMedisClick" 
-            class="bg-[#34C759] text-white text-xs rounded-lg px-3 py-1 shadow-md hover:bg-green-700 transition" 
+            class="bg-green-600 hover:bg-green-700] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm transition" 
             type="button"
           >
             <span>Tambah Rekam Medis</span>
@@ -49,7 +48,7 @@
           <!-- Tombol disabled jika sudah ada rekam medis -->
           <button 
             v-else 
-            class="bg-gray-400 text-white text-xs rounded-lg px-3 py-1 shadow-md cursor-not-allowed" 
+            class="bg-gray-400 hover:bg-gray-500 text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm" 
             disabled
             title="Rekam medis sudah pernah diinput untuk appointment ini"
           >
@@ -60,7 +59,7 @@
           <button
             v-if="status === 'dikonfirmasi'"
             @click="mulaiKonsultasi"
-            class="bg-[#007AFF] text-white text-xs rounded-lg px-3 py-1 shadow-md hover:bg-blue-700 transition"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm transition"
             type="button"
           >
             <span>Mulai Konsultasi</span>
@@ -69,7 +68,7 @@
           <!-- Tombol pasif ketika sedang konsultasi -->
           <button
             v-else-if="status === 'diproses'"
-            class="bg-green-600 text-white text-xs rounded-lg px-3 py-1 shadow-md cursor-not-allowed"
+            class="bg-[#00B87A] hover:bg-[#109568] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
             disabled
           >
             <span>Sedang Konsultasi</span>

@@ -39,6 +39,7 @@
                    <input
                       v-model="searchQuery"
                       @input="handleSearch"
+                      @keyup="handleSearch"
                       type="text"
                       placeholder="Cari pegawai berdasarkan nama, ID, atau email..."
                       class="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-800"
@@ -49,18 +50,35 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
                 </div>
+
+                <!-- Clear search button -->
+                <div 
+                  v-if="searchQuery" 
+                  class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer"
+                  @click="clearSearch"
+                >
+                  <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </div>
               </div>
               
               <!-- Add Button - Right -->
-              <button
-                @click="scrollToForm"
-                class="ml-4 bg-[#3674B5] hover:bg-[#3B59A1] text-white font-medium py-3 px-3 rounded-lg shadow-md hover:shadow-lg flex items-center gap-2"
-                >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                Tambah Pegawai
-              </button>
+            <button
+              @click="goToAddStaff"
+              class="ml-4 bg-[#3674B5] hover:bg-[#3B59A1] text-white font-medium py-3 px-3 rounded-lg shadow-md hover:shadow-lg flex items-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Tambah Pegawai
+            </button>
+            </div>
+
+            <!-- Search Results Info -->
+            <div v-if="searchQuery" class="mt-4 text-sm text-gray-600">
+              Menampilkan {{ filteredStaff.length }} dari {{ props.staff.length }} pegawai
+              <span class="font-medium">"{{ searchQuery }}"</span>
             </div>
           </div>
 
@@ -80,25 +98,28 @@
                   </div>
                   
                   <div class="text-center">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-3">{{ staffMember.nama_lengkap }}</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                      <span v-html="highlightSearchTerm(staffMember.nama_lengkap)"></span>
+                    </h3>
                     <div class="space-y-2 text-sm text-gray-600 mb-6">
                       <p class="flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-4 0v1m4-1v1"></path>
                         </svg>
-                        <span class="font-medium">ID:</span> {{ staffMember.user_id }}
+                        <span class="font-medium">ID:</span> 
+                        <span v-html="highlightSearchTerm(staffMember.user_id)"></span>
                       </p>
                       <p v-if="staffMember.telepon" class="flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                         </svg>
-                        {{ staffMember.telepon }}
+                        <span v-html="highlightSearchTerm(staffMember.telepon)"></span>
                       </p>
                       <p v-if="staffMember.email" class="flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
-                        {{ staffMember.email }}
+                        <span v-html="highlightSearchTerm(staffMember.email)"></span>
                       </p>
                     </div>
                     
@@ -135,268 +156,15 @@
               {{ searchQuery ? 'Tidak ada hasil pencarian' : 'Belum ada data staff' }}
             </h3>
             <p class="text-gray-600 text-lg">
-              {{ searchQuery ? 'Coba gunakan kata kunci yang berbeda' : 'Mulai dengan menambahkan staff pertama Anda' }}
+              {{ searchQuery ? `Tidak ditemukan pegawai dengan kata kunci "${searchQuery}"` : 'Mulai dengan menambahkan staff pertama Anda' }}
             </p>
-          </div>
-
-          <!-- Form Section -->
-          <div ref="formSection" class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8">
-            <div class="max-w-2xl mx-auto">
-              <h2 class="text-2xl font-bold text-[#2A4482] mb-2 text-center">
-                {{ editingStaff ? 'Edit Data Staff' : 'Tambah Pegawai' }}
-              </h2>
-              <p class="text-gray-600 text-center mb-8 text-sm">
-                {{ editingStaff ? 'Perbarui informasi staff' : 'Lengkapi form di bawah untuk menambahkan pegawai baru' }}
-              </p>
-              
-              <form @submit.prevent="submitForm" class="space-y-6">
-                <!-- Nama Lengkap -->
-                <div class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Nama Lengkap <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    v-model="form.nama_lengkap"
-                    type="text"
-                    :class="[
-                      'w-full border rounded-xl px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                      errors.nama_lengkap ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
-                    ]"
-                    placeholder="Masukkan nama lengkap staff"
-                    @input="validateName"
-                  />
-                  <p v-if="errors.nama_lengkap" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.nama_lengkap }}
-                  </p>
-                </div>
-
-                <!-- Email -->
-                <div class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Email <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    v-model="form.email"
-                    type="email"
-                    :class="[
-                      'w-full border rounded-xl px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                      errors.email ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
-                    ]"
-                    placeholder="contoh@gmail.com"
-                    @input="validateEmail"
-                  />
-                  <p v-if="errors.email" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.email }}
-                  </p>
-                </div>
-
-                <!-- Password fields untuk tambah baru -->
-                <div v-if="!editingStaff" class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Password <span class="text-red-500">*</span>
-                  </label>
-                  <div class="relative">
-                    <input
-                      v-model="form.password"
-                      :type="showPassword ? 'text' : 'password'"
-                      :class="[
-                        'w-full border rounded-xl px-4 py-3 pr-12 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                        errors.password ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
-                      ]"
-                      placeholder="Masukkan password"
-                      @input="validatePassword"
-                    />
-                    <button
-                      type="button"
-                      @click="togglePasswordVisibility"
-                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors text-gray-800"
-                    >
-                      <svg v-if="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
-                      </svg>
-                      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <p v-if="errors.password" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.password }}
-                  </p>
-                </div>
-
-                <!-- Konfirmasi Password untuk tambah baru -->
-                <div v-if="!editingStaff" class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Konfirmasi Password <span class="text-red-500">*</span>
-                  </label>
-                  <div class="relative">
-                    <input
-                      v-model="form.password_confirmation"
-                      :type="showPasswordConfirmation ? 'text' : 'password'"
-                      :class="[
-                        'w-full border rounded-xl px-4 py-3 pr-12 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                        errors.password_confirmation ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
-                      ]"
-                      placeholder="Ulangi password"
-                      @input="validatePasswordConfirmation"
-                    />
-                    <button
-                      type="button"
-                      @click="togglePasswordConfirmationVisibility"
-                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <svg v-if="showPasswordConfirmation" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
-                      </svg>
-                      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <p v-if="errors.password_confirmation" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.password_confirmation }}
-                  </p>
-                </div>
-
-                <!-- Password fields untuk edit - opsional -->
-                <div v-if="editingStaff" class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Password Baru <span class="text-gray-500 font-normal text-xs">(opsional)</span>
-                  </label>
-                  <div class="relative">
-                    <input
-                      v-model="form.password"
-                      :type="showPassword ? 'text' : 'password'"
-                      :class="[
-                        'w-full border rounded-xl px-4 py-3 pr-12 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                        errors.password ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
-                      ]"
-                      placeholder="Kosongkan jika tidak ingin mengubah password"
-                      @input="validatePassword"
-                    />
-                    <button
-                      type="button"
-                      @click="togglePasswordVisibility"
-                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <svg v-if="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
-                      </svg>
-                      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <p v-if="errors.password" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.password }}
-                  </p>
-                </div>
-
-                <!-- Konfirmasi Password untuk edit -->
-                <div v-if="editingStaff" class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Konfirmasi Password Baru <span class="text-gray-500 font-normal text-xs">(opsional)</span>
-                  </label>
-                  <div class="relative">
-                    <input
-                      v-model="form.password_confirmation"
-                      :type="showPasswordConfirmation ? 'text' : 'password'"
-                      :class="[
-                        'w-full border rounded-xl px-4 py-3 pr-12 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                        errors.password_confirmation ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
-                      ]"
-                      placeholder="Ulangi password baru"
-                      @input="validatePasswordConfirmation"
-                    />
-                    <button
-                      type="button"
-                      @click="togglePasswordConfirmationVisibility"
-                      class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <svg v-if="showPasswordConfirmation" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
-                      </svg>
-                      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <p v-if="errors.password_confirmation" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.password_confirmation }}
-                  </p>
-                </div>
-
-                <!-- Nomor Telepon -->
-                <div class="space-y-1">
-                  <label class="block text-sm font-semibold text-gray-700">
-                    Nomor Telepon <span class="text-gray-500 font-normal text-xs">(opsional)</span>
-                  </label>
-                  <input
-                    v-model="form.telepon"
-                    type="tel"
-                    :class="[
-                      'w-full border rounded-xl px-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 text-gray-800',
-                      errors.telepon ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-gray-300 focus:ring-emerald-500 focus:border-transparent'
-                    ]"
-                    placeholder="08xxxxxxxxxx"
-                    @input="validateTelepon"
-                  />
-                  <p v-if="errors.telepon" class="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ errors.telepon }}
-                  </p>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-6">
-                  <button
-                    type="submit"
-                    :disabled="form.processing"
-                    class="bg-[#00B87A] hover:bg-[#109568] text-white font-medium py-3 px-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-                  >
-                    <svg v-if="!form.processing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-                    </svg>
-                    <span v-if="form.processing">Menyimpan...</span>
-                    <span v-else>{{ editingStaff ? 'Update Data' : 'Simpan Staff' }}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    @click="resetForm"
-                    class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                    {{ editingStaff ? 'Batal Edit' : 'Reset Form' }}
-                  </button>
-                </div>
-              </form>
-            </div>
+            <button 
+              v-if="searchQuery"
+              @click="clearSearch"
+              class="mt-4 bg-[#3674B5] hover:bg-[#3B59A1] text-white px-6 py-2 rounded-lg font-medium transition-all"
+            >
+              Hapus Pencarian
+            </button>
           </div>
         </div>
       </main>
@@ -438,8 +206,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, reactive } from 'vue'
-import { useForm, router } from '@inertiajs/vue3'
+import { ref, computed, reactive, nextTick } from 'vue'
+import { router } from '@inertiajs/vue3'
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue"
 import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue"
 
@@ -470,138 +238,32 @@ const breadcrumbPages = [
 ]
 
 // Reactive State
-const showModal = ref(false)
-const editingStaff = ref(null)
-const searchQuery = ref(props.search || '')
-const formSection = ref(null)
-const showPassword = ref(false)
-const showPasswordConfirmation = ref(false)
 const showDeleteConfirm = ref(false)
 const selectedStaff = ref(null)
+const searchQuery = ref(props.search || '')
 
-// Form
-const form = useForm({
-  nama_lengkap: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  telepon: '',
-})
-
-// Error state
-const errors = reactive({
-  nama_lengkap: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  telepon: ''
-})
-
-// Validation
-function validateName() {
-  form.nama_lengkap = form.nama_lengkap?.replace(/[^a-zA-Z\s]/g, '') || ''
-  const value = form.nama_lengkap.trim()
-  if (!value) {
-    errors.nama_lengkap = 'Nama lengkap wajib diisi'
-  } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-    errors.nama_lengkap = 'Nama lengkap wajib huruf'
-  } else {
-    errors.nama_lengkap = ''
-  }
+function goToAddStaff() {
+  router.visit('/tambahstaff')
 }
 
-function validateEmail() {
-  const value = form.email?.trim() || ''
-  if (!value) {
-    errors.email = 'Email wajib diisi'
-  } else if (!/^[^\s@]+@gmail\.com$/.test(value)) {
-    errors.email = 'Email harus berakhiran @gmail.com'
-  } else {
-    errors.email = ''
-  }
+function editStaff(staff) {
+  router.visit('/tambahstaff', {
+    method: 'get',
+    data: {
+      edit: true,
+      staff_id: staff.id,
+      nama_lengkap: staff.nama_lengkap,
+      email: staff.email,
+      telepon: staff.telepon || '',
+      user_id: staff.user_id
+    }
+  })
 }
 
-function validatePassword() {
-  const value = form.password || ''
-  if (!editingStaff.value && !value) {
-    errors.password = 'Password wajib diisi'
-  } else if (value.length < 6) {
-    errors.password = 'Password minimal 6 karakter'
-  } else {
-    errors.password = ''
-  }
-}
-
-function validatePasswordConfirmation() {
-  const password = form.password || ''
-  const confirmation = form.password_confirmation || ''
-  if (!editingStaff.value && !confirmation) {
-    errors.password_confirmation = 'Konfirmasi password wajib diisi'
-  } else if (password !== confirmation) {
-    errors.password_confirmation = 'Konfirmasi password tidak cocok'
-  } else {
-    errors.password_confirmation = ''
-  }
-}
-
-function validateTelepon() {
-  form.telepon = form.telepon?.replace(/\s/g, '') || ''
-  if (form.telepon && /\D/.test(form.telepon)) {
-    errors.telepon = 'Nomor telepon wajib angka'
-    form.telepon = form.telepon.replace(/\D/g, '')
-  } else {
-    errors.telepon = ''
-  }
-}
-
-function validateForm() {
-  Object.keys(errors).forEach(key => errors[key] = '')
-  let isValid = true
-
-  if (!form.nama_lengkap?.trim()) {
-    errors.nama_lengkap = 'Nama lengkap wajib diisi'
-    isValid = false
-  } else if (!/^[a-zA-Z\s]+$/.test(form.nama_lengkap.trim())) {
-    errors.nama_lengkap = 'Nama lengkap wajib huruf'
-    isValid = false
-  }
-
-  if (!form.email?.trim()) {
-    errors.email = 'Email wajib diisi'
-    isValid = false
-  } else if (!/^[^\s@]+@gmail\.com$/.test(form.email.trim())) {
-    errors.email = 'Email harus berakhiran @gmail.com'
-    isValid = false
-  }
-
-  if (!editingStaff.value && !form.password) {
-    errors.password = 'Password wajib diisi'
-    isValid = false
-  } else if (form.password && form.password.length < 6) {
-    errors.password = 'Password minimal 6 karakter'
-    isValid = false
-  }
-
-  if (!editingStaff.value && !form.password_confirmation) {
-    errors.password_confirmation = 'Konfirmasi password wajib diisi'
-    isValid = false
-  } else if (form.password !== form.password_confirmation) {
-    errors.password_confirmation = 'Konfirmasi password tidak cocok'
-    isValid = false
-  }
-
-  if (form.telepon && /\D/.test(form.telepon)) {
-    errors.telepon = 'Nomor telepon wajib angka'
-    isValid = false
-  }
-
-  return isValid
-}
-
-// DELETE FUNCTIONS - DIPINDAHKAN KELUAR DARI validateForm()
+// DELETE FUNCTIONS
 function deleteStaff(staff) {
-  selectedStaff.value = staff; // Simpan staff yang akan dihapus
-  showDeleteConfirm.value = true; // Tampilkan pop-up konfirmasi
+  selectedStaff.value = staff
+  showDeleteConfirm.value = true
 }
 
 function closeDeleteConfirm() {
@@ -613,116 +275,99 @@ function confirmDeleteStaff() {
   if (selectedStaff.value) {
     router.delete(`/staff/${selectedStaff.value.id}`, {
       onSuccess: () => {
-        showDeleteConfirm.value = false; // Tutup pop-up setelah berhasil
-        selectedStaff.value = null; // Reset staff yang dipilih
+        showDeleteConfirm.value = false
+        selectedStaff.value = null
       },
       onError: () => {
-        showDeleteConfirm.value = false; // Tutup pop-up jika ada error
-        selectedStaff.value = null; // Reset staff yang dipilih
+        showDeleteConfirm.value = false
+        selectedStaff.value = null
       }
     });
   }
 }
 
-// Utility
-const togglePasswordVisibility = () => showPassword.value = !showPassword.value
-const togglePasswordConfirmationVisibility = () => showPasswordConfirmation.value = !showPasswordConfirmation.value
-
-const resetForm = () => {
-  editingStaff.value = null
-  form.reset()
-  form.clearErrors()
-  Object.keys(errors).forEach(key => errors[key] = '')
-  showPassword.value = false
-  showPasswordConfirmation.value = false
+// SEARCH FUNCTIONS
+const handleSearch = () => {
+  console.log('Search triggered:', searchQuery.value)
+  console.log('Staff data:', props.staff)
+  console.log('Filtered results:', filteredStaff.value)
 }
 
-const submitForm = () => {
-  if (!validateForm()) {
-    const firstErrorElement = document.querySelector('.border-red-300')
-    if (firstErrorElement) {
-      firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      firstErrorElement.focus()
-    }
-    return
-  }
-
-  if (editingStaff.value) {
-    form.put(route('staff.update', editingStaff.value.id), {
-      onSuccess: () => resetForm(),
-      onError: serverErrors => {
-        Object.keys(serverErrors).forEach(key => {
-          if (errors.hasOwnProperty(key)) errors[key] = serverErrors[key]
-        })
-      }
-    })
-  } else {
-    form.post(route('staff.store'), {
-      onSuccess: () => resetForm(),
-      onError: serverErrors => {
-        Object.keys(serverErrors).forEach(key => {
-          if (errors.hasOwnProperty(key)) errors[key] = serverErrors[key]
-        })
-      }
-    })
-  }
+const clearSearch = () => {
+  searchQuery.value = ''
 }
 
-// Computed
+// Computed untuk filtering staff secara real-time
 const filteredStaff = computed(() => {
-  console.log("Search Query:", searchQuery.value); // Debugging
-  if (!searchQuery.value) return props.staff;
-  const search = searchQuery.value.toLowerCase();
-  const filtered = props.staff.filter(staff =>
-    staff.nama_lengkap?.toLowerCase().includes(search) ||
-    staff.user_id?.toLowerCase().includes(search) ||
-    staff.email?.toLowerCase().includes(search)
-  );
-  console.log("Filtered Staff:", filtered); // Debugging
-  return filtered;
-});
+  console.log('Computing filtered staff...')
+  console.log('Search query:', searchQuery.value)
+  console.log('Props staff:', props.staff)
+  
+  // Jika tidak ada search query, return semua staff
+  if (!searchQuery.value || !searchQuery.value.trim()) {
+    return props.staff || []
+  }
+  
+  const search = searchQuery.value.toLowerCase().trim()
+  console.log('Search term:', search)
+  
+  if (!props.staff || !Array.isArray(props.staff)) {
+    console.log('No staff data available')
+    return []
+  }
+  
+  const filtered = props.staff.filter(staff => {
+    if (!staff) return false
+    
+    // Debug setiap staff
+    console.log('Checking staff:', staff)
+    
+    // Cari berdasarkan nama lengkap
+    const nameMatch = staff.nama_lengkap ? 
+      staff.nama_lengkap.toLowerCase().includes(search) : false
+    
+    // Cari berdasarkan user ID (convert to string dulu)
+    const idMatch = staff.user_id ? 
+      String(staff.user_id).toLowerCase().includes(search) : false
+    
+    // Cari berdasarkan email
+    const emailMatch = staff.email ? 
+      staff.email.toLowerCase().includes(search) : false
+    
+    // Cari berdasarkan telepon (convert to string dulu)
+    const phoneMatch = staff.telepon ? 
+      String(staff.telepon).toLowerCase().includes(search) : false
+    
+    const isMatch = nameMatch || idMatch || emailMatch || phoneMatch
+    
+    if (isMatch) {
+      console.log('Match found:', staff.nama_lengkap, {nameMatch, idMatch, emailMatch, phoneMatch})
+    }
+    
+    return isMatch
+  })
+  
+  console.log('Filtered results:', filtered)
+  return filtered
+})
 
-   
+// Function untuk highlight search term
+const highlightSearchTerm = (text) => {
+  if (!searchQuery.value || !text) return text
+  
+  const searchTerm = searchQuery.value.trim()
+  if (!searchTerm) return text
+  
+  const regex = new RegExp(`(${searchTerm})`, 'gi')
+  return text.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>')
+}
 
 // Other methods
-const getInitial = (name) => name.charAt(0).toUpperCase()
-
-const openAddModal = () => {
-  editingStaff.value = null
-  form.reset()
-  form.clearErrors()
-  showModal.value = true
+const getInitial = (name) => {
+  if (!name) return 'N'
+  return name.charAt(0).toUpperCase()
 }
 
-const scrollToForm = () => {
-  editingStaff.value = null
-  form.reset()
-  form.clearErrors()
-  formSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
-
-const editStaff = (staff) => {
-  editingStaff.value = staff
-  form.nama_lengkap = staff.nama_lengkap || ''
-  form.email = staff.email || ''
-  form.telepon = staff.telepon || ''
-  form.password = ''
-  form.password_confirmation = ''
-  form.clearErrors()
-  formSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
-
-const closeModal = () => {
-  showModal.value = false
-  editingStaff.value = null
-  form.reset()
-  form.clearErrors()
-}
-
-   const handleSearch = () => {
-     // Tidak perlu memanggil router.get di sini
-     // Cukup biarkan searchQuery diperbarui
-   }
 </script>
 
 <style>
@@ -760,4 +405,11 @@ const closeModal = () => {
   }
 }
 
+/* Custom styling for search highlights */
+mark {
+  background-color: #fef08a !important;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: 500;
+}
 </style>

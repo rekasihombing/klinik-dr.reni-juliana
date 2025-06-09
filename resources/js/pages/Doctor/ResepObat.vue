@@ -95,7 +95,7 @@
                               label="nama_obat"
                               :reduce="obat => obat.id"
                               placeholder="Pilih Obat"
-                              class="w-full"
+                              class="w-full text-gray-800"
                               @update:modelValue="() => updateObatName(index)"
                             />
                             <!-- Tampilkan stok tersedia -->
@@ -108,7 +108,7 @@
                             <input 
                               type="text" 
                               v-model="item.dosis" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
+                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800" 
                               placeholder="Contoh: 3x1 tablet"
                             />
                           </td>
@@ -120,10 +120,10 @@
                               min="1"
                               step="1"
                               :class="[
-                                'border rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
+                                'border rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800',
                                 isStokTidakCukup(item) ? 'border-red-500 bg-red-50' : 'border-gray-300'
                               ]"
-                              placeholder="Jumlah obat"
+                              placeholder="Jumlah obat" 
                               @input="checkStok(index)"
                             />
                             <!-- Warning stok tidak cukup -->
@@ -137,20 +137,20 @@
                             <input 
                               type="date" 
                               v-model="item.tanggal_mulai" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800"
                             />
                           </td>
                           <td class="border-r border-gray-200 px-4 py-3">
                             <input 
                               type="date" 
                               v-model="item.tanggal_terakhir" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800"
                             />
                           </td>
                           <td class="border-r border-gray-200 px-4 py-3">
                             <textarea 
                               v-model="item.catatan" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" 
+                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none text-gray-800" 
                               placeholder="Catatan tambahan"
                               rows="2"
                             ></textarea>
@@ -159,7 +159,7 @@
                             <div class="flex justify-center space-x-2">
                               <button 
                                 type="button" 
-                                class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md transition-all hover:scale-105 shadow-sm" 
+                                class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
                                 @click="removeItem(index)"
                                 title="Hapus obat"
                               >
@@ -178,7 +178,7 @@
                   <button
                     type="button"
                     @click="addItem"
-                    class="bg-[#47B536] hover:bg-[#449A37] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
+                    class="bg-[#00B87A] hover:bg-[#109568] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
                   >
                     <i class="fas fa-plus"></i>
                     <span>Tambah Obat</span>
@@ -204,13 +204,12 @@
                         </label>
                         <textarea 
                           v-model="obatLuar"
-                          class="w-full border border-gray-300 rounded-md px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" 
+                          class="w-full border border-gray-300 rounded-md px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none text-gray-800" 
                           placeholder="Masukkan daftar obat dari luar klinik beserta dosis dan instruksi penggunaan.
-
-Contoh:
-1. Paracetamol 500mg - 3x1 tablet setelah makan
-2. Amoxicillin 500mg - 3x1 kapsul sebelum makan selama 7 hari
-3. CTM 4mg - 1x1 tablet malam hari saat gatal"
+                          Contoh:
+                          1. Paracetamol 500mg - 3x1 tablet setelah makan
+                          2. Amoxicillin 500mg - 3x1 kapsul sebelum makan selama 7 hari
+                          3. CTM 4mg - 1x1 tablet malam hari saat gatal"
                           rows="8"
                         ></textarea>
                         <div class="text-xs text-gray-500 mt-1">
@@ -234,7 +233,7 @@ Contoh:
                   <button
                     type="button"
                     @click="cancelForm"
-                    class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
+                    class="bg-[#717070] hover:bg-[#555555] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
                   >
                     <span>Batal</span>
                   </button>
@@ -242,8 +241,8 @@ Contoh:
                     type="submit"
                     :disabled="isSubmitting || (activeTab === 'klinik' && hasStokTidakCukup)"
                     :class="[
-                      'shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max transition-all',
-                      (activeTab === 'klinik' && hasStokTidakCukup) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#3674B5] hover:bg-[#3B59A1]',
+                      'text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm',
+                      (activeTab === 'klinik' && hasStokTidakCukup) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#3F86D0] hover:bg-[#3B59A1]',
                       'disabled:opacity-50'
                     ]"
                   >

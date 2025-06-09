@@ -1,90 +1,141 @@
 <template>
-  <aside class="bg-white w-56 flex flex-col text-gray-700 text-sm font-sans">
-    <!-- Header Info Dokter -->
-    <div class="flex items-center space-x-2 border-b border-gray-200 px-4 py-3">
-      <i class="fas fa-user-md text-xl text-gray-600"></i>
-      <div>
-        <div class="font-medium">Dr. Reni Juliana M.</div>
-        <div class="text-xs text-gray-500">Dokter</div>
+  <aside class="bg-white w-64 flex flex-col text-gray-700 text-sm font-sans shadow-xl border-r border-gray-100">
+    <!-- Logo Section -->
+    <div class="px-6 py-5 border-b border-gray-100">
+      <div class="flex items-center space-x-3">
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Logo Klinik</h2>
+          <p class="text-xs text-gray-500">Klinik</p>
+        </div>
       </div>
     </div>
 
+    <!-- Doctor Info -->
+    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+      <div class="flex items-center space-x-3">
+        <div class="w-6 flex justify-center">
+          <i class="fas text-[#2A4482] fa-circle-user text-2xl transition-transform group-hover:scale-110"></i>
+        </div>
+        <div>
+          <p class="font-semibold text-[#2A4482] truncate">Dr. Reni Juliana Manurung</p>
+          <p class="text-xs text-gray-500 tracking-wide">Dokter</p>
+        </div>
+      </div>
+    </div>
+    
     <!-- Navigation Menu -->
-    <nav class="flex flex-col px-3 py-4 flex-1 overflow-y-auto space-y-2">
+    <nav class="flex flex-col px-4 py-6 flex-1 overflow-y-auto space-y-1">
       <!-- Dashboard Dokter -->
       <Link 
         href="/dashboarddokter" 
-        class="flex items-center space-x-2 rounded px-3 py-2 transition-colors duration-200"
-        :class="isActive('/dashboarddokter') ? 'bg-[#3674B5] text-white' : 'hover:bg-gray-100 text-gray-700'"
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/dashboarddokter') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
-        <i class="fas fa-home text-lg"></i>
-        <span>Dashboard</span>
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-home text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Dashboard</span>
+        <div v-if="isActive('/dashboarddokter')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
-
+      
       <!-- Pasien -->
       <Link 
         href="/tambahrekammedis/1" 
-        class="flex items-center space-x-3 rounded-lg px-4 py-3 transition-colors duration-200"
-        :class="isActive('/tambahrekammedis/1') ? 'bg-[#3674B5] text-white' : 'hover:bg-gray-100 text-gray-700'"
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/tambahrekammedis/1') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
-        <i class="fas fa-user-injured text-lg"></i>
-        <span>Pasien</span>
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-user-injured text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Pasien</span>
+        <div v-if="isActive('/tambahrekammedis/1')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
 
       <!-- Janji Temu -->
       <Link 
         href="/janji-temu" 
-        class="flex items-center space-x-3 rounded-lg px-4 py-3 transition-colors duration-200"
-        :class="isActive('/janji-temu') ? 'bg-[#3674B5] text-white' : 'hover:bg-gray-100 text-gray-700'"
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/janji-temu') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
-        <i class="fas fa-calendar-alt text-lg"></i>
-        <span>Janji Temu</span>
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-calendar-alt text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Janji Temu</span>
+        <div v-if="isActive('/janji-temu')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
 
       <!-- Pegawai -->
       <Link 
         href="/staff" 
-        class="flex items-center space-x-3 rounded-lg px-4 py-3 transition-colors duration-200"
-        :class="isActive('/staff') ? 'bg-[#3674B5] text-white' : 'hover:bg-gray-100 text-gray-700'"
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/staff') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
-        <i class="fas fa-users text-lg"></i>
-        <span>Pegawai</span>
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-users text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Pegawai</span>
+        <div v-if="isActive('/staff')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
 
       <!-- Laporan -->
       <Link 
         href="/laporan-operasional" 
-        class="flex items-center space-x-3 rounded-lg px-4 py-3 transition-colors duration-200"
-        :class="isActive('/laporan-operasional') ? 'bg-[#3674B5] text-white' : 'hover:bg-gray-100 text-gray-700'"
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/laporan-operasional') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
-        <i class="fas fa-file-alt text-lg"></i>
-        <span>Laporan Operasional</span>
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-file-alt text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Laporan Operasional</span>
+        <div v-if="isActive('/laporan-operasional')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
 
       <Link 
         href="/laporan-keuangan" 
-        class="flex items-center space-x-3 rounded-lg px-4 py-3 transition-colors duration-200"
-        :class="isActive('/laporan-keuangan') ? 'bg-[#3674B5] text-white' : 'hover:bg-gray-100 text-gray-700'"
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/laporan-keuangan') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
-        <i class="fas fa-file-alt text-lg"></i>
-        <span>Laporan Keuangan</span>
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-file-invoice-dollar text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Laporan Keuangan</span>
+        <div v-if="isActive('/laporan-keuangan')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
-    </nav>
 
-    <!-- Logout Button -->
-    <div 
-      @click="handleLogout"
-      class="px-4 py-3 border-t border-gray-200 flex items-center space-x-2 cursor-pointer hover:bg-gray-100 transition-colors duration-200 text-gray-700"
-    >
-      <i class="fas fa-sign-out-alt text-lg"></i>
-      <span>Logout</span>
+      <!-- Spacer untuk push logout ke bawah -->
+      <div class="flex-1"></div>
+    </nav>
+    
+    <!-- Fixed Logout Button -->
+    <div class="px-4 pb-4 mt-auto border-t border-gray-100 pt-4">
+      <div 
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 cursor-pointer hover:bg-red-50 transition-all duration-200 text-gray-600 hover:text-red-600 hover:scale-[1.02]"
+        @click="handleLogout"
+      >
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-sign-out-alt text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Logout</span>
+        <div class="ml-auto">
+          <i class="fas fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </div>
+      </div>
     </div>
   </aside>
 </template>
 
 <script setup>
+import { defineProps } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import { Link, router } from '@inertiajs/vue3'
 import { computed } from 'vue'
+
+defineProps({
+  doctorName: {
+    type: String,
+    default: 'Nama Dokter'
+  }
+})
 
 // Function to check if current route is active
 const isActive = (route) => {
@@ -94,14 +145,59 @@ const isActive = (route) => {
   }).value
 }
 
+// Get doctor initial
+const getInitial = (name) => {
+  if (!name) return 'D'
+  return name.charAt(0).toUpperCase()
+}
+
 // Handle logout
 const handleLogout = () => {
   if (confirm('Apakah Anda yakin ingin keluar?')) {
-    router.post('/logout')
+    Inertia.post('/logout')
   }
 }
 </script>
 
 <style scoped>
-/* Additional styling if needed */
+/* Custom scrollbar untuk navigation */
+nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+nav::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 2px;
+}
+
+nav::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
+/* Smooth hover animations */
+.group:hover {
+  transform: translateX(2px);
+}
+
+/* Active state glow effect */
+.bg-gradient-to-r {
+  position: relative;
+}
+
+.bg-gradient-to-r::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  border-radius: inherit;
+  opacity: 0.8;
+  z-index: -1;
+}
 </style>

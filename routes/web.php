@@ -160,6 +160,9 @@ Route::get('/pendaftaranpegawai', function () {
     return Inertia::render('Doctor/PendaftaranPegawai');
 })->name('pendaftaranpegawai');
 
+Route::get('/tambahstaff', function () {
+    return Inertia::render('Doctor/TambahStaff');
+})->name('tambahstaff');
 
 // Route::get('/tambahrekammedis', function () {
 //     return Inertia::render('Doctor/TambahRekamMedis');
