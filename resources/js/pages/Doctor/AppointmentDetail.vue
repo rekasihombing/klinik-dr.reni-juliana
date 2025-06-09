@@ -40,7 +40,7 @@
           <button 
             v-if="!hasRekamMedis" 
             @click="handleTambahRekamMedisClick" 
-            class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-green-700 transition" 
+            class="bg-[#34C759] text-white text-xs rounded-lg px-3 py-1 shadow-md hover:bg-green-700 transition" 
             type="button"
           >
             <span>Tambah Rekam Medis</span>
@@ -49,7 +49,7 @@
           <!-- Tombol disabled jika sudah ada rekam medis -->
           <button 
             v-else 
-            class="bg-gray-400 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed" 
+            class="bg-gray-400 text-white text-xs rounded-lg px-3 py-1 shadow-md cursor-not-allowed" 
             disabled
             title="Rekam medis sudah pernah diinput untuk appointment ini"
           >
@@ -60,7 +60,7 @@
           <button
             v-if="status === 'dikonfirmasi'"
             @click="mulaiKonsultasi"
-            class="bg-[#007AFF] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-blue-700 transition"
+            class="bg-[#007AFF] text-white text-xs rounded-lg px-3 py-1 shadow-md hover:bg-blue-700 transition"
             type="button"
           >
             <span>Mulai Konsultasi</span>
@@ -69,7 +69,7 @@
           <!-- Tombol pasif ketika sedang konsultasi -->
           <button
             v-else-if="status === 'diproses'"
-            class="bg-green-600 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed"
+            class="bg-green-600 text-white text-xs rounded-lg px-3 py-1 shadow-md cursor-not-allowed"
             disabled
           >
             <span>Sedang Konsultasi</span>

@@ -9,8 +9,8 @@
       <Sidebar :patient-name="patientData.nama || patientName" />
 
       <!-- Main content -->
-      <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight text-black">
-
+      <main class="bg-gray-100 flex-1 p-6 font-sans text-[13px] leading-tight text-black">
+        
         <!-- Top bar -->
         <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
@@ -281,7 +281,7 @@
                 <button
                   type="submit"
                   :disabled="form.processing"
-                  class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max select-none flex items-center gap-2 transition-colors"
+                  class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max select-none flex items-center gap-2 transition-colors"
                 >
                   <i class="fas fa-save text-[13px]"></i> 
                   <span v-if="form.processing">Menyimpan...</span>
@@ -291,7 +291,7 @@
                 <button
                   type="button"
                   @click="downloadRecord"
-                  class="bg-[#47B536] hover:bg-[#449A37] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max select-none flex items-center gap-2 transition-colors"
+                  class="bg-[#00B87A] hover:bg-[#109568] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max select-none flex items-center gap-2 transition-colors"
                 >
                   <i class="fas fa-download text-[13px]"></i> Download PDF
                 </button>

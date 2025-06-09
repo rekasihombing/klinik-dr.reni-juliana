@@ -162,7 +162,7 @@
         <div class="mt-6 flex justify-start space-x-4">
           <Link
             :href="route('stok-obat.create')"
-            class="bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max"
+            class="bg-[#00B87A] hover:bg-[#109568] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max"
           >
             <i class="fas fa-plus"></i>
             Tambah Stok Obat
@@ -170,7 +170,7 @@
 
           <Link
             :href="route('obat.create')"
-            class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max"
+            class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-3 rounded-lg text-sm w-max"
           >
             <i class="fas fa-plus"></i>
             Tambah Obat
