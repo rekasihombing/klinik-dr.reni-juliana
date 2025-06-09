@@ -1,140 +1,146 @@
 <template>
   <div class="min-h-screen bg-[#FFFF] flex">
     <!-- Sidebar -->
-    <SidebarDokter />
+    <Sidebar :patient-name="patientData.nama || patientName" />
 
     <!-- Main Content -->
-    <div class="ml-2 p-6 flex-1">
-      <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
-        <div class="flex items-center space-x-2 text-[#2A4482]">
-          <span class="text-xl">🏠</span>
-          <span>Dashboard</span>
-          <span class="text-[#2A4482]">›</span>
-          <span class="text-[#2A4482]">Janji Temu</span>
-        </div>
-        <div class="text-white text-right">
-          <p class="text-sm">{{ currentDate }}</p>
-          <p class="text-lg font-mono">{{ currentTime }}</p>
-        </div>
-      </div>
+    <main class="bg-gray-100 flex-1 p-6">
+      <div>
+        <!-- Header -->
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
-      <!-- Content Card -->
-      <div class="bg-white rounded-xl shadow-xl p-6">
-        <!-- Title -->
-        <div class="mb-6">
-          <h1 class="text-2xl font-bold text-gray-800 mb-2">
-            <span class="px-2 py-1 rounded">Janji Temu</span> Pasien
-          </h1>
-          <p class="text-gray-600">
-            Berikut adalah daftar <span class=" px-1 rounded">janji temu</span> pasien
-          </p>
-        </div>
+        <!-- Content Card -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
+          <div>
 
-        <!-- Filter Section -->
-        <div class="flex items-center space-x-4 mb-6">
-          <div class="flex items-center space-x-2">
-            <label class="text-gray-700 font-medium">Dari:</label>
-            <input 
-              type="date" 
-              v-model="filterFrom"
-              class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-          </div>
-          <div class="flex items-center space-x-2">
-            <label class="text-gray-700 font-medium">Sampai:</label>
-            <input 
-              type="date" 
-              v-model="filterTo"
-              class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-          </div>
-          <div class="ml-auto">
-            <input 
-              type="text" 
-              placeholder="Search"
-              v-model="searchQuery"
-              class="border border-gray-300 rounded-lg px-4 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-          </div>
-        </div>
+            <!-- Filter Section -->
+            <div class="flex items-center space-x-4 mb-6">
+              <div class="flex items-center space-x-2">
+                <label class="text-gray-700 font-medium">Dari:</label>
+                <input 
+                  type="date" 
+                  v-model="filterFrom"
+                  class="bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                >
+              </div>
+              <div class="flex items-center space-x-2">
+                <label class="text-gray-700 font-medium">Sampai:</label>
+                <input 
+                  type="date" 
+                  v-model="filterTo"
+                  class="bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                >
+              </div>
+              <div class="ml-auto">
+                <input 
+                  type="text" 
+                  placeholder="Search"
+                  v-model="searchQuery"
+                  class="bg-white border border-gray-300 rounded-lg px-4 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                >
+              </div>
+            </div>
 
-        <!-- Table -->
-        <div class="overflow-hidden rounded-lg border border-gray-200">
-          <table class="w-full">
-            <thead class="bg-[#3674B5] text-white">
-              <tr>
-                <th class="px-6 py-3 text-left font-semibold">Nama Pasien</th>
-                <th class="px-6 py-3 text-left font-semibold">Tanggal</th>
-                <th class="px-6 py-3 text-left font-semibold">Waktu</th>
-                <th class="px-6 py-3 text-left font-semibold">Keluhan</th>
-                <th class="px-6 py-3 text-left font-semibold">Detail</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white">
-              <tr 
-                v-for="(appointment, index) in filteredAppointments" 
-                :key="appointment.id"
-                :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
-                class="border-b border-gray-200 hover:bg-blue-50 transition-colors"
-              >
-                <td class="px-6 py-4 text-gray-800">{{ appointment.pasien_id }}</td>
-                <td class="px-6 py-4 text-gray-800">{{ appointment.tanggal }}</td>
-                <td class="px-6 py-4 text-gray-800">{{ appointment.jam_konsultasi }}</td>
-                <td class="px-6 py-4 text-gray-800">{{ appointment.keluhan }}</td>
-                <td class="px-6 py-4">
-                  <button 
-                    @click="showDetail(appointment)"
-                    class="text-blue-600 hover:text-blue-800 font-medium hover:underline"
+            <!-- Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-[#3674B5]">
+                  <tr>
+                    <th class="px-6 py-3 text-left font-semibold">Nama Pasien</th>
+                    <th class="px-6 py-3 text-left font-semibold">Tanggal</th>
+                    <th class="px-6 py-3 text-left font-semibold">Waktu</th>
+                    <th class="px-6 py-3 text-left font-semibold">Keluhan</th>
+                    <th class="px-6 py-3 text-left font-semibold">Detail</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white">
+                  <tr 
+                    v-for="(appointment, index) in filteredAppointments" 
+                    :key="appointment.id"
+                    :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
+                    class="border-b border-gray-200 hover:bg-blue-50 transition-colors"
                   >
-                    Lihat Detail
-                  </button>
-                </td>
-              </tr>
-              <tr v-if="filteredAppointments.length === 0">
-                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                  Tidak ada data janji temu yang ditemukan
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    <td class="px-6 py-4 text-gray-800">{{ appointment.pasien_id }}</td>
+                    <td class="px-6 py-4 text-gray-800">{{ appointment.tanggal }}</td>
+                    <td class="px-6 py-4 text-gray-800">{{ appointment.jam_konsultasi }}</td>
+                    <td class="px-6 py-4 text-gray-800">{{ appointment.keluhan }}</td>
+                    <td class="px-6 py-4">
+                      <button 
+                        @click="showDetail(appointment)"
+                        class="text-blue-600 hover:text-blue-800 font-medium hover:underline"
+                      >
+                        Lihat Detail
+                      </button>
+                    </td>
+                  </tr>
+                  <tr v-if="filteredAppointments.length === 0">
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                      Tidak ada data janji temu yang ditemukan
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
 
-    <!-- Detail Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-6 w-96 max-w-md mx-4">
-        <h3 class="text-lg font-bold mb-4">Detail Janji Temu</h3>
-        <div v-if="selectedAppointment" class="space-y-3">
-          <div>
-            <span class="font-medium text-gray-700">Nama Pasien:</span>
-            <p class="text-gray-800">{{ selectedAppointment.pasien_id }}</p>
-          </div>
-          <div>
-            <span class="font-medium text-gray-700">Tanggal:</span>
-            <p class="text-gray-800">{{ selectedAppointment.tanggal }}</p>
-          </div>
-          <div>
-            <span class="font-medium text-gray-700">Waktu:</span>
-            <p class="text-gray-800">{{ selectedAppointment.jam_konsultasi }}</p>
-          </div>
-          <div>
-            <span class="font-medium text-gray-700">Keluhan:</span>
-            <p class="text-gray-800">{{ selectedAppointment.keluhan }}</p>
-          </div>
-          <div>
-            <span class="font-medium text-gray-700">Status:</span>
-            <p class="text-gray-800">{{ selectedAppointment.status || 'Menunggu' }}</p>
-          </div>
+    <!-- Modal Detail Janji Temu -->
+    <div 
+      v-if="showModal"
+      class="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-30"
+      @click.self="closeModal"
+    >
+      <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fadeIn">
+        <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] text-white px-6 py-4">
+          <h3 class="text-xl font-bold flex items-center space-x-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>Detail Janji Temu</span>
+          </h3>
         </div>
-        <div class="flex justify-end space-x-3 mt-6">
-          <button 
-            @click="closeModal"
-            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-          >
-            Tutup
-          </button>
+
+        <div class="px-6 py-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Nama Pasien</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.pasien_id }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Tanggal</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.tanggal }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Waktu</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.jam_konsultasi }}</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Keluhan</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.keluhan }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Status</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.status || 'Menunggu' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
+            <button 
+              @click="closeModal"
+              class="inline-flex items-center px-6 py-2 border border-gray-300 text-sm font-medium rounded-lg text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              Tutup
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -142,74 +148,58 @@
 </template>
 
 <script>
-import SidebarDokter from '@/layouts/dokter/SidebarDokter.vue'
-
+import Sidebar from '../../layouts/dokter/SidebarDokter.vue'
+import HeaderStaff from '../../layouts/dokter/HeaderDokter.vue'
 
 export default {
   name: 'JanjiTemuPasien',
   components: {
-    SidebarDokter,
+    Sidebar,
+    HeaderStaff
   },
   props: {
     appointments: {
       type: Array,
       required: true
+    },
+    patientName: String,
+    patientData: {
+      type: Object,
+      default: () => ({ nama: '' })
     }
   },
   data() {
     return {
-      currentDate: '',
-      currentTime: '',
+      breadcrumbPages: [
+        { label: 'Dashboard', href: '/dashboarddokter' },
+        { label: 'Janji Temu', href: '/janji-temu' }
+      ],
       filterFrom: '',
       filterTo: '',
       searchQuery: '',
       showModal: false,
       selectedAppointment: null,
-    }
+    };
   },
   computed: {
     filteredAppointments() {
       let filtered = this.appointments;
-
-      // Filter by search query
       if (this.searchQuery) {
         filtered = filtered.filter(appointment => 
-          appointment.nama_pasien.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          appointment.keluhan.toLowerCase().includes(this.searchQuery.toLowerCase())
+          appointment.nama_pasien?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          appointment.keluhan?.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       }
-
-      // Filter by date range if filterFrom and filterTo are set
       if (this.filterFrom) {
         filtered = filtered.filter(appointment => appointment.tanggal >= this.filterFrom);
       }
       if (this.filterTo) {
         filtered = filtered.filter(appointment => appointment.tanggal <= this.filterTo);
       }
-
       return filtered;
     }
   },
-  mounted() {
-    this.updateDateTime();
-    setInterval(this.updateDateTime, 1000);
-  },
   methods: {
-    updateDateTime() {
-      const now = new Date();
-      const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      };
-      this.currentDate = now.toLocaleDateString('id-ID', options);
-      this.currentTime = now.toLocaleTimeString('id-ID', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-      });
-    },
     showDetail(appointment) {
       this.selectedAppointment = appointment;
       this.showModal = true;
@@ -219,5 +209,36 @@ export default {
       this.selectedAppointment = null;
     }
   }
-}
+};
 </script>
+
+<style scoped>
+.fixed.inset-0 {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.fixed.inset-0.bg-black.bg-opacity-50,
+.bg-black.bg-opacity-30.backdrop-blur-sm {
+  animation: fadeIn 0.2s ease-out;
+}
+.bg-white.rounded-2xl.shadow-2xl {
+  animation: slideIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+</style>
