@@ -1,86 +1,102 @@
+```vue
 <template>
   <div class="min-h-screen bg-gray-50 font-sans text-gray-800 flex">
-    
     <!-- Sidebar -->
     <SidebarStaff class="w-64 bg-white shadow-md" />
 
     <!-- Main content -->
     <main class="flex-1">
-
-       <!-- Header Section -->
+      <!-- Header Section -->
       <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
       <!-- Content Container -->
       <div class="p-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 max-w-7xl mx-auto">
-
           <!-- Header Section -->
           <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-[#3674B5] rounded-xl flex items-center justify-center shadow-lg">
                   <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2"></path>
                   </svg>
                 </div>
-                <div>
-                  <h1 class="text-lg font-bold text-[#3674B5]">Daftar Pembayaran Pasien</h1>
-                </div>
+                <h1 class="text-lg font-bold text-[#3674B5]">Daftar Pembayaran Pasien</h1>
               </div>
               <div class="flex items-center gap-3">
-                <router-link 
-                  to="/tambah-tagihan" 
+                <InertiaLink
+                  href="/tambah-tagihan"
                   class="inline-flex items-center gap-2 bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg text-white px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                   </svg>
                   Buat Tagihan Baru
-                </router-link>
+                </InertiaLink>
               </div>
             </div>
           </div>
 
           <!-- Filter & Search Section -->
           <div class="px-8 py-6 border-b border-gray-200 bg-gray-50">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form @submit.prevent="applyFilters" class="grid grid-cols-1 md:grid-cols-5 gap-4">
               <!-- Search -->
               <div class="md:col-span-2">
                 <div class="relative">
                   <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
-                  <input 
-                    v-model="searchQuery"
-                    type="text" 
+                  <input
+                    v-model="form.search"
+                    type="text"
                     placeholder="Cari nama pasien atau nomor tagihan..."
-                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
+                  <!-- Clear search button -->
+                  <button
+                    v-if="form.search"
+                    @click="clearSearch"
+                    type="button"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
               
               <!-- Status Filter -->
               <div>
-                <select 
-                  v-model="statusFilter"
+                <select
+                  v-model="form.status"
+                  @change="applyFilters"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 >
                   <option value="">Semua Status</option>
-                  <option value="pending">Menunggu Pembayaran</option>
-                  <option value="paid">Sudah Dibayar</option>
-                  <option value="overdue">Terlambat</option>
+                  <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
+                  <option value="sudah_dibayar">Sudah Dibayar</option>
                 </select>
               </div>
               
               <!-- Date Filter -->
               <div>
-                <input 
-                  v-model="dateFilter"
-                  type="date" 
+                <input
+                  v-model="form.start_date"
+                  @change="applyFilters"
+                  type="date"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 />
               </div>
-            </div>
+              <div>
+                <input
+                  v-model="form.end_date"
+                  @change="applyFilters"
+                  type="date"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                />
+              </div>
+            </form>
           </div>
 
           <!-- Bills Table -->
@@ -99,19 +115,24 @@
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-100">
-                    <tr v-for="bill in filteredBills" :key="bill.id" class="hover:bg-gray-50 transition-colors">
+                    <tr v-if="!tagihan?.data?.length" class="hover:bg-gray-50 transition-colors">
+                      <td colspan="6" class="py-4 px-4 text-center text-gray-600">
+                        Tidak ada data tagihan.
+                      </td>
+                    </tr>
+                    <tr v-for="bill in tagihan?.data" :key="bill.id" class="hover:bg-gray-50 transition-colors">
                       <td class="py-4 px-4">
-                        <div class="font-medium text-gray-900">{{ bill.billNumber }}</div>
-                        <div class="text-xs text-gray-500">{{ formatTime(bill.createdAt) }}</div>
+                        <div class="font-medium text-gray-900">{{ bill.nomor_tagihan }}</div>
+                        <div class="text-xs text-gray-500">{{ formatTime(bill.created_at) }}</div>
                       </td>
                       <td class="py-4 px-4">
-                        <div class="font-medium text-gray-900">{{ bill.patientName }}</div>
+                        <div class="font-medium text-gray-900">{{ bill.rekam_medis?.pasien?.nama_lengkap || '-' }}</div>
                       </td>
                       <td class="py-4 px-4 text-center">
-                        <div class="text-sm text-gray-900">{{ formatDate(bill.createdAt) }}</div>
+                        <div class="text-sm text-gray-900">{{ formatDate(bill.tanggal_tagihan) }}</div>
                       </td>
                       <td class="py-4 px-4 text-center">
-                        <div class="font-semibold text-gray-900">Rp {{ formatCurrency(bill.total) }}</div>
+                        <div class="font-semibold text-gray-900">Rp {{ formatCurrency(bill.subtotal) }}</div>
                       </td>
                       <td class="py-4 px-4 text-center">
                         <span :class="getStatusClass(bill.status)" class="px-3 py-1 rounded-full text-xs font-medium">
@@ -120,8 +141,8 @@
                       </td>
                       <td class="py-4 px-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                          <button 
-                            @click="viewBillDetail(bill)"
+                          <button
+                            @click="viewBillDetail(bill.id)"
                             class="bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded-lg transition-all duration-200 hover:scale-105"
                             title="Lihat Detail"
                           >
@@ -130,8 +151,8 @@
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                             </svg>
                           </button>
-                          <button 
-                            v-if="bill.status === 'pending'"
+                          <button
+                            v-if="bill.status === 'menunggu_pembayaran'"
                             @click="markAsPaid(bill)"
                             class="bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-all duration-200 hover:scale-105"
                             title="Tandai Sudah Dibayar"
@@ -140,7 +161,8 @@
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                           </button>
-                          <button 
+                          <button
+                            v-if="bill.status === 'sudah_dibayar'"
                             @click="printBill(bill)"
                             class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-all duration-200 hover:scale-105"
                             title="Cetak Struk"
@@ -160,150 +182,224 @@
             <!-- Pagination -->
             <div class="flex items-center justify-between mt-6">
               <div class="text-sm text-gray-600">
-                Menampilkan {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ Math.min(currentPage * itemsPerPage, filteredBills.length) }} 
-                dari {{ filteredBills.length }} tagihan
+                Menampilkan {{ tagihan?.from || 0 }} - {{ tagihan?.to || 0 }}
+                dari {{ tagihan?.total || 0 }} tagihan
               </div>
               <div class="flex items-center gap-2">
-                <button 
-                  @click="previousPage"
-                  :disabled="currentPage === 1"
+                <InertiaLink
+                  :href="tagihan?.prev_page_url"
+                  :disabled="!tagihan?.prev_page_url"
                   class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
                 >
                   Previous
-                </button>
-                <span class="px-3 py-2 bg-[#3674B5] text-white rounded-lg">{{ currentPage }}</span>
-                <button 
-                  @click="nextPage"
-                  :disabled="currentPage >= totalPages"
+                </InertiaLink>
+                <span class="px-3 py-2 bg-[#3674B5] text-white rounded-lg">{{ tagihan?.current_page || 1 }}</span>
+                <InertiaLink
+                  :href="tagihan?.next_page_url"
+                  :disabled="!tagihan?.next_page_url"
                   class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
                 >
                   Next
+                </InertiaLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill Detail Modal -->
+      <div
+        v-if="showDetailModal && selectedBill"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        style="background-color: rgba(0, 0, 0, 0.30);"
+      >
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-[#3674B5]">Detail Tagihan</h2>
+                <p class="text-sm text-gray-600 mt-1">{{ selectedBill?.nomor_tagihan || '-' }}</p>
+              </div>
+              <button
+                @click="closeDetailModal"
+                class="w-8 h-8 bg-white hover:bg-gray-100 rounded-lg flex items-center justify-center transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-8">
+            <!-- Patient Info -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Informasi Pasien</h3>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <div class="text-sm text-gray-600 mb-1">Nama Pasien:</div>
+                    <div class="font-semibold text-gray-900">{{ selectedBill?.rekam_medis?.pasien?.nama_lengkap || '-' }}</div>
+                  </div>
+                  <div>
+                    <div class="text-sm text-gray-600 mb-1">Tanggal:</div>
+                    <div class="font-semibold text-gray-900">{{ formatDateTime(selectedBill?.tanggal_tagihan) || '-' }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Items Detail -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Rincian Tagihan</h3>
+              
+              <!-- Medicine Items -->
+              <div v-if="selectedBill?.tagihan_obat?.length" class="mb-4">
+                <h4 class="text-md font-medium text-gray-800 mb-2">Obat</h4>
+                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                  <table class="w-full">
+                    <thead class="bg-gray-100">
+                      <tr>
+                        <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Item</th>
+                        <th class="text-center py-2 px-4 text-sm font-medium text-gray-700">Qty</th>
+                        <th class="text-center py-2 px-4 text-sm font-medium text-gray-700">Harga</th>
+                        <th class="text-right py-2 px-4 text-sm font-medium text-gray-700">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                      <tr v-for="item in selectedBill.tagihan_obat" :key="item.id">
+                        <td class="py-2 px-4 text-sm">{{ item.nama_obat }}</td>
+                        <td class="py-2 px-4 text-center text-sm">{{ item.jumlah }} {{ item.satuan }}</td>
+                        <td class="py-2 px-4 text-center text-sm">Rp {{ formatCurrency(item.harga_satuan) }}</td>
+                        <td class="py-2 px-4 text-right text-sm font-medium">Rp {{ formatCurrency(item.subtotal) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Action Items -->
+              <div v-if="selectedBill?.tagihan_tindakan?.length" class="mb-4">
+                <h4 class="text-md font-medium text-gray-800 mb-2">Tindakan</h4>
+                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                  <table class="w-full">
+                    <thead class="bg-gray-100">
+                      <tr>
+                        <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Tindakan</th>
+                        <th class="text-right py-2 px-4 text-sm font-medium text-gray-700">Biaya</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                      <tr v-for="action in selectedBill.tagihan_tindakan" :key="action.id">
+                        <td class="py-2 px-4 text-sm">{{ action.nama_tindakan }}</td>
+                        <td class="py-2 px-4 text-right text-sm font-medium">Rp {{ formatCurrency(action.subtotal) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Total -->
+            <div class="border-t-2 border-gray-300 pt-4 mb-6">
+              <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
+                <span class="text-lg font-bold text-gray-900">TOTAL TAGIHAN</span>
+                <span class="text-lg font-bold text-[#3674B5]">Rp {{ formatCurrency(selectedBill?.subtotal) || '0' }}</span>
+              </div>
+            </div>
+
+            <!-- Status & Actions -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">Status:</span>
+                <span :class="getStatusClass(selectedBill?.status)" class="px-3 py-1 rounded-full text-sm font-medium">
+                  {{ getStatusText(selectedBill?.status) || '-' }}
+                </span>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  v-if="selectedBill?.status === 'menunggu_pembayaran'"
+                  @click="markAsPaid(selectedBill)"
+                  class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all"
+                >
+                  Tandai Sudah Dibayar
+                </button>
+                <button
+                  v-if="selectedBill?.status === 'sudah_dibayar'"
+                  @click="printBill(selectedBill)"
+                  class="bg-[#3674B5] hover:bg-[#3B59A1] text-white px-4 py-2 rounded-lg transition-all"
+                >
+                  Cetak Struk
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
 
-    <!-- Bill Detail Modal -->
-    <div v-if="showDetailModal" 
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-         style="background-color: rgba(0, 0, 0, 0.30);">
-      <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-xl font-bold text-[#3674B5]">Detail Tagihan</h2>
-              <p class="text-sm text-gray-600 mt-1">{{ selectedBill?.billNumber }}</p>
+      <!-- Confirmation Modal -->
+      <div
+        v-if="showConfirmModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        style="background-color: rgba(0, 0, 0, 0.15);"
+      >
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+          <div class="p-8 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Konfirmasi Pembayaran</h3>
+            <p class="text-gray-600 mb-6">
+              Apakah Anda yakin ingin memproses pembayaran sebesar
+              <span class="font-bold text-[#3674B5]">Rp {{ formatCurrency(totalAmount) }}</span>
+              atas nama <span class="font-semibold text-gray-900">{{ paymentForm?.patient_name || 'Nama tidak tersedia' }}</span>?
+            </p>
+            <div class="flex gap-3 justify-center">
+              <button
+                @click="showConfirmModal = false"
+                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
+              >
+                Batal
+              </button>
+              <button
+                @click="confirmPayment"
+                :disabled="isProcessing"
+                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {{ isProcessing ? 'Memproses...' : 'Konfirmasi' }}
+              </button>
             </div>
-            <button 
-              @click="closeDetailModal"
-              class="w-8 h-8 bg-white hover:bg-gray-100 rounded-lg flex items-center justify-center transition-all"
-            >
-              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
           </div>
         </div>
+      </div>
 
-        <div class="p-8">
-          <!-- Patient Info -->
-          <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Informasi Pasien</h3>
-            <div class="bg-gray-50 rounded-lg p-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <div class="text-sm text-gray-600 mb-1">Nama Pasien:</div>
-                  <div class="font-semibold text-gray-900">{{ selectedBill?.patientName }}</div>
-                </div>
-                <div>
-                  <div class="text-sm text-gray-600 mb-1">Tanggal:</div>
-                  <div class="font-semibold text-gray-900">{{ formatDateTime(selectedBill?.createdAt) }}</div>
-                </div>
-              </div>
+      <!-- Payment Success Modal -->
+      <div
+        v-if="showPaymentModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        style="background-color: rgba(0, 0, 0, 0.15);"
+      >
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+          <div class="p-8 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
             </div>
-          </div>
-
-          <!-- Items Detail -->
-          <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Rincian Tagihan</h3>
-            
-            <!-- Medicine Items -->
-            <div v-if="selectedBill?.items?.length" class="mb-4">
-              <h4 class="text-md font-medium text-gray-800 mb-2">Obat</h4>
-              <div class="bg-gray-50 rounded-lg overflow-hidden">
-                <table class="w-full">
-                  <thead class="bg-gray-100">
-                    <tr>
-                      <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Item</th>
-                      <th class="text-center py-2 px-4 text-sm font-medium text-gray-700">Qty</th>
-                      <th class="text-center py-2 px-4 text-sm font-medium text-gray-700">Harga</th>
-                      <th class="text-right py-2 px-4 text-sm font-medium text-gray-700">Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-100">
-                    <tr v-for="item in selectedBill.items" :key="item.name">
-                      <td class="py-2 px-4 text-sm">{{ item.name }}</td>
-                      <td class="py-2 px-4 text-center text-sm">{{ item.quantity }}</td>
-                      <td class="py-2 px-4 text-center text-sm">Rp {{ formatCurrency(item.price) }}</td>
-                      <td class="py-2 px-4 text-right text-sm font-medium">Rp {{ formatCurrency(item.quantity * item.price) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Action Items -->
-            <div v-if="selectedBill?.actions?.length" class="mb-4">
-              <h4 class="text-md font-medium text-gray-800 mb-2">Tindakan</h4>
-              <div class="bg-gray-50 rounded-lg overflow-hidden">
-                <table class="w-full">
-                  <thead class="bg-gray-100">
-                    <tr>
-                      <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Tindakan</th>
-                      <th class="text-right py-2 px-4 text-sm font-medium text-gray-700">Biaya</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-100">
-                    <tr v-for="action in selectedBill.actions" :key="action.name">
-                      <td class="py-2 px-4 text-sm">{{ action.name }}</td>
-                      <td class="py-2 px-4 text-right text-sm font-medium">Rp {{ formatCurrency(action.price) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- Total -->
-          <div class="border-t-2 border-gray-300 pt-4 mb-6">
-            <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
-              <span class="text-lg font-bold text-gray-900">TOTAL TAGIHAN</span>
-              <span class="text-lg font-bold text-[#3674B5]">Rp {{ formatCurrency(selectedBill?.total) }}</span>
-            </div>
-          </div>
-
-          <!-- Status & Actions -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600">Status:</span>
-              <span :class="getStatusClass(selectedBill?.status)" class="px-3 py-1 rounded-full text-sm font-medium">
-                {{ getStatusText(selectedBill?.status) }}
-              </span>
-            </div>
-            <div class="flex gap-3">
-              <button 
-                v-if="selectedBill?.status === 'pending'"
-                @click="markAsPaid(selectedBill)"
-                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all"
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Pembayaran Berhasil!</h3>
+            <p class="text-gray-600 mb-2">
+              Pembayaran atas nama <span class="font-semibold text-gray-900">{{ paymentForm?.patient_name || 'Nama tidak tersedia' }}</span>
+            </p>
+            <p class="text-gray-600 mb-6">
+              sebesar <span class="font-bold text-green-600">Rp {{ formatCurrency(totalAmount) }}</span> telah berhasil diproses.
+            </p>
+            <div class="flex gap-3 justify-center">
+              <button
+                @click="closePaymentModal"
+                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
               >
-                Tandai Sudah Dibayar
+                Tutup
               </button>
-              <button 
-                @click="printBill(selectedBill)"
-                class="bg-[#3674B5] hover:bg-[#3B59A1] text-white px-4 py-2 rounded-lg transition-all"
+              <button
+                @click="printBill(paymentForm)"
+                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
               >
                 Cetak Struk
               </button>
@@ -311,247 +407,329 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script>
-import SidebarStaff from '../../layouts/staff/SidebarStaff.vue'
+import { Inertia } from '@inertiajs/inertia';
+import { InertiaLink } from '@inertiajs/inertia-vue3';
+import { useForm } from '@inertiajs/inertia-vue3';
+import SidebarStaff from '../../layouts/staff/SidebarStaff.vue';
 import HeaderStaff from '../../layouts/staff/HeaderStaff.vue';
+import { debounce } from 'lodash';
+import { ref, watch } from 'vue';
+import axios from 'axios';
 
 export default {
-  name: "DaftarTagihanStaff",
+  name: 'DaftarTagihanStaff',
   components: {
     SidebarStaff,
     HeaderStaff,
+    InertiaLink,
+  },
+  props: {
+    tagihan: Object,
+    filters: {
+      type: Object,
+      default: () => ({
+        search: '',
+        status: '',
+        start_date: '',
+        end_date: '',
+      }),
+    },
+  },
+  setup(props) {
+    const form = useForm({
+      search: props.filters?.search || '',
+      status: props.filters?.status || '',
+      start_date: props.filters?.start_date || '',
+      end_date: props.filters?.end_date || '',
+    });
+
+    const showDetailModal = ref(false);
+    const selectedBill = ref(null);
+    const showConfirmModal = ref(false);
+    const showPaymentModal = ref(false);
+    const isProcessing = ref(false);
+    const totalAmount = ref(0);
+    const paymentForm = ref(null);
+
+    const applyFilters = () => {
+      console.log('Applying filters with data:', form.data());
+      Inertia.get('/pembayaran', form.data(), {
+        preserveState: true,
+        preserveScroll: true,
+        only: ['tagihan', 'filters'],
+        onStart: () => {
+          console.log('Filter request started...');
+        },
+        onSuccess: (page) => {
+          console.log('Filter request completed:', page.props.tagihan);
+        },
+        onError: (errors) => {
+          console.error('Filter request error:', errors);
+          this.$toast?.error('Terjadi kesalahan saat memfilter data.');
+        },
+      });
+    };
+
+    const debouncedApplyFilters = debounce(applyFilters, 300);
+
+    watch(
+      () => ({
+        search: form.search,
+        status: form.status,
+        start_date: form.start_date,
+        end_date: form.end_date,
+      }),
+      (newValues, oldValues) => {
+        console.log('Form values changed:', { old: oldValues, new: newValues });
+        debouncedApplyFilters();
+      },
+      { deep: true }
+    );
+
+    watch(
+      () => props.filters,
+      (newFilters) => {
+        try {
+          console.log('External filters updated:', newFilters);
+          if (!newFilters) {
+            console.log('Filters prop is null, resetting form');
+            form.reset();
+            return;
+          }
+          form.search = newFilters.search ?? '';
+          form.status = newFilters.status ?? '';
+          form.start_date = newFilters.start_date ?? '';
+          form.end_date = newFilters.end_date ?? '';
+        } catch (error) {
+          console.error('Error updating form filters:', error);
+          this.$toast?.error('Terjadi kesalahan saat memperbarui filter.');
+        }
+      },
+      { immediate: true, deep: true }
+    );
+
+    return {
+      form,
+      showDetailModal,
+      selectedBill,
+      showConfirmModal,
+      showPaymentModal,
+      isProcessing,
+      totalAmount,
+      paymentForm,
+      applyFilters,
+      debouncedApplyFilters,
+    };
   },
   data() {
     return {
-      searchQuery: "",
-      statusFilter: "",
-      dateFilter: "",
-      currentPage: 1,
-      itemsPerPage: 10,
-      showDetailModal: false,
-      selectedBill: null,
       breadcrumbPages: [
-        { label: "Dashboard", href: "/dashboardstaff" },
-        { label: "Pembayaran", href: "/pembayaran" }
+        { label: 'Dashboard', href: '/dashboardstaff' },
+        { label: 'Pembayaran', href: '/pembayaran' },
       ],
-      bills: [
-        {
-          id: 1,
-          billNumber: "KSB-241204-1430",
-          patientName: "Ahmad Sutrisno",
-          createdAt: "2024-12-04T14:30:00",
-          total: 125000,
-          status: "paid",
-          items: [
-            { name: "Paracetamol 500mg", quantity: 10, price: 2500 },
-            { name: "Amoxicillin 250mg", quantity: 20, price: 3000 }
-          ],
-          actions: [
-            { name: "Pemeriksaan Umum", price: 75000 }
-          ]
-        },
-        {
-          id: 2,
-          billNumber: "KSB-241204-1015",
-          patientName: "Siti Nurhaliza",
-          createdAt: "2024-12-04T10:15:00",
-          total: 85000,
-          status: "pending",
-          items: [
-            { name: "Vitamin C 1000mg", quantity: 30, price: 1000 }
-          ],
-          actions: [
-            { name: "Konsultasi Dokter", price: 50000 },
-            { name: "Cek Tensi", price: 5000 }
-          ]
-        },
-        {
-          id: 3,
-          billNumber: "KSB-241203-1620",
-          patientName: "Budi Santoso",
-          createdAt: "2024-12-03T16:20:00",
-          total: 200000,
-          status: "overdue",
-          items: [
-            { name: "Omeprazole 20mg", quantity: 14, price: 5000 },
-            { name: "Antasida Tablet", quantity: 20, price: 1500 }
-          ],
-          actions: [
-            { name: "Pemeriksaan Lambung", price: 120000 },
-            { name: "Konsultasi Spesialis", price: 25000 }
-          ]
-        },
-        {
-          id: 4,
-          billNumber: "KSB-241203-0945",
-          patientName: "Maria Gonzales",
-          createdAt: "2024-12-03T09:45:00",
-          total: 150000,
-          status: "paid",
-          items: [
-            { name: "Ibuprofen 400mg", quantity: 15, price: 3000 },
-            { name: "Salep Anti Inflamasi", quantity: 2, price: 15000 }
-          ],
-          actions: [
-            { name: "Pemeriksaan Ortopedi", price: 100000 },
-            { name: "Fisioterapi", price: 5000 }
-          ]
-        },
-        {
-          id: 5,
-          billNumber: "KSB-241202-1130",
-          patientName: "Rudi Hermawan",
-          createdAt: "2024-12-02T11:30:00",
-          total: 95000,
-          status: "pending",
-          items: [
-            { name: "Cough Syrup", quantity: 1, price: 25000 },
-            { name: "Lozenges", quantity: 2, price: 10000 }
-          ],
-          actions: [
-            { name: "Pemeriksaan Tenggorokan", price: 50000 }
-          ]
-        }
-      ]
     };
   },
-  computed: {
-    filteredBills() {
-      let filtered = this.bills;
-      
-      // Search filter
-      if (this.searchQuery) {
-        filtered = filtered.filter(bill => 
-          bill.patientName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          bill.billNumber.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-      
-      // Status filter
-      if (this.statusFilter) {
-        filtered = filtered.filter(bill => bill.status === this.statusFilter);
-      }
-      
-      // Date filter
-      if (this.dateFilter) {
-        filtered = filtered.filter(bill => {
-          const billDate = new Date(bill.createdAt).toISOString().split('T')[0];
-          return billDate === this.dateFilter;
-        });
-      }
-      
-      return filtered;
-    },
-    totalPages() {
-      return Math.ceil(this.filteredBills.length / this.itemsPerPage);
-    },
-    paginatedBills() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredBills.slice(start, end);
-    }
-  },
   methods: {
+    async viewBillDetail(tagihanId) {
+      try {
+        console.log('Viewing bill detail for ID:', tagihanId);
+        const response = await axios.get(`/pembayaran/${tagihanId}`, {
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (response.data.success && response.data.tagihan) {
+          this.selectedBill = response.data.tagihan;
+          this.showDetailModal = true;
+        } else {
+          console.error('No tagihan data in response');
+          this.$toast?.error('Data tagihan tidak ditemukan.');
+        }
+      } catch (error) {
+        console.error('Error loading bill detail:', error);
+        this.$toast?.error('Terjadi kesalahan saat memuat detail tagihan.');
+      }
+    },
+    markAsPaid(bill) {
+      console.log('Preparing to mark bill as paid:', bill.nomor_tagihan);
+      this.paymentForm = useForm({
+        rekam_medis_id: bill.rekam_medis_id,
+        tagihan_id: bill.id,
+        patient_name: bill.rekam_medis?.pasien?.nama_lengkap || '-',
+        total_amount: bill.subtotal,
+        payment_method: 'cash',
+        notes: 'Pembayaran melalui dashboard',
+      });
+      this.totalAmount = bill.subtotal;
+      this.showConfirmModal = true;
+    },
+    confirmPayment() {
+      if (!this.paymentForm) return;
+      this.isProcessing = true;
+      console.log('Confirming payment for bill:', this.paymentForm.data());
+
+      this.paymentForm.post(`/pembayaran/${this.paymentForm.tagihan_id}/store`, {
+        onSuccess: () => {
+          console.log('Payment marked successfully');
+          this.isProcessing = false;
+          this.showConfirmModal = false;
+          this.showPaymentModal = true;
+          if (this.selectedBill && this.selectedBill.id === this.paymentForm.tagihan_id) {
+            this.selectedBill.status = 'sudah_dibayar';
+          }
+          this.$toast?.success(`Tagihan ${this.paymentForm.tagihan_id} telah ditandai sebagai sudah dibayar.`);
+          this.applyFilters();
+        },
+        onError: (errors) => {
+          console.error('Payment error:', errors);
+          this.isProcessing = false;
+          this.showConfirmModal = false;
+          this.$toast?.error(errors.message || 'Terjadi kesalahan saat memproses pembayaran.');
+        },
+      });
+    },
+    closePaymentModal() {
+      console.log('Closing payment success modal');
+      this.showPaymentModal = false;
+      this.paymentForm = null;
+      this.totalAmount = 0;
+    },
+    printBill(bill) {
+      console.log('Printing bill:', bill.nomor_tagihan, 'tagihan_id:', bill.id);
+
+      if (!bill.id) {
+        this.$toast?.error('ID Tagihan tidak ditemukan. Silakan refresh halaman.');
+        return;
+      }
+
+      // Close modals if open
+      this.showDetailModal = false;
+      this.showPaymentModal = false;
+      this.showConfirmModal = false;
+      this.selectedBill = null;
+      this.paymentForm = null;
+      this.totalAmount = 0;
+
+      // Open PDF invoice
+      const url = `/tagihan/invoice/${bill.id}`;
+      console.log('Opening URL:', url);
+
+      try {
+        const win = window.open(url, '_blank', 'noopener,noreferrer');
+        if (!win || win.closed || typeof win.closed === 'undefined') {
+          this.$toast?.error('Popup diblokir. Membuka di tab yang sama...');
+          window.location.href = url;
+        }
+      } catch (error) {
+        console.error('Error opening PDF:', error);
+        this.$toast?.error('Gagal membuka PDF: ' + error.message);
+      }
+    },
+    closeDetailModal() {
+      console.log('Closing detail modal');
+      this.showDetailModal = false;
+      this.selectedBill = null;
+    },
     formatCurrency(amount) {
+      if (!amount && amount !== 0) return '0';
       return new Intl.NumberFormat('id-ID').format(amount);
     },
     formatDate(dateString) {
-      return new Date(dateString).toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+      if (!dateString) return '-';
+      try {
+        return new Date(dateString).toLocaleDateString('id-ID', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+      } catch (error) {
+        console.error('Date formatting error:', error);
+        return dateString;
+      }
     },
     formatTime(dateString) {
-      return new Date(dateString).toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      if (!dateString) return '-';
+      try {
+        return new Date(dateString).toLocaleTimeString('id-ID', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      } catch (error) {
+        console.error('Time formatting error:', error);
+        return dateString;
+      }
     },
     formatDateTime(dateString) {
-      return new Date(dateString).toLocaleString('id-ID', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      if (!dateString) return '-';
+      try {
+        return new Date(dateString).toLocaleString('id-ID', {
+          weekday: 'long',
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      } catch (error) {
+        console.error('DateTime formatting error:', error);
+        return dateString;
+      }
     },
     getStatusClass(status) {
       const classes = {
-        'pending': 'bg-yellow-100 text-yellow-800',
-        'paid': 'bg-green-100 text-green-800',
-        'overdue': 'bg-red-100 text-red-800'
+        menunggu_pembayaran: 'bg-yellow-100 text-yellow-800',
+        sudah_dibayar: 'bg-green-100 text-green-800',
       };
       return classes[status] || 'bg-gray-100 text-gray-800';
     },
     getStatusText(status) {
       const texts = {
-        'pending': 'Menunggu Pembayaran',
-        'paid': 'Sudah Dibayar',
-        'overdue': 'Terlambat'
+        menunggu_pembayaran: 'Menunggu Pembayaran',
+        sudah_dibayar: 'Sudah Dibayar',
       };
       return texts[status] || 'Tidak Diketahui';
     },
-    viewBillDetail(bill) {
-      this.selectedBill = bill;
-      this.showDetailModal = true;
+    clearFilters() {
+      console.log('Clearing all filters');
+      this.form.reset();
+      this.applyFilters();
     },
-    closeDetailModal() {
-      this.showDetailModal = false;
-      this.selectedBill = null;
+    clearSearch() {
+      console.log('Clearing search');
+      this.form.search = '';
     },
-    markAsPaid(bill) {
-      // Update bill status
-      const billIndex = this.bills.findIndex(b => b.id === bill.id);
-      if (billIndex !== -1) {
-        this.bills[billIndex].status = 'paid';
-        // Update selected bill if it's the same
-        if (this.selectedBill && this.selectedBill.id === bill.id) {
-          this.selectedBill.status = 'paid';
-        }
-      }
-      
-      // Show success message (you can implement toast/notification here)
-      alert(`Tagihan ${bill.billNumber} telah ditandai sebagai sudah dibayar.`);
-    },
-    printBill(bill) {
-      // Implementation for printing bill
-      console.log('Printing bill:', bill);
-      window.print();
-    },
-    previousPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
+  },
+  mounted() {
+    console.log('Component mounted with props:', this.$props);
+    console.log('Initial tagihan:', this.tagihan);
+    console.log('Initial form data:', this.form.data());
+  },
+  beforeUnmount() {
+    console.log('Component being unmounted');
+    if (this.debouncedApplyFilters?.cancel) {
+      this.debouncedApplyFilters.cancel();
     }
-  }
+  },
 };
 </script>
 
 <style scoped>
-/* Smooth transitions */
 .transition-all {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Focus states */
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: none;
   transform: translateY(-1px);
 }
 
-/* Button hover effects */
 button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
@@ -560,13 +738,11 @@ button:active:not(:disabled) {
   transform: translateY(0);
 }
 
-/* Disabled state */
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Animation for modals */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -582,19 +758,16 @@ button:disabled {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Table hover effects */
 tbody tr:hover {
   background-color: rgba(249, 250, 251, 0.5);
 }
 
-/* Status badge animations */
 .px-3.py-1 {
   transition: all 0.2s ease;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .grid-cols-4 {
+  .grid-cols-5 {
     grid-template-columns: 1fr;
   }
   
@@ -603,3 +776,4 @@ tbody tr:hover {
   }
 }
 </style>
+```
