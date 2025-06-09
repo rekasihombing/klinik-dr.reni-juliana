@@ -70,6 +70,7 @@ Route::post('/kontak', [FaqController::class, 'store']);
     Route::post('/appointment/{id}/queue', [StaffDashboardController::class, 'generateQueueNumber'])->name('appointment.queue');
 Route::get('/pendaftaran', [OfflineBookingController::class, 'create'])->name('pendaftaran.form');
 Route::post('/simpanpendaftar', [OfflineBookingController::class, 'store'])->name('pendaftaran.store');
+Route::get('/check-nik/{nik}', [OfflineBookingController::class, 'checkNik'])->name('check-nik');
 Route::middleware(['auth'])->group(function () {
     Route::get('/konfirmasi-pasien', [KonfirmasiPasienStaffController::class, 'index'])
         ->name('konfirmasi.pasien');
