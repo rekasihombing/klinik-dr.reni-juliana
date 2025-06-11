@@ -3,9 +3,13 @@
     <!-- Logo Section -->
     <div class="px-6 py-5 border-b border-gray-100">
       <div class="flex items-center space-x-3">
+        <!-- Logo Klinik -->
+        <div class="w-10 h-10 rounded-lg overflow-hidden">
+          <img src="/images/logo-klinik.png" alt="Logo Klinik" class="w-full h-full object-contain"/>
+        </div>
         <div>
-          <h2 class="text-lg font-bold text-gray-800">Logo Klinik</h2>
-          <p class="text-xs text-gray-500">Klinik</p>
+          <h2 class="text-lg font-bold text-[#2A4482]">Klinik Dr. Reni</h2>
+          <p class="text-xs text-gray-500">Klinik Umum</p>
         </div>
       </div>
     </div>
