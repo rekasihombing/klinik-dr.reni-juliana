@@ -281,7 +281,7 @@
                 <button
                   type="submit"
                   :disabled="form.processing"
-                  class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max select-none flex items-center gap-2 transition-colors"
+                  class="bg-[#3F86D0] hover:bg-[#3B59A1] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
                 >
                   <i class="fas fa-save text-[13px]"></i> 
                   <span v-if="form.processing">Menyimpan...</span>
@@ -291,7 +291,7 @@
                 <button
                   type="button"
                   @click="downloadRecord"
-                  class="bg-[#00B87A] hover:bg-[#109568] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max select-none flex items-center gap-2 transition-colors"
+                  class="bg-[#00B87A] hover:bg-[#109568] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
                 >
                   <i class="fas fa-download text-[13px]"></i> Download PDF
                 </button>
@@ -340,7 +340,7 @@ const props = defineProps({
     type: Object,
     default: () => ({
       tanggalKunjungan: '',
-      keluhan: '',
+      keluhanUtama: '',
       rps: '',
       rpd: '',
       riwayatAlergi: '',
@@ -418,19 +418,19 @@ function calculateAge() {
   return age + ' tahun';
 }
 
-// Format tanggal kunjungan
 function formatVisitDate() {
-  const visitDate = props.visitHistory?.tanggalKunjungan || new Date();
-  const date = new Date(visitDate);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
+  const rawDate = props.visitHistory?.tanggalKunjungan;
+  if (!rawDate) return '';
+
+  // Asumsikan format YYYY-MM-DD
+  const [year, month, day] = rawDate.split('-');
   return `${day}-${month}-${year}`;
 }
 
 // Update waktu setiap detik
 function updateTime() {
   const now = new Date();
+
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');

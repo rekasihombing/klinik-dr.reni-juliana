@@ -347,33 +347,72 @@
     </div>
   </template>
 </div>
-
-            <!-- Rekam Medis Card -->
-            <div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 hover:shadow-xl transition-all duration-300">
-              <div class="flex items-center space-x-3 mb-4">
-                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <i class="fas fa-file-medical text-green-600 text-lg"></i>
-                </div>
-                <h3 class="text-[#2D4480] font-semibold text-base">Rekam Medis</h3>
-              </div>
-              
-              <div class="space-y-2 mb-4">
-                <div class="text-base font-semibold text-[#1B2A4D]">
-                  Senin, 12 Mei 2025
-                </div>
-              </div>
-              
-              <button class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max">
-                Lihat Rekam Medis
-              </button>
-            </div>
-            <!-- Tombol Janji Temu -->
-            <button
-              @click="handleCreateAppointment" style="cursor:pointer;"
-              class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
-            >
-              Buat Janji Temu Baru
-            </button>
+   <!-- Rekam Medis Card -->
+  <div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 hover:shadow-xl transition-all duration-300">
+    <div class="flex items-center space-x-3 mb-4">
+      <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+        <i class="fas fa-file-medical text-green-600 text-lg"></i>
+      </div>
+      <h3 class="text-[#2D4480] font-semibold text-base">Rekam Medis</h3>
+    </div>
+    
+    <div v-if="lastMedicalRecord" class="space-y-3 mb-4">
+      <!-- Tanggal Kunjungan Terakhir -->
+      <div class="text-base font-semibold text-[#1B2A4D]">
+        {{ lastMedicalRecord.tanggal_kunjungan }}
+      </div>
+      
+      <!-- Info Singkat -->
+      <div class="space-y-2 text-sm text-gray-600">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-clock w-4"></i>
+          <span>{{ lastMedicalRecord.jam_kunjungan }}</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-hashtag w-4"></i>
+          <span>Antrian: {{ lastMedicalRecord.no_antrian }}</span>
+        </div>
+        <div v-if="lastMedicalRecord.keluhan" class="flex items-start space-x-2">
+          <i class="fas fa-notes-medical w-4 mt-0.5"></i>
+          <span class="text-gray-700">{{ truncateText(lastMedicalRecord.keluhan, 60) }}</span>
+        </div>
+        <div v-if="lastMedicalRecord.diagnosa" class="flex items-start space-x-2">
+          <i class="fas fa-stethoscope w-4 mt-0.5"></i>
+          <span class="text-gray-700 font-medium">{{ truncateText(lastMedicalRecord.diagnosa, 60) }}</span>
+        </div>
+        <div v-if="lastMedicalRecord.no_rekam_medis" class="flex items-center space-x-2">
+          <i class="fas fa-id-card w-4"></i>
+          <span class="text-xs text-gray-500">{{ lastMedicalRecord.no_rekam_medis }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div v-else class="space-y-2 mb-4">
+      <div class="text-base text-gray-500">
+        Belum ada rekam medis
+      </div>
+      <div class="text-sm text-gray-400">
+        Rekam medis akan muncul setelah konsultasi pertama
+      </div>
+    </div>
+    
+    <div class="flex space-x-2">
+      <button 
+        v-if="lastMedicalRecord"
+        @click="viewDetail"
+        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm transition-all duration-200"
+      >
+        Lihat Detail
+      </button>
+      
+      <button 
+        @click="viewHistory"
+        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm border border-gray-200 hover:border-gray-300 transition-all duration-200"
+      >
+        {{ lastMedicalRecord ? 'Riwayat Lengkap' : 'Lihat Riwayat' }}
+      </button>
+    </div>
+  </div>
           </div>
 
           <!-- Right Column: Calendar -->
@@ -608,6 +647,10 @@ const props = defineProps({
   patientProfile: {
     type: Object,
     default: () => ({})
+  },
+  lastMedicalRecord: {
+    type: Object,
+    default: null
   }
 });
 
@@ -1036,6 +1079,23 @@ const nextAppointment = ref(props.nextAppointment)
 
 function hideFinishedAppointment() {
   nextAppointment.value = null
+}
+
+const truncateText = (text, maxLength) => {
+  if (!text) return ''
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
+}
+
+// Method untuk melihat detail rekam medis
+const viewDetail = () => {
+  if (props.lastMedicalRecord) {
+    router.get(`/rekam-medis/${props.lastMedicalRecord.id}`)
+  }
+}
+
+// Method untuk melihat riwayat lengkap
+const viewHistory = () => {
+  router.get('/riwayat-rekam-medis')
 }
 
 </script>

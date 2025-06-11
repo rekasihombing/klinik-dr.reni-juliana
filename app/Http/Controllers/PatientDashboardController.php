@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Patient;
 use App\Models\Appointment;
+use App\Models\RekamMedis;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -44,6 +45,9 @@ class PatientDashboardController extends Controller
             }
         }
 
+        // Ambil rekam medis terakhir
+        $lastMedicalRecord = $this->getLastMedicalRecord($patient);
+
         // Cek kelengkapan data pasien
         $isProfileComplete = $this->checkProfileCompletion($patient);
 
@@ -56,7 +60,48 @@ class PatientDashboardController extends Controller
             ] : null,
             'isProfileComplete' => $isProfileComplete,
             'patientProfile' => $patient ? $patient->toArray() : [],
+            'lastMedicalRecord' => $lastMedicalRecord, // Tambahkan rekam medis terakhir
         ]);
+    }
+
+    /**
+     * Mengambil rekam medis terakhir untuk pasien
+     */
+    private function getLastMedicalRecord($patient)
+    {
+        if (!$patient) {
+            return null;
+        }
+
+        // Ambil rekam medis terakhir
+        $rekamMedisTerakhir = RekamMedis::with(['appointment' => function($query) {
+                $query->with('pasien');
+            }])
+            ->whereHas('appointment', function($query) use ($patient) {
+                $query->where('patient_id', $patient->id);
+            })
+            ->orderBy('tanggal_kunjungan', 'desc')
+            ->first();
+        
+        // Format data rekam medis terakhir jika ada
+        if ($rekamMedisTerakhir) {
+            return [
+                'id' => $rekamMedisTerakhir->id,
+                'tanggal_kunjungan' => $rekamMedisTerakhir->tanggal_kunjungan ? 
+                                     Carbon::parse($rekamMedisTerakhir->tanggal_kunjungan)->locale('id')->isoFormat('dddd, D MMMM YYYY') : 
+                                     Carbon::parse($rekamMedisTerakhir->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY'),
+                'jam_kunjungan' => $rekamMedisTerakhir->appointment ? 
+                                 Carbon::parse($rekamMedisTerakhir->appointment->jam_konsultasi)->format('H:i') : 
+                                 Carbon::parse($rekamMedisTerakhir->created_at)->format('H:i'),
+                'no_antrian' => $rekamMedisTerakhir->appointment ? $rekamMedisTerakhir->appointment->no_antrian : '-',
+                'keluhan' => $rekamMedisTerakhir->keluhan,
+                'diagnosa' => $rekamMedisTerakhir->diagnosa,
+                'no_rekam_medis' => $rekamMedisTerakhir->no_rekam_medis,
+                'catatan_dokter' => $rekamMedisTerakhir->catatan_dokter,
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -112,6 +157,9 @@ class PatientDashboardController extends Controller
             }
         }
 
+        // Ambil rekam medis terakhir
+        $lastMedicalRecord = $this->getLastMedicalRecord($patient);
+
         $isProfileComplete = $this->checkProfileCompletion($patient);
 
         return Inertia::render('pasien/Dashboard', [
@@ -120,6 +168,7 @@ class PatientDashboardController extends Controller
             'nextAppointment' => $nextAppointment,
             'isProfileComplete' => $isProfileComplete,
             'patientProfile' => $patient ? $patient->toArray() : [],
+            'lastMedicalRecord' => $lastMedicalRecord,
         ]);
     }
 
@@ -176,6 +225,9 @@ class PatientDashboardController extends Controller
             \Log::info('Final next appointment: ', $nextAppointment ? $nextAppointment->toArray() : 'null');
         }
 
+        // Ambil rekam medis terakhir
+        $lastMedicalRecord = $this->getLastMedicalRecord($patient);
+
         $isProfileComplete = $this->checkProfileCompletion($patient);
 
         return Inertia::render('pasien/Dashboard', [
@@ -184,6 +236,7 @@ class PatientDashboardController extends Controller
             'nextAppointment' => $nextAppointment,
             'isProfileComplete' => $isProfileComplete,
             'patientProfile' => $patient ? $patient->toArray() : [],
+            'lastMedicalRecord' => $lastMedicalRecord,
         ]);
     }
 

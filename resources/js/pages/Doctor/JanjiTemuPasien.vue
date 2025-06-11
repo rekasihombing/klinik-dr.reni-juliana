@@ -46,11 +46,11 @@
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-[#3674B5]">
                   <tr>
-                    <th class="px-6 py-3 text-left font-semibold">Nama Pasien</th>
-                    <th class="px-6 py-3 text-left font-semibold">Tanggal</th>
-                    <th class="px-6 py-3 text-left font-semibold">Waktu</th>
-                    <th class="px-6 py-3 text-left font-semibold">Keluhan</th>
-                    <th class="px-6 py-3 text-left font-semibold">Detail</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Nama Pasien</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Tanggal</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Waktu</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Keluhan</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Detail</th>
                   </tr>
                 </thead>
                 <tbody class="bg-white">
@@ -65,12 +65,16 @@
                     <td class="px-6 py-4 text-gray-800">{{ appointment.jam_konsultasi }}</td>
                     <td class="px-6 py-4 text-gray-800">{{ appointment.keluhan }}</td>
                     <td class="px-6 py-4">
-                      <button 
-                        @click="showDetail(appointment)"
-                        class="text-blue-600 hover:text-blue-800 font-medium hover:underline"
-                      >
-                        Lihat Detail
-                      </button>
+                    <button 
+                      @click="showDetail(appointment)"
+                      class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-[#3674B5] hover:bg-[#3B59A1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg"
+                    >
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                      </svg>
+                      Lihat Detail
+                    </button>
                     </td>
                   </tr>
                   <tr v-if="filteredAppointments.length === 0">
@@ -91,6 +95,7 @@
       v-if="showModal"
       class="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-30"
       @click.self="closeModal"
+      style="background-color: rgba(0, 0, 0, 0.15);"
     >
       <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fadeIn">
         <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] text-white px-6 py-4">
