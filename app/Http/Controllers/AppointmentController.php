@@ -95,7 +95,7 @@ class AppointmentController extends Controller
 
         return Inertia::render('pasien/RiwayatJanjiTemu', [
             'patientName' => $patient->nama_lengkap,
-            'clinicName' => 'Klinik Kesehatan', // Sesuaikan dengan nama klinik Anda
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
             'appointments' => $appointments
         ]);
     }

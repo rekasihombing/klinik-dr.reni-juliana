@@ -20,7 +20,7 @@ class RekamMedis extends Model
         'status',          // Add status field
         
         // Anamnesis
-        'keluhan_utama',
+        'keluhan',
         'rps',
         'rpd',
         'riwayat_alergi',

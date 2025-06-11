@@ -42,19 +42,6 @@
         <div v-if="isActive('/dashboard')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
       
-      <!-- Buat Janji Temu -->
-      <Link 
-        href="/janjitemu" 
-        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
-        :class="isActive('/janjitemu') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
-      >
-        <div class="w-6 flex justify-center">
-          <i class="fas fa-calendar-plus text-lg transition-transform group-hover:scale-110"></i>
-        </div>
-        <span class="font-medium">Buat Janji Temu</span>
-        <div v-if="isActive('/janjitemu')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
-      </Link>
-      
       <!-- Riwayat Janji Temu -->
       <Link 
         href="/riwayat-janji-temu" 
@@ -79,6 +66,19 @@
         </div>
         <span class="font-medium">Rekam Medis</span>
         <div v-if="isActive('/riwayat-rekam-medis')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
+      </Link>
+
+            <!-- Data Pasien -->
+      <Link 
+        href="/riwayat-resep-obat" 
+        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
+        :class="isActive('/riwayat-resep-obat') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
+      >
+        <div class="w-6 flex justify-center">
+          <i class="fas fa-file-medical-alt text-lg transition-transform group-hover:scale-110"></i>
+        </div>
+        <span class="font-medium">Resep Obat</span>
+        <div v-if="isActive('/riwayat-resep-obat')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
       
       <!-- Konfirmasi Janji Temu -->

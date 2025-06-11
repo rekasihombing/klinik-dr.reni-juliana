@@ -1,330 +1,360 @@
 <template>
-  <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-    <div>{{ clinicName }}</div>
-    <div class="flex items-center space-x-1 cursor-pointer">
-      <span>{{ patientData.nama_lengkap || patientName }}</span>
+  <div class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+              <i class="fas fa-prescription-bottle text-white text-lg"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Resep Obat</h1>
+              <p class="text-sm text-gray-500">Kelola resep obat untuk {{ patientData.nama_lengkap || patientName }}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="px-4 py-2 bg-blue-50 rounded-lg">
+              <span class="text-sm font-medium text-blue-700">{{ clinicName }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="flex flex-1 overflow-hidden">
-      <!-- Sidebar -->
-      <Sidebar :patient-name="patientData.nama_lengkap || patientName" />
-
-      <!-- Main content -->
-      <main class="bg-gray-100 flex-1 p-6">
-
-        <!-- Top bar -->
-        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
-
-        <!-- Content -->
-        <div class="max-w-6xl mx-auto p-4">
-          <section class="bg-white rounded-lg shadow-lg p-6 select-text" style="min-width:320px">
-            <!-- Header Section -->
-            <div class="flex items-center space-x-3 mb-6 pb-4 border-b-2 border-blue-100">
-              <div>
-              </div>
-              <div>
-                <h2 class="text-[#2A4482] font-bold text-lg">Resep Obat</h2>
-                <p class="text-gray-600 text-sm">Kelola resep obat untuk pasien (dari klinik dan luar klinik)</p>
-              </div>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <!-- Patient Info Bar -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-6">
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <i class="fas fa-user text-white text-xl"></i>
             </div>
+            <div class="text-white">
+              <h2 class="text-xl font-semibold">{{ patientData.nama_lengkap || patientName }}</h2>
+              <p class="text-blue-100 text-sm">Pasien - ID: {{ rekamMedisId }}</p>
+            </div>
+          </div>
+        </div>
 
-            <form class="max-w-6xl space-y-6" @submit.prevent="savePrescription">
-
-              <!-- Tab Navigation -->
-              <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+        <!-- Form Content -->
+        <div class="p-8">
+          <form @submit.prevent="savePrescription" class="space-y-8">
+            <!-- Tab Navigation -->
+            <div class="relative">
+              <div class="flex space-x-1 bg-gray-50 p-1.5 rounded-xl">
                 <button
                   type="button"
                   :class="[
-                    'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all',
-                    activeTab === 'klinik' 
-                      ? 'bg-white text-[#2A4482] shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
+                    'relative flex-1 py-3 px-6 text-sm font-medium rounded-lg transition-all duration-200',
+                    activeTab === 'klinik'
+                      ? 'bg-white text-blue-600 shadow-md'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                   ]"
                   @click="activeTab = 'klinik'"
                 >
+                  <i class="fas fa-clinic-medical mr-2"></i>
                   Obat dari Klinik
                 </button>
                 <button
                   type="button"
                   :class="[
-                    'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all',
-                    activeTab === 'luar' 
-                      ? 'bg-white text-[#2A4482] shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
+                    'relative flex-1 py-3 px-6 text-sm font-medium rounded-lg transition-all duration-200',
+                    activeTab === 'luar'
+                      ? 'bg-white text-amber-600 shadow-md'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                   ]"
                   @click="activeTab = 'luar'"
                 >
+                  <i class="fas fa-external-link-alt mr-2"></i>
                   Obat dari Luar Klinik
                 </button>
               </div>
+            </div>
 
-              <!-- Obat dari Klinik Tab -->
-              <div v-show="activeTab === 'klinik'">
-                <!-- Prescription Table -->
-                <div class="bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                  <div class="bg-[#3674B5] text-white px-4 py-3">
-                    <h3 class="font-semibold flex items-center">
-                      Daftar Resep Obat dari Klinik
-                    </h3>
-                  </div>
-                  
-                  <div class="overflow-x-auto">
-                    <table class="w-full border-collapse text-sm">
-                      <thead class="bg-gray-50">
-                        <tr class="border-b-2 border-gray-200">
-                          <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Nama Obat</th>
-                          <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Dosis</th>
-                          <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Jumlah</th>
-                          <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Tanggal Mulai</th>
-                          <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Tanggal Berakhir</th>
-                          <th class="text-left px-4 py-3 font-semibold text-gray-700 border-r border-gray-200">Catatan</th>
-                          <th class="text-center px-4 py-3 font-semibold text-gray-700">Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr 
-                          class="border-b border-gray-200 hover:bg-blue-25 transition-colors" 
-                          v-for="(item, index) in prescriptionItems" 
-                          :key="index"
+            <!-- Obat dari Klinik Tab -->
+            <div v-show="activeTab === 'klinik'" class="space-y-6">
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <i class="fas fa-pills text-blue-600 mr-3"></i>
+                  Daftar Resep Obat dari Klinik
+                </h3>
+                
+                <!-- Prescription Cards -->
+                <div class="space-y-4">
+                  <div 
+                    v-for="(item, index) in prescriptionItems" 
+                    :key="index"
+                    class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+                  >
+                    <div class="flex items-center justify-between mb-4">
+                      <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span class="text-blue-600 font-semibold text-sm">{{ index + 1 }}</span>
+                        </div>
+                        <h4 class="font-medium text-gray-900">Obat {{ index + 1 }}</h4>
+                      </div>
+                      <div class="flex items-center space-x-2">
+                        <button 
+                          type="button" 
+                          @click="removeItem(index)"
+                          class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg flex items-center justify-center transition-colors"
+                          title="Hapus obat"
                         >
-                          <td class="border-r border-gray-200 px-4 py-3">
-                            <VueSelect
-                              v-model="item.obat_id"
-                              :options="availableObat"
-                              label="nama_obat"
-                              :reduce="obat => obat.id"
-                              placeholder="Pilih Obat"
-                              class="w-full text-gray-800"
-                              @update:modelValue="() => updateObatName(index)"
-                            />
-                            <!-- Tampilkan stok tersedia -->
-                            <div v-if="item.obat_id && getObatInfo(item.obat_id)" class="text-xs text-gray-500 mt-1">
-                              Stok tersedia: {{ getObatInfo(item.obat_id).stok }}
-                            </div>
-                          </td>
+                          <i class="fas fa-trash text-sm"></i>
+                        </button>
+                      </div>
+                    </div>
 
-                          <td class="border-r border-gray-200 px-4 py-3">
-                            <input 
-                              type="text" 
-                              v-model="item.dosis" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800" 
-                              placeholder="Contoh: 3x1 tablet"
-                            />
-                          </td>
-                          
-                          <td class="border-r border-gray-200 px-4 py-3">
-                            <input 
-                              type="number" 
-                              v-model.number="item.jumlah"
-                              min="1"
-                              step="1"
-                              :class="[
-                                'border rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800',
-                                isStokTidakCukup(item) ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                              ]"
-                              placeholder="Jumlah obat" 
-                              @input="checkStok(index)"
-                            />
-                            <!-- Warning stok tidak cukup -->
-                            <div v-if="isStokTidakCukup(item)" class="text-xs text-red-600 mt-1 flex items-center">
-                              <i class="fas fa-exclamation-triangle mr-1"></i>
-                              Stok tidak cukup! Tersedia: {{ getObatInfo(item.obat_id)?.stok || 0 }}
-                            </div>
-                          </td>
-                          
-                          <td class="border-r border-gray-200 px-4 py-3">
-                            <input 
-                              type="date" 
-                              v-model="item.tanggal_mulai" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800"
-                            />
-                          </td>
-                          <td class="border-r border-gray-200 px-4 py-3">
-                            <input 
-                              type="date" 
-                              v-model="item.tanggal_terakhir" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800"
-                            />
-                          </td>
-                          <td class="border-r border-gray-200 px-4 py-3">
-                            <textarea 
-                              v-model="item.catatan" 
-                              class="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none text-gray-800" 
-                              placeholder="Catatan tambahan"
-                              rows="2"
-                            ></textarea>
-                          </td>
-                          <td class="px-4 py-3">
-                            <div class="flex justify-center space-x-2">
-                              <button 
-                                type="button" 
-                                class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
-                                @click="removeItem(index)"
-                                title="Hapus obat"
-                              >
-                                <i class="fas fa-trash-alt text-sm"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <!-- Nama Obat -->
+                      <div class="lg:col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          <i class="fas fa-capsules mr-1"></i>
+                          Nama Obat *
+                        </label>
+                        <VueSelect
+                          v-model="item.obat_id"
+                          :options="availableObat"
+                          label="nama_obat"
+                          :reduce="obat => obat.id"
+                          placeholder="Pilih obat..."
+                          class="w-full"
+                          @update:modelValue="() => updateObatName(index)"
+                        />
+                        <div v-if="item.obat_id && getObatInfo(item.obat_id)" class="mt-2 text-xs text-gray-500 flex items-center">
+                          <i class="fas fa-box mr-1"></i>
+                          Stok tersedia: {{ getObatInfo(item.obat_id).stok }}
+                        </div>
+                      </div>
+
+                      <!-- Dosis -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          <i class="fas fa-syringe mr-1"></i>
+                          Dosis *
+                        </label>
+                        <input 
+                          type="text" 
+                          v-model="item.dosis" 
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="Contoh: 3x1 tablet"
+                        />
+                      </div>
+
+                      <!-- Jumlah -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          <i class="fas fa-sort-numeric-up mr-1"></i>
+                          Jumlah *
+                        </label>
+                        <input 
+                          type="number" 
+                          v-model.number="item.jumlah"
+                          min="1"
+                          :class="[
+                            'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
+                            isStokTidakCukup(item) ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                          ]"
+                          placeholder="Jumlah"
+                          @input="checkStok(index)"
+                        />
+                        <div v-if="isStokTidakCukup(item)" class="mt-2 text-xs text-red-600 flex items-center">
+                          <i class="fas fa-exclamation-triangle mr-1"></i>
+                          Stok tidak cukup! Tersedia: {{ getObatInfo(item.obat_id)?.stok || 0 }}
+                        </div>
+                      </div>
+
+                      <!-- Tanggal Mulai -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          <i class="fas fa-calendar-alt mr-1"></i>
+                          Tanggal Mulai *
+                        </label>
+                        <input 
+                          type="date" 
+                          v-model="item.tanggal_mulai" 
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+
+                      <!-- Tanggal Berakhir -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          <i class="fas fa-calendar-check mr-1"></i>
+                          Tanggal Berakhir *
+                        </label>
+                        <input 
+                          type="date" 
+                          v-model="item.tanggal_terakhir" 
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+
+                      <!-- Catatan -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                          <i class="fas fa-sticky-note mr-1"></i>
+                          Catatan
+                        </label>
+                        <textarea 
+                          v-model="item.catatan" 
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none" 
+                          placeholder="Catatan tambahan..."
+                          rows="3"
+                        ></textarea>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Action Buttons for Klinik -->
-                <div class="flex items-center justify-start pt-4">
+                <!-- Add Button -->
+                <div class="mt-6">
                   <button
                     type="button"
                     @click="addItem"
-                    class="bg-[#00B87A] hover:bg-[#109568] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
+                    class="flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all hover:scale-105 shadow-lg"
                   >
                     <i class="fas fa-plus"></i>
                     <span>Tambah Obat</span>
                   </button>
                 </div>
               </div>
+            </div>
 
-              <!-- Obat dari Luar Klinik Tab -->
-              <div v-show="activeTab === 'luar'">
-                <div class="bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                  <div class="bg-[#F59E0B] text-white px-4 py-3">
-                    <h3 class="font-semibold flex items-center">
-                      <i class="fas fa-external-link-alt mr-2"></i>
-                      Resep Obat dari Luar Klinik
-                    </h3>
-                  </div>
-                  
-                  <div class="p-6">
-                    <div class="space-y-4">
-                      <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                          Daftar Obat dari Luar Klinik
-                        </label>
-                        <textarea 
-                          v-model="obatLuar"
-                          class="w-full border border-gray-300 rounded-md px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none text-gray-800" 
-                          placeholder="Masukkan daftar obat dari luar klinik beserta dosis dan instruksi penggunaan.
-                          Contoh:
-                          1. Paracetamol 500mg - 3x1 tablet setelah makan
-                          2. Amoxicillin 500mg - 3x1 kapsul sebelum makan selama 7 hari
-                          3. CTM 4mg - 1x1 tablet malam hari saat gatal"
-                          rows="8"
-                        ></textarea>
-                        <div class="text-xs text-gray-500 mt-1">
-                          <i class="fas fa-info-circle mr-1"></i>
-                          Tuliskan detail obat termasuk nama, dosis, frekuensi, dan instruksi khusus
-                        </div>
-                      </div>
+            <!-- Obat dari Luar Klinik Tab -->
+            <div v-show="activeTab === 'luar'" class="space-y-6">
+              <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <i class="fas fa-external-link-alt text-amber-600 mr-3"></i>
+                  Resep Obat dari Luar Klinik
+                </h3>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <label class="block text-sm font-medium text-gray-700 mb-3">
+                    <i class="fas fa-list-ul mr-1"></i>
+                    Daftar Obat dari Luar Klinik
+                  </label>
+                  <textarea 
+                    v-model="obatLuar"
+                    class="w-full px-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none" 
+                    placeholder="Masukkan daftar obat dari luar klinik beserta dosis dan instruksi penggunaan.
+
+Contoh:
+1. Paracetamol 500mg - 3x1 tablet setelah makan
+2. Amoxicillin 500mg - 3x1 kapsul sebelum makan selama 7 hari
+3. CTM 4mg - 1x1 tablet malam hari saat gatal"
+                    rows="10"
+                  ></textarea>
+                  <div class="mt-3 p-3 bg-amber-50 rounded-lg">
+                    <div class="text-sm text-amber-700 flex items-start">
+                      <i class="fas fa-info-circle mr-2 mt-0.5"></i>
+                      <span>Tuliskan detail obat termasuk nama, dosis, frekuensi, dan instruksi khusus untuk setiap obat</span>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Action Buttons -->
-              <div class="flex items-center justify-between pt-4">
-                <div class="text-sm text-gray-600">
-                  <i class="fas fa-info-circle mr-1"></i>
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+              <div class="flex items-center space-x-3">
+                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                <span class="text-sm text-gray-600">
                   Tab aktif: <span class="font-medium">{{ activeTab === 'klinik' ? 'Obat dari Klinik' : 'Obat dari Luar Klinik' }}</span>
-                </div>
-                
-                <div class="flex space-x-3">
-                  <button
-                    type="button"
-                    @click="cancelForm"
-                    class="bg-[#717070] hover:bg-[#555555] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
-                  >
-                    <span>Batal</span>
-                  </button>
-                  <button
-                    type="submit"
-                    :disabled="isSubmitting || (activeTab === 'klinik' && hasStokTidakCukup)"
-                    :class="[
-                      'text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm',
-                      (activeTab === 'klinik' && hasStokTidakCukup) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#3F86D0] hover:bg-[#3B59A1]',
-                      'disabled:opacity-50'
-                    ]"
-                  >
-                    <span v-if="isSubmitting">Menyimpan...</span>
-                    <span v-else-if="activeTab === 'klinik' && hasStokTidakCukup">Stok Tidak Cukup</span>
-                    <span v-else>Simpan Resep</span>
-                  </button>
-                </div>
+                </span>
               </div>
-            </form>
-          </section>
+              
+              <div class="flex items-center space-x-4">
+                <button
+                  type="button"
+                  @click="cancelForm"
+                  class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all hover:scale-105 shadow-lg"
+                >
+                  <i class="fas fa-times mr-2"></i>
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  :disabled="isSubmitting || (activeTab === 'klinik' && hasStokTidakCukup)"
+                  :class="[
+                    'px-6 py-3 text-white rounded-lg font-medium transition-all hover:scale-105 shadow-lg',
+                    (activeTab === 'klinik' && hasStokTidakCukup) || isSubmitting
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  ]"
+                >
+                  <i class="fas fa-save mr-2"></i>
+                  <span v-if="isSubmitting">Menyimpan...</span>
+                  <span v-else-if="activeTab === 'klinik' && hasStokTidakCukup">Stok Tidak Cukup</span>
+                  <span v-else>Simpan Resep</span>
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-      </main>
+      </div>
     </div>
 
-    <!-- Alert Pop-ups -->
-    <!-- Success Alert -->
+    <!-- Modal Components -->
+    <!-- Success Modal -->
     <div 
       v-if="showSuccessAlert" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       @click.self="closeSuccessAlert"
-      style="background-color: rgba(0, 0, 0, 0.15);"
     >
-      <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 text-center">
-        <div class="mb-4">
-          <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <i class="fas fa-check-circle text-green-600 text-2xl"></i>
-          </div>
-          <h3 class="text-lg font-semibold text-[#2A4482] mb-2">Berhasil!</h3>
-          <p class="text-gray-600 text-sm">Resep obat berhasil disimpan</p>
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center transform transition-all">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-check-circle text-green-600 text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Berhasil!</h3>
+        <p class="text-gray-600 mb-6">Resep obat berhasil disimpan</p>
         <button
           @click="closeSuccessAlert"
-          class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-2 rounded-lg text-sm font-medium transition-all"
+          class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-all"
         >
           Tutup
         </button>
       </div>
     </div>
 
-    <!-- Error Alert -->
+    <!-- Error Modal -->
     <div 
       v-if="showErrorAlert" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       @click.self="closeErrorAlert"
-      style="background-color: rgba(0, 0, 0, 0.15);"
     >
-      <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 text-center">
-        <div class="mb-4">
-          <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
-          </div>
-          <h3 class="text-lg font-semibold text-[#2A4482] mb-2">Error!</h3>
-          <p class="text-gray-600 text-sm">{{ errorMessage }}</p>
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Error!</h3>
+        <p class="text-gray-600 mb-6">{{ errorMessage }}</p>
         <button
           @click="closeErrorAlert"
-          class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-2 rounded-lg text-sm font-medium transition-all"
+          class="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-medium transition-all"
         >
           Tutup
         </button>
       </div>
     </div>
 
-    <!-- Stok Tidak Cukup Alert -->
+    <!-- Stock Alert Modal -->
     <div 
       v-if="showStokAlert" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       @click.self="closeStokAlert"
-      style="background-color: rgba(0, 0, 0, 0.15);"
     >
-      <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 text-center">
-        <div class="mb-4">
-          <div class="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-            <i class="fas fa-exclamation-triangle text-orange-600 text-2xl"></i>
-          </div>
-          <h3 class="text-lg font-semibold text-[#2A4482] mb-2">Stok Tidak Mencukupi!</h3>
-          <p class="text-gray-600 text-sm">{{ stockAlertMessage }}</p>
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-exclamation-triangle text-orange-600 text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Stok Tidak Mencukupi!</h3>
+        <p class="text-gray-600 mb-6">{{ stockAlertMessage }}</p>
         <button
           @click="closeStokAlert"
-          class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-2 rounded-lg text-sm font-medium transition-all"
+          class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-lg font-medium transition-all"
         >
           Mengerti
         </button>
@@ -334,21 +364,18 @@
     <!-- Incomplete Form Alert -->
     <div 
       v-if="showIncompleteAlert" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       @click.self="closeIncompleteAlert"
-      style="background-color: rgba(0, 0, 0, 0.15);"
     >
-      <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 text-center">
-        <div class="mb-4">
-          <div class="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-            <i class="fas fa-exclamation-triangle text-blue-600 text-2xl"></i>
-          </div>
-          <h3 class="text-lg font-semibold text-[#2A4482] mb-2">Resep Belum Lengkap!</h3>
-          <p class="text-gray-600 text-sm">{{ incompleteMessage }}</p>
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-exclamation-triangle text-blue-600 text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Resep Belum Lengkap!</h3>
+        <p class="text-gray-600 mb-6">{{ incompleteMessage }}</p>
         <button
           @click="closeIncompleteAlert"
-          class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-2 rounded-lg text-sm font-medium transition-all"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-all"
         >
           Mengerti
         </button>
@@ -358,28 +385,25 @@
     <!-- Delete Confirmation -->
     <div 
       v-if="showDeleteConfirm" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       @click.self="closeDeleteConfirm"
-      style="background-color: rgba(0, 0, 0, 0.15);"
     >
-      <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 text-center">
-        <div class="mb-6">
-          <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <i class="fas fa-trash-alt text-red-600 text-2xl"></i>
-          </div>
-          <h3 class="text-lg font-semibold text-[#2A4482] mb-2">Hapus Obat?</h3>
-          <p class="text-gray-600 text-sm">Apakah Anda yakin ingin menghapus obat ini dari resep?</p>
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-trash-alt text-red-600 text-2xl"></i>
         </div>
-        <div class="flex space-x-3 justify-center">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Obat?</h3>
+        <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus obat ini dari resep?</p>
+        <div class="flex space-x-3">
           <button
             @click="closeDeleteConfirm"
-            class="shadow-md hover:shadow-lg bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-lg font-medium transition-all"
           >
             Batal
           </button>
           <button
             @click="confirmDelete"
-            class="shadow-md hover:shadow-lg bg-[#3674B5] hover:bg-[#3B59A1] text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-medium transition-all"
           >
             Hapus
           </button>
@@ -393,8 +417,6 @@
 import { defineProps, ref, computed } from "vue";
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
-import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
-import HeaderStaff from "../../layouts/dokter/HeaderDokter.vue";
 import VueSelect from "vue3-select";
 import "vue3-select/dist/vue3-select.css";
 
@@ -418,12 +440,6 @@ const props = defineProps({
     default: () => []
   }
 });
-
-// Breadcrumb data
-const breadcrumbPages = [
-  { label: "Dashboard", href: "/dashboarddokter" },
-  { label: "Resep Obat", href: "/resepobat" }
-];
 
 // Tab state
 const activeTab = ref('klinik');
@@ -495,7 +511,6 @@ function addItem() {
 // Remove prescription item
 function removeItem(index) {
   if (prescriptionItems.value.length === 1) {
-    // Reset the only item instead of removing it
     prescriptionItems.value[0] = { 
       obat_id: null, 
       nama_obat: '', 
@@ -516,7 +531,6 @@ function updateObatName(index) {
   const selectedObat = props.availableObat.find(obat => obat.id == prescriptionItems.value[index].obat_id);
   if (selectedObat) {
     prescriptionItems.value[index].nama_obat = selectedObat.nama_obat;
-    // Check stock immediately when obat is selected
     checkStok(index);
   } else {
     prescriptionItems.value[index].nama_obat = '';
@@ -525,7 +539,6 @@ function updateObatName(index) {
 
 function validateForm() {
   if (activeTab.value === 'klinik') {
-    // Check for insufficient stock first
     if (hasStokTidakCukup.value) {
       const insufficientItems = prescriptionItems.value
         .filter(item => isStokTidakCukup(item))
@@ -564,7 +577,6 @@ function validateForm() {
       return false;
     }
   } else {
-    // Validate obat luar
     if (!obatLuar.value.trim()) {
       incompleteMessage.value = 'Mohon isi daftar obat dari luar klinik';
       return false;

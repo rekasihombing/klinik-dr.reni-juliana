@@ -30,32 +30,31 @@
         </section>
 
         <section class="px-10 pb-8 flex space-x-4">
-          <button class="bg-[#3F86D0] hover:bg-[#3B59A1] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm" type="button">
-            <i class="fas fa-file-alt"></i>
-            <span>Lihat Rekam Medis</span>
-          </button>
           
-          <!-- Tombol Tambah Rekam Medis dengan validasi -->
-          <button 
-            v-if="!hasRekamMedis" 
-            @click="handleTambahRekamMedisClick" 
-            class="bg-green-600 hover:bg-green-700] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm transition" 
-            type="button"
-          >
-            <span>Tambah Rekam Medis</span>
-          </button>
+          <!-- Tombol Tambah Rekam Medis hanya muncul saat status 'diproses' (sedang konsultasi) -->
+          <template v-if="status === 'diproses'">
+            <!-- Tombol Tambah Rekam Medis dengan validasi -->
+            <button 
+              v-if="!hasRekamMedis" 
+              @click="handleTambahRekamMedisClick" 
+              class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-green-700 transition" 
+              type="button"
+            >
+              <span>Tambah Rekam Medis</span>
+            </button>
+            
+            <!-- Tombol disabled jika sudah ada rekam medis -->
+            <button 
+              v-else 
+              class="bg-gray-400 text-white text-xs rounded px-3 py-1 shadow-md cursor-not-allowed" 
+              disabled
+              title="Rekam medis sudah pernah diinput untuk appointment ini"
+            >
+              <span>Rekam Medis Sudah Ada</span>
+            </button>
+          </template>
           
-          <!-- Tombol disabled jika sudah ada rekam medis -->
-          <button 
-            v-else 
-            class="bg-gray-400 hover:bg-gray-500 text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm" 
-            disabled
-            title="Rekam medis sudah pernah diinput untuk appointment ini"
-          >
-            <span>Rekam Medis Sudah Ada</span>
-          </button>
-          
-          
+          <!-- Tombol Mulai Konsultasi - hanya muncul saat status 'dikonfirmasi' -->
           <button
             v-if="status === 'dikonfirmasi'"
             @click="mulaiKonsultasi"

@@ -38,8 +38,6 @@
                 >
                   <option value="">Semua Status</option>
                   <option value="selesai">Selesai</option>
-                  <option value="menunggu">Menunggu</option>
-                  <option value="dikonfirmasi">Dikonfirmasi</option>
                   <option value="dibatalkan">Dibatalkan</option>
                 </select>
                 <select 
@@ -132,19 +130,16 @@
                     </div>
                   </div>
 
-                  <!-- Progress Bar for Waiting -->
-                  <div v-else-if="['menunggu', 'dikonfirmasi'].includes(appointment.originalStatus)" class="mt-4 pt-4 border-t border-gray-100">
-                    <div class="flex items-center text-sm text-orange-600">
-                      <i class="fas fa-hourglass-half mr-2"></i>
-                      <span>{{ appointment.originalStatus === 'menunggu' ? 'Menunggu konfirmasi' : 'Dikonfirmasi, menunggu jadwal' }}</span>
+                  <!-- Cancelled Status -->
+                  <div v-else-if="appointment.originalStatus === 'dibatalkan'" class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex items-center text-sm text-red-600">
+                      <i class="fas fa-times-circle mr-2"></i>
+                      <span>Janji temu dibatalkan</span>
                     </div>
-                    <div class="w-full bg-orange-100 rounded-full h-2 mt-2">
-                      <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full" :style="{ width: appointment.originalStatus === 'menunggu' ? '30%' : '70%' }"></div>
+                    <div class="w-full bg-red-100 rounded-full h-2 mt-2">
+                      <div class="bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full w-full"></div>
                     </div>
                   </div>
-
-                  <!-- Cancelled Status -->
-                 
                 </div>
               </div>
             </TransitionGroup>
@@ -156,10 +151,10 @@
               <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
             </div>
             <h3 class="text-xl font-semibold text-gray-900 mb-2">
-              {{ searchQuery || statusFilter ? 'Tidak Ada Hasil Ditemukan' : 'Belum Ada Janji Temu' }}
+              {{ searchQuery || statusFilter ? 'Tidak Ada Hasil Ditemukan' : 'Belum Ada Riwayat Janji Temu' }}
             </h3>
             <p class="text-gray-600 mb-6 max-w-md mx-auto">
-              {{ searchQuery || statusFilter ? 'Coba ubah filter pencarian Anda.' : 'Riwayat janji temu Anda akan muncul di sini setelah membuat janji pertama.' }}
+              {{ searchQuery || statusFilter ? 'Coba ubah filter pencarian Anda.' : 'Riwayat janji temu yang telah selesai atau dibatalkan akan muncul di sini.' }}
             </p>
             <button 
               v-if="!searchQuery && !statusFilter"
@@ -290,6 +285,19 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Cancellation reason for cancelled appointments -->
+              <div v-else-if="selectedAppointment.originalStatus === 'dibatalkan'" class="bg-white rounded-xl border border-gray-200 p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                  <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-times-circle text-white"></i>
+                  </div>
+                  <h3 class="text-lg font-semibold text-gray-900">Status Pembatalan</h3>
+                </div>
+                <div class="bg-red-50 rounded-xl p-5 border border-red-200">
+                  <p class="text-red-900 leading-relaxed">Janji temu ini telah dibatalkan. Untuk membuat janji temu baru, silakan kembali ke halaman utama.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -310,7 +318,7 @@ const props = defineProps({
   },
   clinicName: {
     type: String,
-    default: 'Klinik Kesehatan'
+    default: 'Klinik Praktek Dr. Reni Juliana Manurung'
   },
   appointments: {
     type: Array,
@@ -333,15 +341,17 @@ const cancelledCount = computed(() => {
   return props.appointments?.filter(app => app.originalStatus === 'dibatalkan').length || 0
 })
 
-const pendingCount = computed(() => {
-  return props.appointments?.filter(app => ['menunggu', 'dikonfirmasi'].includes(app.originalStatus)).length || 0
-})
-
-// Filtered and sorted appointments
+// Filtered and sorted appointments - ONLY show completed and cancelled appointments
 const filteredAppointments = computed(() => {
   if (!props.appointments) return []
   
-  let filtered = props.appointments.filter(appointment => {
+  // First filter to only show completed or cancelled appointments
+  let historyAppointments = props.appointments.filter(appointment => 
+    appointment.originalStatus === 'selesai' || appointment.originalStatus === 'dibatalkan'
+  )
+  
+  // Then apply search and status filters
+  let filtered = historyAppointments.filter(appointment => {
     const matchesSearch = searchQuery.value === '' || 
       appointment.date?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       appointment.keluhan?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -367,8 +377,6 @@ const getStatusClass = (status) => {
   const statusClasses = {
     selesai: 'bg-green-100 text-green-700 border border-green-200',
     dibatalkan: 'bg-red-100 text-red-700 border border-red-200',
-    menunggu: 'bg-orange-100 text-orange-700 border border-orange-200',
-    dikonfirmasi: 'bg-blue-100 text-blue-700 border border-blue-200',
   }
   return statusClasses[status] || 'bg-gray-100 text-gray-700 border border-gray-200'
 }
@@ -378,8 +386,6 @@ const getStatusDescription = (status) => {
   const descriptions = {
     selesai: 'Kunjungan telah selesai dilakukan',
     dibatalkan: 'Janji temu dibatalkan',
-    menunggu: 'Menunggu konfirmasi dari klinik',
-    dikonfirmasi: 'Dikonfirmasi, siap untuk kunjungan',
   }
   return descriptions[status] || 'Status tidak diketahui'
 }
@@ -395,7 +401,6 @@ function formatDate(dateStr) {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return date.toLocaleDateString('id-ID', options); // Contoh: 1 Juni 2025
 }
-
 
 // Modal functions
 const viewDetail = (appointment) => {
