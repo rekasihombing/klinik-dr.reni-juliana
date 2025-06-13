@@ -18,8 +18,6 @@
 
       <main class="flex-grow p-6">
         <div class="max-w-6xl mx-auto">
-
-
           <!-- Search and Filter Bar -->
           <div class="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-white/50">
             <div class="flex flex-col md:flex-row gap-4 items-center">
@@ -47,74 +45,80 @@
             </div>
           </div>
 
-          <!-- Medical Records Cards -->
-          <div v-if="filteredAppointments.length > 0" class="space-y-4">
-            <TransitionGroup name="card" tag="div" class="space-y-4">
+          <!-- Medical Records Cards - Grid Layout (2 per row) -->
+          <div v-if="filteredAppointments.length > 0">
+            <TransitionGroup name="card" tag="div" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div 
                 v-for="(appointment, index) in filteredAppointments" 
                 :key="appointment.id"
-                class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-white/50 overflow-hidden group"
+                class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-white/50 overflow-hidden group cursor-pointer"
+                @click="viewDetail(appointment)"
               >
-                <div class="p-6">
-                  <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="w-12 h-12 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
-                        <span class="text-blue-600 font-bold text-lg">#{{ appointment.queueNumber || index + 1 }}</span>
+                <!-- Card Header -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-4">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">#{{ appointment.queueNumber || index + 1 }}</span>
                       </div>
                       <div>
-                        <h3 class="text-lg font-semibold text-[#2A4482] mb-1">Kunjungan {{ formatDate(appointment.date) }}</h3>
-                        <div class="flex items-center text-gray-500 text-sm space-x-4">
-                          <span class="flex items-center">
-                            <i class="fas fa-clock mr-2"></i>{{ appointment.time }}
-                          </span>
-                          <span class="flex items-center">
-                            <i class="fas fa-calendar mr-2"></i>{{ appointment.date }}
-                          </span>
-                        </div>
+                        <h3 class="text-white font-semibold text-lg">{{ formatDate(appointment.date) }}</h3>
+                        <p class="text-blue-100 text-sm">{{ appointment.time }}</p>
                       </div>
                     </div>
-                    <button
-                      @click="viewDetail(appointment)"
-                      class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg group-hover:scale-105 flex items-center space-x-2"
-                    >
-                      <span>Lihat Detail</span>
-                      <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-                    </button>
+                    <div class="text-white/80 group-hover:text-white transition-colors">
+                      <i class="fas fa-chevron-right"></i>
+                    </div>
                   </div>
+                </div>
 
-                  <!-- Quick Preview -->
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
-                    <div class="flex items-start space-x-3">
-                      <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-stethoscope text-red-500"></i>
-                      </div>
-                      <div class="min-w-0 flex-1">
-                        <p class="text-sm font-medium text-gray-900 mb-1">Keluhan Utama</p>
-                        <p class="text-sm text-gray-600 truncate">{{ appointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
-                      </div>
+                <!-- Card Body -->
+                <div class="p-4 space-y-4">
+                  <!-- Keluhan -->
+                  <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-stethoscope text-red-500 text-sm"></i>
                     </div>
-                    
-                    <div class="flex items-start space-x-3">
-                      <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-diagnoses text-green-500"></i>
-                      </div>
-                      <div class="min-w-0 flex-1">
-                        <p class="text-sm font-medium text-gray-900 mb-1">Diagnosa</p>
-                        <p class="text-sm text-gray-600 truncate">{{ appointment.diagnosa || 'Belum ada diagnosa' }}</p>
-                      </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Keluhan Utama</p>
+                      <p class="text-sm text-gray-800 line-clamp-2">{{ appointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
                     </div>
-                    
-                    <div class="flex items-start space-x-3">
-                      <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-heartbeat text-blue-500"></i>
-                      </div>
-                      <div class="min-w-0 flex-1">
-                        <p class="text-sm font-medium text-gray-900 mb-1">Vital Signs</p>
-                        <p class="text-sm text-gray-600">
-                          {{ getVitalSignsPreview(appointment) }}
-                        </p>
-                      </div>
+                  </div>
+                  
+                  <!-- Diagnosa -->
+                  <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-diagnoses text-green-500 text-sm"></i>
                     </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Diagnosa</p>
+                      <p class="text-sm text-gray-800 line-clamp-2">{{ appointment.diagnosa || 'Belum ada diagnosa' }}</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Vital Signs -->
+                  <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-heartbeat text-blue-500 text-sm"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Vital Signs</p>
+                      <p class="text-sm text-gray-800 truncate">{{ getVitalSignsPreview(appointment) }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500 flex items-center">
+                      <i class="fas fa-calendar mr-1"></i>
+                      {{ appointment.date }}
+                    </span>
+                    <span class="text-blue-600 group-hover:text-blue-700 font-medium">
+                      Lihat Detail
+                      <i class="fas fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -422,6 +426,14 @@ const getVitalSignsPreview = (appointment) => {
 </script>
 
 <style scoped>
+/* Line clamp utility for text truncation */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Smooth transitions */
 .card-enter-active,
 .card-leave-active {

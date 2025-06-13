@@ -30,7 +30,7 @@ use App\Http\Controllers\TindakanController;
 use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\DaftarPembayaranController;
-
+use App\Http\Controllers\RiwayatResepObatController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -323,6 +323,38 @@ Route::get('/pembayaran', [DaftarPembayaranController::class, 'index'])->name('p
 Route::get('/pembayaran/{id}', [DaftarPembayaranController::class, 'show'])->name('pembayaran.show');
 Route::post('/pembayaran/{id}/store', [DaftarPembayaranController::class, 'store'])->name('pembayaran.store');
 Route::get('/pembayaran/invoice/{id}', [DaftarPembayaranController::class, 'invoice'])->name('pembayaran.invoice');
+
+// Tambahkan routes ini ke file routes/web.php yang sudah ada
+
+// Routes untuk Resep Obat (Pasien)
+Route::middleware(['auth'])->group(function () {
+    
+    // Route untuk daftar resep obat pasien
+    Route::get('/riwayat-resep-obat', [RiwayatResepObatController::class, 'index'])
+        ->name('riwayat-resep-obat.index');
+    
+    // Route untuk detail resep obat berdasarkan rekam medis
+    Route::get('/riwayat-resep-obat/{rekamMedisId}', [RiwayatResepObatController::class, 'show'])
+        ->name('riwayat-resep-obat.show')
+        ->where('rekamMedisId', '[0-9]+');
+    
+    // API Routes untuk fitur tambahan (opsional)
+    Route::prefix('api/riwayat-resep-obat')->group(function () {
+        
+        // Get resep obat yang sedang aktif
+        Route::get('/aktif', [RiwayatResepObatController::class, 'getAktif'])
+            ->name('api.riwayat-resep-obat.aktif');
+        
+        // Set reminder untuk obat (jika implementasi reminder)
+        Route::post('/reminder', [RiwayatResepObatController::class, 'setReminder'])
+            ->name('api.riwayat-resep-obat.reminder');
+        
+        // Export resep obat ke PDF
+        Route::get('/export/{rekamMedisId}', [RiwayatResepObatController::class, 'exportPDF'])
+            ->name('api.riwayat-resep-obat.export')
+            ->where('rekamMedisId', '[0-9]+');
+    });
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
