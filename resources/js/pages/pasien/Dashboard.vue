@@ -1,15 +1,22 @@
 <template>
-  <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-    <!-- Header -->
-    <header
-      class="bg-[#F5FDFF] backdrop-blur-sm shadow-lg flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-gray-100"
-    >
-      <div class="font-semibold text-[#2D4480]">{{ clinicName }}</div>
-      <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors" @click.stop="router.visit('/profilpasien')">
-        <span class="font-medium">{{ patientName }}</span>
-        <i class="fas fa-user-circle text-xl text-[#3674B5]"></i>
+  <div class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
+  <header class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-4 md:px-6 py-3 md:py-4 text-[#1B2A4D] text-xs md:text-sm font-sans border-b border-white/20 sticky top-0 z-40">
+    <div class="flex items-center space-x-2 md:space-x-3">
+      <img 
+        src="/images/logo-klinik.png" 
+        alt="Logo Klinik" 
+        class="w-8 h-8 md:w-10 md:h-10 object-contain"
+      />
+      <div class="font-semibold text-[#2D4480] text-sm md:text-base">{{ clinicName }}</div>
+    </div>
+    <div class="flex items-center space-x-1 md:space-x-2 cursor-pointer hover:bg-blue-50 px-2 md:px-4 py-1 md:py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
+      <span class="font-medium text-xs md:text-sm hidden sm:inline">{{ patientName }}</span>
+      <span class="font-medium text-xs md:text-sm sm:hidden">{{ patientName.split(' ')[0] }}</span>
+      <div class="w-6 h-6 md:w-8 md:h-8 bg-blue-700 rounded-full flex items-center justify-center">
+        <i class="fas fa-user text-white text-xs md:text-sm"></i>
       </div>
-    </header>
+    </div>
+  </header>
 
     <!-- Main Container -->
     <div class="flex flex-1 overflow-hidden">
@@ -17,8 +24,9 @@
       <Sidebar :patient-name="patientName" />
 
       <!-- Main Content -->
-      <main class="flex-1 p-6 bg-[#F7F8FA] overflow-auto">
-        <h1 class="text-[#2D4480] font-bold text-lg mb-4 font-sans">
+      <main class="bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] flex-1 p-4 md:p-6 lg:p-10">
+
+        <h1 class="text-[#2D4480] font-bold text-base md:text-lg mb-4 font-sans">
           Selamat Datang, {{ patientName }}!
         </h1>
 
@@ -26,11 +34,11 @@
         <transition name="fade">
           <div
             v-if="!isProfileComplete && !hideProfileNotification"
-            class="bg-[#FFF4E6] border-l-4 border-[#FF8A00] rounded-xl backdrop-blur-xs shadow-md px-4 py-3 mb-6 flex items-center justify-between text-sm font-sans"
+          class="bg-[#FFF4E6] border-l-4 border-[#FF8A00] rounded-xl backdrop-blur-xs shadow-md px-3 md:px-4 py-3 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 sm:justify-between text-xs md:text-sm font-sans"
           >
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3 flex-1">
               <i class="fas fa-exclamation-triangle text-[#FF8A00] text-lg"></i>
-              <div>
+              <div class="flex-1">
                 <span class="text-[#1B2A4D] font-semibold">
                   Anda belum melengkapi data profil
                 </span>
@@ -39,10 +47,10 @@
                 </p>
               </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
               <button
-                 @click.stop="router.visit('/datapasien')" style="cursor:pointer;"
-                class="bg-[#FF8A00] p-4 hover:bg-[#E67700] text-white rounded-lg px-4 py-2 text-xs font-medium transition shadow-md hover:shadow-lg"
+                @click.stop="router.visit('/datapasien')" style="cursor:pointer;"
+                class="bg-[#FF8A00] p-4 hover:bg-[#E67700] text-white rounded-lg px-3 md:px-4 py-2 text-xs font-medium transition shadow-md hover:shadow-lg flex-1 sm:flex-none"
               >
                 Lengkapi Disini
               </button>
@@ -61,7 +69,7 @@
 <transition name="fade">
   <div
     v-if="(isValidAppointment || isAppointmentPassed) && nextAppointment && !hidePassedNotification"
-    class="rounded-xl backdrop-blur-xs shadow-md px-4 py-2 mb-6 flex items-center justify-between text-xs font-sans"
+    class="rounded-xl backdrop-blur-xs shadow-md px-3 md:px-4 py-2 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:justify-between text-xs font-sans"
     :class="isValidAppointment ? 'bg-[#D4F1E4] text-[#1B2A4D]' : 'bg-[#FFE2E2] text-[#E53935]'"
   >
     <div class="flex items-center space-x-2">
@@ -87,16 +95,15 @@
 </transition>
 
         <!-- Content Grid -->
-        <div class="flex flex-col md:flex-row gap-4">
-          <!-- Left Column -->
-          <div class="flex flex-col space-y-4 w-[370px]">
+<div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
+  <div class="flex flex-col space-y-4 w-full lg:w-[370px] lg:flex-shrink-0">
         <!-- Jadwal Konsultasi Card -->
-<div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 hover:shadow-xl transition-all duration-300" @click="handleAppointmentClick" style="cursor:pointer;">
+<div class="bg-white rounded-xl shadow-lg p-4 md:p-6 font-sans border border-gray-100 hover:shadow-xl transition-all duration-300" @click="handleAppointmentClick" style="cursor:pointer;">
   <div class="flex items-center space-x-3 mb-4">
     <div class="w-10 h-10 rounded-lg flex items-center justify-center" :class="appointmentIconClass">
       <i :class="appointmentIcon" class="text-lg"></i>
     </div>
-    <h3 class="text-[#2D4480] font-semibold text-base">{{ appointmentTitle }}</h3>
+    <h3 class="text-[#2D4480] font-semibold text-sm md:text-base">{{ appointmentTitle }}</h3>
   </div>
 
   <!-- Content berdasarkan status -->
@@ -184,7 +191,7 @@
         v-if="!isCheckedIn"
         @click.stop="handleCancelAppointmentFromModal"
         :disabled="cancelLoading"
-        class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
+        class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
         style="cursor:pointer;"
       >
         {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
@@ -292,7 +299,7 @@
 
       <button
         @click.stop="handleCreateAppointment"
-        class="w-full bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+        class="w-full bg-[#3674B5] hover:bg-[#3B59A1] text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
         style="cursor:pointer;"
       >
         <i class="fas fa-plus mr-2"></i>
@@ -311,7 +318,7 @@
       <div class="flex gap-2">
         <button style="cursor:pointer;"
           @click.stop="handleCreateAppointment"
-          class="bg-[#314169] hover:bg-[#26324D] text-white rounded px-3 py-1 text-xs transition"
+          class="bg-[#314169] hover:bg-[#26324D] text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
         >
           Buat Janji Temu Baru
         </button>
@@ -353,7 +360,7 @@
       <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
         <i class="fas fa-file-medical text-green-600 text-lg"></i>
       </div>
-      <h3 class="text-[#2D4480] font-semibold text-base">Rekam Medis</h3>
+      <h3 class="text-[#2D4480] font-semibold text-sm md:text-base">Rekam Medis</h3>
     </div>
     
     <div v-if="lastMedicalRecord" class="space-y-3 mb-4">
@@ -388,7 +395,7 @@
     </div>
     
     <div v-else class="space-y-2 mb-4">
-      <div class="text-base text-gray-500">
+      <div class="text-semibold text-gray-500">
         Belum ada rekam medis
       </div>
       <div class="text-sm text-gray-400">
@@ -396,33 +403,33 @@
       </div>
     </div>
     
-    <div class="flex space-x-2">
-      <button 
-        v-if="lastMedicalRecord"
-        @click="viewDetail"
-        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm transition-all duration-200"
-      >
-        Lihat Detail
-      </button>
-      
-      <button 
-        @click="viewHistory"
-        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm border border-gray-200 hover:border-gray-300 transition-all duration-200"
-      >
-        {{ lastMedicalRecord ? 'Riwayat Lengkap' : 'Lihat Riwayat' }}
-      </button>
-    </div>
-  </div>
+        <div class="flex space-x-2">
+          <button 
+            v-if="lastMedicalRecord"
+            @click="viewDetail"
+            class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm transition-all duration-200"
+          >
+            Lihat Detail
+          </button>
+          
+          <button 
+            @click="viewHistory"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-base border border-gray-200 hover:border-gray-300 transition-all duration-200"
+          >
+            {{ lastMedicalRecord ? 'Riwayat Lengkap' : 'Lihat Riwayat' }}
+          </button>
+        </div>
+      </div>
           </div>
 
           <!-- Right Column: Calendar -->
-          <div class="lg:col-span-2">
+          <div class="w-full lg:flex-1">
             <div class="bg-white rounded-xl shadow-lg p-6 font-sans border border-gray-100 text-black">
               <div class="flex items-center space-x-3 mb-6">
                 <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                   <i class="fas fa-calendar text-purple-600 text-lg"></i>
                 </div>
-                <h3 class="text-[#2D4480] font-semibold text-base">Pilih Tanggal</h3>
+                <h3 class="text-[#2D4480] font-semibold text-sm md:text-base">Pilih Tanggal</h3>
               </div>
               
               <div class="calendar-container">
@@ -444,7 +451,7 @@
   class="fixed inset-0 flex items-center justify-center z-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-lg shadow-2xl text-center p-6 w-90">
+  <div class="bg-white rounded-lg shadow-2xl text-center p-4 md:p-6 w-11/12 max-w-md mx-4">
       <div class="text-center">
         <i class="fas fa-calendar-check text-[#2D4480] text-4xl mb-4"></i>
         <h2 class="text-[#2D4480] font-semibold text-lg mb-2">
@@ -471,7 +478,7 @@
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-lg p-6 w-80 shadow-lg">
+  <div class="bg-white rounded-lg p-4 md:p-8 w-11/12 max-w-lg mx-4 shadow-lg">
     <div class="text-center">
       <!-- Icon berubah berdasarkan status check-in -->
       <i 
@@ -546,7 +553,7 @@
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-xl p-6 w-80 shadow-lg">
+  <div class="bg-white rounded-xl p-8 w-95 shadow-lg">
     <div class="text-center">
       <i class="fas fa-exclamation-triangle text-[#E53935] text-4xl mb-4"></i>
       
@@ -586,7 +593,7 @@
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
 >
-  <div class="bg-white rounded-xl p-6 w-96 shadow-lg">
+  <div class="bg-white rounded-xl p-4 md:p-6 w-11/12 max-w-md mx-4 shadow-lg">
     <div class="text-center">
       <i class="fas fa-exclamation-triangle text-[#FF8A00] text-4xl mb-4"></i>
       
@@ -1133,5 +1140,31 @@ const viewHistory = () => {
 .bg-white.rounded-lg {
   animation: slideIn 0.3s ease-out;
 }
+
+/* Responsive breakpoints tambahan */
+@media (max-width: 640px) {
+  .calendar-container {
+    font-size: 14px;
+  }
+  
+  .calendar-container .flatpickr-calendar {
+    max-width: 100%;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Modal full width di mobile kecil */
+  .fixed.inset-0 .bg-white {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+}
+.sidebar {
+  flex: 0 0 250px; /* Adjust based on your design */
+  /* Example for fixed width */
+}
+
 
 </style>

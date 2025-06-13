@@ -1,21 +1,7 @@
 <template>
   <aside class="bg-white w-64 flex flex-col text-gray-700 text-sm font-sans shadow-xl border-r border-gray-100">
-
-        <!-- Logo Section -->
-    <div class="px-6 py-5 border-b border-gray-100">
-      <div class="flex items-center space-x-3">
-        <!-- Logo Klinik -->
-        <div class="w-10 h-10 rounded-lg overflow-hidden">
-          <img src="/images/logo-klinik.png" alt="Logo Klinik" class="w-full h-full object-contain"/>
-        </div>
-        <div>
-          <h2 class="text-lg font-bold text-[#2A4482]">Klinik Dr. Reni</h2>
-          <p class="text-xs text-gray-500">Klinik Umum</p>
-        </div>
-      </div>
-    </div>
     <!-- Patient Info -->
-    <div class="px-6 py-4 border-b border-gray-100">
+    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
       <div class="flex items-center space-x-3">
         <div class="w-6 flex justify-center">
           <i class="fas text-[#2A4482] fa-circle-user text-2xl transition-transform group-hover:scale-110"></i>
@@ -51,7 +37,7 @@
         <div class="w-6 flex justify-center">
           <i class="fas fa-history text-lg transition-transform group-hover:scale-110"></i>
         </div>
-        <span class="font-medium">Riwayat Janji</span>
+        <span class="font-medium">Riwayat Janji Temu</span>
         <div v-if="isActive('/riwayat-janji-temu')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
       
@@ -75,23 +61,10 @@
         :class="isActive('/riwayat-resep-obat') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
         <div class="w-6 flex justify-center">
-          <i class="fas fa-file-medical-alt text-lg transition-transform group-hover:scale-110"></i>
+          <i class="fas fa-pills text-lg transition-transform group-hover:scale-110"></i>
         </div>
         <span class="font-medium">Resep Obat</span>
         <div v-if="isActive('/riwayat-resep-obat')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
-      </Link>
-      
-      <!-- Konfirmasi Janji Temu -->
-      <Link 
-        href="/jadwalkonsultasi" 
-        class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
-        :class="isActive('/jadwalkonsultasi') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
-      >
-        <div class="w-6 flex justify-center">
-          <i class="fas fa-calendar-check text-lg transition-transform group-hover:scale-110"></i>
-        </div>
-        <span class="font-medium">Jadwal Konsultasi</span>
-        <div v-if="isActive('/jadwalkonsultasi')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
 
       <!-- Spacer untuk push logout ke bawah -->

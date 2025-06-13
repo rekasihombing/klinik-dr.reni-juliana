@@ -37,7 +37,7 @@
             <button 
               v-if="!hasRekamMedis" 
               @click="handleTambahRekamMedisClick" 
-              class="bg-[#34C759] text-white text-xs rounded px-3 py-1 shadow-md hover:bg-green-700 transition" 
+              class="bg-[#34C759] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm hover:bg-green-700" 
               type="button"
             >
               <span>Tambah Rekam Medis</span>
@@ -58,7 +58,7 @@
           <button
             v-if="status === 'dikonfirmasi'"
             @click="mulaiKonsultasi"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm transition"
+            class="bg-[#3F86D0] hover:bg-[#3B59A1] text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm transition"
             type="button"
           >
             <span>Mulai Konsultasi</span>

@@ -44,16 +44,16 @@
       
       <!-- Pasien -->
       <Link 
-        href="/tambahrekammedis/1" 
+        href="/Pasien" 
         class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
-        :class="isActive('/tambahrekammedis/1') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
+        :class="isActive('/Pasien') ? 'bg-gradient-to-r from-[#3674B5] to-[#4A90E2] text-white shadow-lg' : 'hover:bg-gray-50 text-gray-700 hover:text-[#3674B5]'"
       >
         <div class="w-6 flex justify-center">
           <i class="fas fa-user-injured text-lg transition-transform group-hover:scale-110"></i>
         </div>
         <span class="font-medium">Pasien</span>
-        <div v-if="isActive('/tambahrekammedis/1')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
-      </Link>
+        <div v-if="isActive('/Pasien')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
+      </Link>
 
       <!-- Janji Temu -->
       <Link 

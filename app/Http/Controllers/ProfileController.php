@@ -43,7 +43,7 @@ class ProfileController extends Controller
 
         return Inertia::render('pasien/ProfilPasien', [
             'patientName' => $user->name,
-            'clinicName' => 'Nama Klinik Anda', // Sesuaikan dengan klinik Anda
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung', // Sesuaikan dengan klinik Anda
             'patientData' => $patientData
         ]);
     }

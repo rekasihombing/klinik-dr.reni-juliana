@@ -60,10 +60,10 @@
                     :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
                     class="border-b border-gray-200 hover:bg-blue-50 transition-colors"
                   >
-                    <td class="px-6 py-4 text-gray-800">{{ appointment.pasien_id }}</td>
-                    <td class="px-6 py-4 text-gray-800">{{ appointment.tanggal }}</td>
-                    <td class="px-6 py-4 text-gray-800">{{ appointment.jam_konsultasi }}</td>
-                    <td class="px-6 py-4 text-gray-800">{{ appointment.keluhan }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-900">{{ appointment.pasien_id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-700">{{ appointment.tanggal }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-800">{{ appointment.jam_konsultasi }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-600">{{ appointment.keluhan }}</td>
                     <td class="px-6 py-4">
                     <button 
                       @click="showDetail(appointment)"
