@@ -11,7 +11,7 @@ class StaffSeeder extends Seeder
     public function run()
     {
         $userId = DB::table('users')->insertGetId([
-            'email' => 'staff@mail.com',
+            'email' => 'staff@gmail.com',
             'password' => Hash::make('staff123'),
             'role' => 'staff',
             'created_at' => now(),

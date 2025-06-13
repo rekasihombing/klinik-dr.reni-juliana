@@ -49,7 +49,7 @@ class Tagihan extends Model
     // Relasi ke Pasien
     public function pasien(): BelongsTo
     {
-        return $this->belongsTo(Pasien::class, 'pasien_id');
+        return $this->belongsTo(Patient::class, 'pasien_id');
     }
 
     // Accessor contoh format subtotal

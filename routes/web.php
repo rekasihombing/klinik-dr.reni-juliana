@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -31,20 +32,13 @@ use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\DaftarPembayaranController;
 use App\Http\Controllers\RiwayatResepObatController;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
-
-
-    Route::get('/rekam-medis/{rekamMedis}/tindakan/create', [TindakanController::class, 'create'])->name('tindakan.create');
-
-    // Menyimpan tindakan baru untuk rekam medis tertentu
-    Route::post('/rekam-medis/{rekamMedis}/tindakan', [TindakanController::class, 'store'])->name('tindakan.store');
-
-Route::get('/tagihan', function () {
-    return Inertia::render('staff/Tagihan');
-})->name('tagihan');
 
 Route::get('/login', function () {
     return Inertia::render('auth/Login');
@@ -54,7 +48,43 @@ Route::get('/register', function () {
     return Inertia::render('auth/Register');
 });
 
+// PERBAIKAN: Route register dengan redirect ke verifikasi
 Route::post('/register', [RegisteredUserController::class, 'store']);
+
+// VERIFIKASI EMAIL ROUTES - PERBAIKAN
+// Pastikan route ini ada
+Route::get('/email/verify', function () {
+    return Inertia::render('Auth/VerifyEmail', [
+        'status' => session('status')
+    ]);
+})->middleware('auth')->name('verification.notice');
+
+// 2. Handle link verifikasi email - PERBAIKAN
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    
+    // Trigger verified event
+    event(new Verified($request->user()));
+    
+    // Redirect ke dashboard dengan pesan sukses
+    return redirect()->intended(route('dashboard'))->with('verified', true);
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// 3. Resend verification email - PERBAIKAN
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+// DASHBOARD - dengan middleware verified
+Route::middleware(['auth', 'verified'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
+// ... sisa routes Anda tetap sama ...
+
+Route::get('/tagihan', function () {
+    return Inertia::render('staff/Tagihan');
+})->name('tagihan');
 
 Route::post('/contact', [FaqController::class, 'store']);   
 
@@ -65,9 +95,11 @@ Route::get('/kontak', function () {
 Route::post('/kontak', [FaqController::class, 'store']);   
 
 //Staff
-    Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff');
-    Route::patch('/appointment/{id}/status', [StaffDashboardController::class, 'updateStatus'])->name('appointment.status');
-    Route::post('/appointment/{id}/queue', [StaffDashboardController::class, 'generateQueueNumber'])->name('appointment.queue');
+Route::get('/dashboardstaff', [StaffDashboardController::class, 'index'])->name('dashboardstaff');
+Route::patch('/appointment/{id}/status', [StaffDashboardController::class, 'updateStatus'])->name('appointment.status');
+Route::post('/appointment/{id}/queue', [StaffDashboardController::class, 'generateQueueNumber'])->name('appointment.queue');
+
+// ... (sisa routes Anda)
 Route::get('/pendaftaran', [OfflineBookingController::class, 'create'])->name('pendaftaran.form');
 Route::post('/simpanpendaftar', [OfflineBookingController::class, 'store'])->name('pendaftaran.store');
 Route::get('/check-nik/{nik}', [OfflineBookingController::class, 'checkNik'])->name('check-nik');
@@ -107,7 +139,25 @@ Route::get('/schedule-exceptions', [ScheduleExceptionController::class, 'index']
 
 
 //Pasien
-Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+// Menampilkan view minta verifikasi
+Route::get('/email/verify', function () {
+    return Inertia::render('Auth/VerifyEmail');
+})->middleware('auth')->name('verification.notice');
+
+// Proses link verifikasi email
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); // Menandai email sebagai verified
+    return inertia::render('/dashboard'); // Arahkan ke halaman setelah verifikasi
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Kirim ulang email verifikasi
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::middleware(['auth', 'verified'])->get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 
 Route::middleware(['auth'])->get('/janjitemu', function () {
@@ -262,14 +312,23 @@ Route::middleware(['auth'])->group(function () {
     */
 });
 
-// route janji-temu, laporan-operasional, laporan keuangan
 Route::middleware(['auth'])->group(function () {
-    Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
-    Route::get('/dokter.Laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('dokter.laporan-operasional');
-    Route::get('/staff.Laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('staff.laporan-operasional');
-    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index']);
-});
+    // Route untuk halaman laporan keuangan
+    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
+        ->name('laporan-keuangan.index');
+    
+    // Route untuk download PDF
+    Route::post('/laporan-keuangan/download-pdf', [LaporanKeuanganController::class, 'downloadPDF'])
+        ->name('laporan-keuangan.download-pdf');
+    
+    // Route untuk mendapatkan detail transaksi (opsional untuk AJAX)
+    Route::get('/laporan-keuangan/detail-transaksi', [LaporanKeuanganController::class, 'getDetailTransaksi'])
+        ->name('laporan-keuangan.detail-transaksi');
 
+        Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
+     Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index']);
+});
+Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 Route::put('/appointment/{id}/mulai-konsultasi', [AppointmentController::class, 'mulaiKonsultasi'])
     ->name('appointment.mulai-konsultasi');
 
@@ -357,6 +416,37 @@ Route::middleware(['auth'])->group(function () {
             ->where('rekamMedisId', '[0-9]+');
     });
 });
+
+
+// Forgot Password Routes
+// Route::middleware('guest')->group(function () {
+//     // Show forgot password form
+//     Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
+//         ->name('password.request');
+    
+//     // Handle forgot password form submission
+//     Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])
+//         ->name('password.email');
+    
+//     // Show reset password form
+//     Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])
+//         ->name('password.reset');
+    
+//     // Handle reset password form submission
+//     Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])
+//         ->name('password.update');
+// });
+
+// // Example of other auth routes that you might need
+// Route::middleware('guest')->group(function () {
+//     Route::get('/login', function () {
+//         return Inertia::render('Auth/Login');
+//     })->name('login');
+    
+//     Route::get('/register', function () {
+//         return Inertia::render('Auth/Register');
+//     })->name('register');
+// });
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

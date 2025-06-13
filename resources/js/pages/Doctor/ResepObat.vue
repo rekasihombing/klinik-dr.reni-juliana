@@ -153,29 +153,39 @@
                             </div>
                           </div>
 
-                          <!-- Tanggal Mulai -->
-                          <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                              Tanggal Mulai *
-                            </label>
-                            <input 
-                              type="date" 
-                              v-model="item.tanggal_mulai" 
-                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-700"
-                            />
-                          </div>
+                         <!-- Tanggal Mulai -->
+<div>
+  <label class="block text-sm font-medium text-gray-700 mb-2">
+    Tanggal Mulai *
+  </label>
+  <input 
+    type="date" 
+    v-model="item.tanggal_mulai" 
+    @change="validateDates(index)"
+    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-700"
+  />
+</div>
 
-                          <!-- Tanggal Berakhir -->
-                          <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                              Tanggal Berakhir *
-                            </label>
-                            <input 
-                              type="date" 
-                              v-model="item.tanggal_terakhir" 
-                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-700"
-                            />
-                          </div>
+<!-- Tanggal Berakhir -->
+<div>
+  <label class="block text-sm font-medium text-gray-700 mb-2">
+    Tanggal Berakhir *
+  </label>
+  <input 
+    type="date" 
+    v-model="item.tanggal_terakhir" 
+    :min="getMinEndDate(index)"
+    @change="validateDates(index)"
+    :class="[
+      'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-700',
+      dateValidationErrors[index] ? 'border-red-300 bg-red-50' : 'border-gray-300'
+    ]"
+  />
+  <div v-if="dateValidationErrors[index]" class="mt-2 text-xs text-red-600 flex items-center">
+    <i class="fas fa-exclamation-triangle mr-1"></i>
+    {{ dateValidationErrors[index] }}
+  </div>
+</div>
 
                           <!-- Catatan -->
                           <div>
@@ -536,6 +546,7 @@ function updateObatName(index) {
   }
 }
 
+// Update fungsi validateForm untuk include validasi tanggal
 function validateForm() {
   if (activeTab.value === 'klinik') {
     if (hasStokTidakCukup.value) {
@@ -551,12 +562,20 @@ function validateForm() {
       return false;
     }
 
+    // Validasi tanggal
+    const hasDateErrors = dateValidationErrors.value.some(error => error !== null);
+    if (hasDateErrors) {
+      incompleteMessage.value = 'Pastikan tanggal berakhir lebih dari tanggal mulai untuk semua obat';
+      return false;
+    }
+
     const isValid = prescriptionItems.value.every(item => {
       const jumlahValue = typeof item.jumlah === 'string' ? parseInt(item.jumlah) : item.jumlah;
       const jumlahValid = !isNaN(jumlahValue) && jumlahValue > 0;
       
+      // Enhanced date validation
       const tanggalValid = item.tanggal_mulai && item.tanggal_terakhir && 
-                          new Date(item.tanggal_mulai) <= new Date(item.tanggal_terakhir);
+                          new Date(item.tanggal_terakhir) > new Date(item.tanggal_mulai);
       
       const isObatValid = (item.obat_id !== null && item.obat_id !== '') || 
                          (item.nama_obat?.trim().length > 0);
@@ -572,7 +591,7 @@ function validateForm() {
     });
 
     if (!isValid) {
-      incompleteMessage.value = 'Mohon lengkapi nama obat, dosis, dan tanggal untuk semua item resep dari klinik';
+      incompleteMessage.value = 'Mohon lengkapi nama obat, dosis, dan tanggal yang valid untuk semua item resep dari klinik';
       return false;
     }
   } else {
@@ -791,6 +810,52 @@ async function savePrescription() {
     isSubmitting.value = false;
   }
 }
+
+// Tambahkan computed property untuk validasi tanggal
+const dateValidationErrors = computed(() => {
+  return prescriptionItems.value.map((item, index) => {
+    if (!item.tanggal_mulai || !item.tanggal_terakhir) {
+      return null;
+    }
+    
+    const startDate = new Date(item.tanggal_mulai);
+    const endDate = new Date(item.tanggal_terakhir);
+    
+    if (endDate <= startDate) {
+      return 'Tanggal berakhir harus setelah tanggal mulai';
+    }
+    
+    return null;
+  });
+});
+
+// Fungsi untuk mendapatkan tanggal minimum untuk tanggal terakhir
+function getMinEndDate(index) {
+  const item = prescriptionItems.value[index];
+  if (!item.tanggal_mulai) return getCurrentDate();
+  
+  const startDate = new Date(item.tanggal_mulai);
+  startDate.setDate(startDate.getDate() + 1); // Minimal 1 hari setelah tanggal mulai
+  return startDate.toISOString().split('T')[0];
+}
+
+// Fungsi untuk validasi tanggal individual
+function validateDates(index) {
+  const item = prescriptionItems.value[index];
+  
+  if (item.tanggal_mulai && item.tanggal_terakhir) {
+    const startDate = new Date(item.tanggal_mulai);
+    const endDate = new Date(item.tanggal_terakhir);
+    
+    if (endDate <= startDate) {
+      // Reset tanggal terakhir jika tidak valid
+      const minEndDate = new Date(startDate);
+      minEndDate.setDate(minEndDate.getDate() + 1);
+      item.tanggal_terakhir = minEndDate.toISOString().split('T')[0];
+    }
+  }
+}
+
 
 // Update checkStok method to use API
 function checkStok(index) {
