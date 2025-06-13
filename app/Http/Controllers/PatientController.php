@@ -10,7 +10,7 @@ use Inertia\Inertia;
 
 class PatientController extends Controller
 {
-public function index()
+public function index(Request $request)
 {
     $pasiens = Patient::all();
 
@@ -20,6 +20,18 @@ public function index()
     return Inertia::render('staff/PasienList', [
         'pasiens' => $pasiens
     ]);
+
+        if ($request->routeIs('staff.pasien')) {
+        return Inertia::render('staff/PasienList', [
+            'pasiens' => $pasiens
+        ]);
+    }
+
+    if ($request->routeIs('dokter.pasien')) {
+        return Inertia::render('doctor/PasienList', [
+            'pasiens' => $pasiens
+        ]);
+    }
 }
 
 

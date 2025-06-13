@@ -22,7 +22,7 @@ class Patient extends Model
         'alamat',
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function user()
 {

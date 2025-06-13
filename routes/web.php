@@ -86,7 +86,8 @@ Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
 
-Route::get('/Pasien', [PatientController::class, 'index'])->name('patients.index');
+Route::get('/staff.Pasien', [PatientController::class, 'index'])->name('patients.index');
+Route::get('/dokter.Pasien', [PatientController::class, 'index'])->name('patients.index');
 
 Route::get('/patients/{id}', [DetailPasienController::class, 'show'])->name('patients.show');
 
