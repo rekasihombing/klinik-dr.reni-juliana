@@ -67,7 +67,7 @@
           </div>
 
           <div class="mb-4 text-right text-sm text-gray-500">
-            <a href="#" class="hover:underline">Lupa kata sandi?</a>
+            <a href="/forgot-password" class="hover:underline">Lupa kata sandi?</a>
           </div>
 
           <button type="submit"

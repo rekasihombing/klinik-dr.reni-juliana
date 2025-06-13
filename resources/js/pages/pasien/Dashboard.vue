@@ -172,13 +172,6 @@
 
 <!-- Status: Menunggu Konfirmasi (Setelah Check-in) -->
 <template v-else-if="nextAppointment.status === 'menunggu' && isCheckedIn">
-  <!-- Header dengan Icon -->
-  <div class="flex items-center gap-2 mb-3">
-    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-      <i class="fas fa-clock text-orange-600 text-sm"></i>
-    </div>
-    <h3 class="text-sm font-semibold text-gray-800">Menunggu Konfirmasi</h3>
-  </div>
 
   <!-- Tanggal dan Waktu -->
   <div class="mb-3">
@@ -218,13 +211,6 @@
 
 <!-- Status: Dikonfirmasi -->
 <template v-else-if="nextAppointment.status === 'dikonfirmasi'">
-  <!-- Header dengan Icon -->
-  <div class="flex items-center gap-2 mb-3">
-    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-      <i class="fas fa-check-circle text-green-600 text-sm"></i>
-    </div>
-    <h3 class="text-sm font-semibold text-gray-800">Siap Konsultasi</h3>
-  </div>
 
   <!-- Tanggal dan Waktu -->
   <div class="mb-3">
