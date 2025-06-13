@@ -108,101 +108,298 @@
 
   <!-- Content berdasarkan status -->
   <template v-if="nextAppointment && nextAppointment.status">
-    <!-- Status: Menunggu -->
-    <template v-if="nextAppointment.status === 'menunggu'">
-      <div class="space-y-2 mb-4">
-        <div class="text-base font-bold text-[#1B2A4D]">
-          {{ formatDate(nextAppointment.tanggal) }}
-        </div>
-        <div class="text-base font-semibold" :class="canCheckInToday && !isCheckedIn ? 'text-[#47B536]' : 'text-[#FF8A00]'">
-          {{ nextAppointment.jam_konsultasi }} WIB
-        </div>
-        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
-             :class="canCheckInToday && !isCheckedIn ? 'bg-[#E8F5E8] text-[#47B536] border border-[#47B536]/20' : 'bg-[#FFF4E6] text-[#FF8A00] border border-[#FF8A00]/20'">
-          <i class="fas fa-clock mr-2"></i>
-          Menunggu Konfirmasi
-        </div>
-      </div>
-      
-      <!-- Check-in section dengan warna hijau jika bisa check-in hari ini -->
-      <div v-if="canCheckInToday && !isCheckedIn" class="bg-green-50 rounded-lg p-3 mb-3 cursor-pointer hover:bg-green-100 transition">
-        <div class="text-xs font-medium text-[#47B536] flex items-center">
-          <i class="fas fa-mouse-pointer mr-2"></i>
-          Check-in di sini
-        </div>
-      </div>
+<!-- Status: Menunggu (Sebelum Check-in) -->
+<template v-if="nextAppointment.status === 'menunggu' && !isCheckedIn">
 
-      <div v-else class="bg-orange-50 rounded-lg p-3 mb-3">
-        <div class="text-xs font-medium text-[#FF8A00] flex items-center">
-          <i class="fas fa-hourglass-half mr-2"></i>
-          Janji temu Anda sedang menunggu konfirmasi dari klinik
-        </div>
-      </div>
 
-      <button
-        @click.stop="handleCancelAppointmentFromModal"
-        :disabled="cancelLoading"
-        class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white text-sm rounded-lg px-4 py-2 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
-        style="cursor:pointer;"
-      >
-        {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
-      </button>
-    </template>
+  <!-- Tanggal dan Waktu -->
+  <div class="mb-3">
+    <div class="text-lg font-bold text-gray-900 mb-1">
+      {{ formatDate(nextAppointment.tanggal) }}
+    </div>
+    <div class="text-base font-semibold text-blue-600">
+      {{ nextAppointment.jam_konsultasi }} WIB
+    </div>
+  </div>
 
-    <!-- Status: Dikonfirmasi -->
-    <template v-else-if="nextAppointment.status === 'dikonfirmasi'">
-      <div class="space-y-2 mb-4">
-        <div class="text-base font-bold text-[#1B2A4D]">
-          {{ formatDate(nextAppointment.tanggal) }}
-        </div>
-        <div class="text-base font-semibold" :class="canCheckInToday && !isCheckedIn ? 'text-[#47B536]' : 'text-[#3674B5]'">
-          {{ nextAppointment.jam_konsultasi }} WIB
-        </div>
-        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
-             :class="canCheckInToday && !isCheckedIn ? 'bg-[#E8F5E8] text-[#47B536] border border-[#47B536]/20' : 'bg-[#E3F2FD] text-[#3674B5] border border-[#3674B5]/20'">
-          <i class="fas fa-check-circle mr-2"></i>
-          Dikonfirmasi
-        </div>
-      </div>
-      
-      <!-- Check-in info berdasarkan tanggal dengan warna hijau -->
-      <div v-if="canCheckInToday && !isCheckedIn" class="bg-green-50 rounded-lg p-3 mb-3 cursor-pointer hover:bg-green-100 transition">
-        <div class="text-xs font-medium text-[#47B536] flex items-center">
-          <i class="fas fa-mouse-pointer mr-2"></i>
-          Check-in di sini (Hari ini adalah hari appointment Anda)
-        </div>
-      </div>
-      
-      <div v-else-if="!canCheckInToday && !isCheckedIn" class="bg-gray-50 rounded-lg p-3 mb-3">
-        <div class="text-xs font-medium text-gray-500 flex items-center">
-          <i class="fas fa-clock mr-2"></i>
-          Check-in akan tersedia pada hari appointment
-        </div>
-      </div>
+  <!-- Status Badge -->
+  <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-200 mb-3">
+    <i class="fas fa-info-circle mr-1"></i>
+    Janji Temu Terjadwal
+  </div>
 
-      <!-- Status Check-in -->
-      <div v-if="isCheckedIn" class="flex items-center text-emerald-600 text-sm font-semibold mb-3">
-        <i class="fas fa-check-circle mr-2"></i>
-        Sudah Check-in
-      </div>
+  <!-- Info Check-in -->
+  <div class="bg-gray-50 rounded-lg p-3 mb-3">
+    <p class="text-gray-600 text-xs">
+      Check-in hanya bisa dilakukan pada hari 
+      <span class="font-medium">{{ formatDate(nextAppointment.tanggal) }}</span>.
+    </p>
+  </div>
 
-      <!-- Tombol Batalkan - Hanya jika belum check-in -->
-      <button
-        v-if="!isCheckedIn"
-        @click.stop="handleCancelAppointmentFromModal"
-        :disabled="cancelLoading"
-        class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
-        style="cursor:pointer;"
-      >
-        {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
-      </button>
+  <!-- Tombol Check-in -->
+  <div class="space-y-2">
+    <!-- Button aktif jika hari ini hari H -->
+    <button
+      v-if="canCheckInToday"
+      @click.stop="handleCheckIn"
+      :disabled="checkInLoading"
+      class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+    >
+      <i class="fas fa-check-circle"></i>
+      {{ checkInLoading ? 'Loading...' : 'Check In' }}
+    </button>
 
-      <!-- Pesan jika sudah check-in -->
-      <div v-if="isCheckedIn" class="w-full bg-gray-100 text-gray-500 text-sm rounded-lg px-4 py-2 font-medium text-center">
-        <i class="fas fa-info-circle mr-2"></i>
-        Tidak dapat dibatalkan setelah check-in
+    <!-- Button disabled jika belum hari H -->
+    <button
+      v-else
+      disabled
+      class="w-full bg-gray-200 text-gray-500 font-medium py-2 px-4 rounded-lg cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+    >
+      <i class="fas fa-lock"></i>
+      Check In (Belum Tersedia)
+    </button>
+
+    <!-- Tombol Batalkan -->
+    <button
+      @click.stop="handleCancelAppointmentFromModal"
+      :disabled="cancelLoading"
+      class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+    >
+      {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
+    </button>
+  </div>
+</template>
+
+<!-- Status: Menunggu Konfirmasi (Setelah Check-in) -->
+<template v-else-if="nextAppointment.status === 'menunggu' && isCheckedIn">
+  <!-- Header dengan Icon -->
+  <div class="flex items-center gap-2 mb-3">
+    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+      <i class="fas fa-clock text-orange-600 text-sm"></i>
+    </div>
+    <h3 class="text-sm font-semibold text-gray-800">Menunggu Konfirmasi</h3>
+  </div>
+
+  <!-- Tanggal dan Waktu -->
+  <div class="mb-3">
+    <div class="text-lg font-bold text-gray-900 mb-1">
+      {{ formatDate(nextAppointment.tanggal) }}
+    </div>
+    <div class="text-base font-semibold text-orange-600">
+      {{ nextAppointment.jam_konsultasi }} WIB
+    </div>
+  </div>
+
+  <!-- Status Badge -->
+  <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-600 border border-orange-200 mb-3">
+    <i class="fas fa-hourglass-half mr-1"></i>
+    Menunggu Konfirmasi Staff
+  </div>
+
+  <!-- Status Check-in -->
+  <div class="bg-green-50 rounded-lg p-3 mb-3">
+    <div class="flex items-center text-green-600">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span class="font-medium text-sm">Sudah Check-in</span>
+    </div>
+    <p class="text-green-600 text-xs mt-1">
+      pada {{ formatCheckInTime(nextAppointment.checked_in_at) }}
+    </p>
+  </div>
+
+  <!-- Info -->
+  <div class="bg-gray-100 rounded-lg p-3 text-center">
+    <p class="text-gray-600 text-xs">
+      <i class="fas fa-info-circle mr-1"></i>
+      Tidak dapat dibatalkan setelah check-in
+    </p>
+  </div>
+</template>
+
+<!-- Status: Dikonfirmasi -->
+<template v-else-if="nextAppointment.status === 'dikonfirmasi'">
+  <!-- Header dengan Icon -->
+  <div class="flex items-center gap-2 mb-3">
+    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+      <i class="fas fa-check-circle text-green-600 text-sm"></i>
+    </div>
+    <h3 class="text-sm font-semibold text-gray-800">Siap Konsultasi</h3>
+  </div>
+
+  <!-- Tanggal dan Waktu -->
+  <div class="mb-3">
+    <div class="text-lg font-bold text-gray-900 mb-1">
+      {{ formatDate(nextAppointment.tanggal) }}
+    </div>
+    <div class="text-base font-semibold text-blue-600">
+      {{ nextAppointment.jam_konsultasi }} WIB
+    </div>
+  </div>
+
+  <!-- Status Badge -->
+  <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-600 border border-green-200 mb-3">
+    <i class="fas fa-check-circle mr-1"></i>
+    Dikonfirmasi - Siap Konsultasi
+  </div>
+
+  <!-- Status Check-in jika sudah check-in -->
+  <div v-if="isCheckedIn" class="bg-green-50 rounded-lg p-3 mb-3">
+    <div class="flex items-center text-green-600">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span class="font-medium text-sm">Sudah Check-in</span>
+    </div>
+    <p class="text-green-600 text-xs mt-1">Siap untuk konsultasi dengan dokter</p>
+  </div>
+
+  <!-- Info Check-in jika belum check-in -->
+  <div v-if="!isCheckedIn && !canCheckInToday" class="bg-gray-50 rounded-lg p-3 mb-3">
+    <p class="text-gray-600 text-xs">
+      Check-in hanya bisa dilakukan pada hari 
+      <span class="font-medium">{{ formatDate(nextAppointment.tanggal) }}</span>.
+    </p>
+  </div>
+
+  <!-- Tombol Check-in - Hanya jika belum check-in -->
+  <div v-if="!isCheckedIn" class="space-y-2">
+    <!-- Button aktif jika hari ini hari H -->
+    <button
+      v-if="canCheckInToday"
+      @click.stop="handleCheckIn"
+      :disabled="checkInLoading"
+      class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+    >
+      <i class="fas fa-check-circle"></i>
+      {{ checkInLoading ? 'Loading...' : 'Check In Sekarang' }}
+    </button>
+
+    <!-- Button disabled jika belum hari H -->
+    <button
+      v-else
+      disabled
+      class="w-full bg-gray-200 text-gray-500 font-medium py-2 px-4 rounded-lg cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+    >
+      <i class="fas fa-lock"></i>
+      Check In (Belum Tersedia)
+    </button>
+
+    <!-- Tombol Batalkan - Hanya jika belum check-in -->
+    <button
+      @click.stop="handleCancelAppointmentFromModal"
+      :disabled="cancelLoading"
+      class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+    >
+      {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
+    </button>
+  </div>
+
+  <!-- Info jika sudah check-in -->
+  <div v-if="isCheckedIn" class="bg-gray-100 rounded-lg p-3 text-center">
+    <p class="text-gray-600 text-xs">
+      <i class="fas fa-info-circle mr-1"></i>
+      Tidak dapat dibatalkan setelah check-in
+    </p>
+  </div>
+</template>
+
+<!-- Status: Dikonfirmasi -->
+<template v-else-if="nextAppointment.status === 'dikonfirmasi'">
+  <div class="space-y-2 mb-4">
+    <div class="text-base font-bold text-[#1B2A4D]">
+      {{ formatDate(nextAppointment.tanggal) }}
+    </div>
+    <div class="text-base font-semibold text-[#3674B5]">
+      {{ nextAppointment.jam_konsultasi }} WIB
+    </div>
+    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#E3F2FD] text-[#3674B5] border border-[#3674B5]/20">
+      <i class="fas fa-check-circle mr-2"></i>
+      Dikonfirmasi - Siap Konsultasi
+    </div>
+  </div>
+  
+  <!-- Status Check-in jika sudah check-in -->
+  <div v-if="isCheckedIn" class="flex items-center text-emerald-600 text-sm font-semibold mb-3">
+    <i class="fas fa-check-circle mr-2"></i>
+    Sudah Check-in
+  </div>
+
+  <!-- Check-in section jika belum check-in -->
+  <div v-if="!isCheckedIn" class="mb-3">
+    <!-- Jika bisa check-in hari ini -->
+    <div v-if="canCheckInToday" class="bg-green-50 rounded-lg p-3 cursor-pointer hover:bg-green-100 transition">
+      <div class="text-xs font-medium text-[#47B536] flex items-center">
+        <i class="fas fa-mouse-pointer mr-2"></i>
+        Check-in di sini (Hari ini adalah hari appointment Anda)
       </div>
-    </template>
+    </div>
+    
+    <!-- Jika belum hari H -->
+    <div v-else class="bg-gray-50 rounded-lg p-3">
+      <div class="text-xs font-medium text-gray-500 flex items-center">
+        <i class="fas fa-calendar-clock mr-2"></i>
+        Check-in akan tersedia pada hari appointment
+      </div>
+    </div>
+  </div>
+
+  <!-- Tombol Check-in - Hanya jika belum check-in -->
+  <div v-if="!isCheckedIn" class="mb-3">
+    <!-- Button aktif jika hari ini hari H -->
+    <button
+      v-if="canCheckInToday"
+      @click.stop="handleCheckIn"
+      :disabled="checkInLoading"
+      class="w-full bg-[#47B536] hover:bg-[#449A37] text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+      style="cursor:pointer;"
+    >
+      <i class="fas fa-check-circle"></i>
+      {{ checkInLoading ? 'Loading...' : 'Check In Sekarang' }}
+    </button>
+
+    <!-- Button disabled jika belum hari H -->
+    <button
+      v-else
+      disabled
+      class="w-full bg-gray-300 text-gray-500 font-medium py-2.5 px-6 rounded-lg cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+      title="Check-in hanya dapat dilakukan pada hari appointment"
+    >
+      <i class="fas fa-lock"></i>
+      Check In (Belum Waktunya)
+    </button>
+  </div>
+
+  <!-- Pesan informasi tambahan jika belum hari H dan belum check-in -->
+  <div v-if="!canCheckInToday && !isCheckedIn" class="bg-blue-50 rounded-lg p-3 mb-3">
+    <div class="text-xs font-medium text-blue-600 flex items-center">
+      <i class="fas fa-info-circle mr-2"></i>
+      Check-in dapat dilakukan pada hari appointment ({{ formatDate(nextAppointment.tanggal) }})
+    </div>
+  </div>
+
+  <!-- Info konsultasi siap jika sudah check-in -->
+  <div v-if="isCheckedIn" class="bg-blue-50 rounded-lg p-3 mb-3">
+    <div class="text-xs font-medium text-[#3674B5] flex items-center">
+      <i class="fas fa-user-md mr-2"></i>
+      Anda siap untuk konsultasi dengan dokter
+    </div>
+  </div>
+
+  <!-- Tombol Batalkan - Hanya jika belum check-in -->
+  <button
+    v-if="!isCheckedIn"
+    @click.stop="handleCancelAppointmentFromModal"
+    :disabled="cancelLoading"
+    class="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white font-medium py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-sm"
+    style="cursor:pointer;"
+  >
+    {{ cancelLoading ? 'Loading...' : 'Batalkan Janji Temu' }}
+  </button>
+
+  <!-- Pesan jika sudah check-in -->
+  <div v-if="isCheckedIn" class="w-full bg-gray-100 text-gray-500 text-sm rounded-lg px-4 py-2 font-medium text-center">
+    <i class="fas fa-info-circle mr-2"></i>
+    Tidak dapat dibatalkan setelah check-in
+  </div>
+</template>
 
     <!-- Status: Diproses -->
     <template v-else-if="nextAppointment.status === 'diproses'">
@@ -1024,9 +1221,12 @@ const appointmentIconClass = computed(() => {
     return 'bg-gray-100';
   }
   
-  switch (props.nextAppointment.status) {
+  const status = props.nextAppointment.status;
+  const checkedIn = isCheckedIn.value;
+  
+  switch (status) {
     case 'menunggu':
-      return 'bg-orange-100';
+      return checkedIn ? 'bg-orange-100' : 'bg-blue-100';
     case 'dikonfirmasi':
       return 'bg-blue-100';
     case 'diproses':
@@ -1045,9 +1245,12 @@ const appointmentIcon = computed(() => {
     return 'fas fa-calendar-alt text-gray-500';
   }
   
-  switch (props.nextAppointment.status) {
+  const status = props.nextAppointment.status;
+  const checkedIn = isCheckedIn.value;
+  
+  switch (status) {
     case 'menunggu':
-      return 'fas fa-clock text-[#FF8A00]';
+      return checkedIn ? 'fas fa-clock text-[#FF8A00]' : 'fas fa-calendar-check text-[#3674B5]';
     case 'dikonfirmasi':
       return 'fas fa-calendar-check text-[#3674B5]';
     case 'diproses':
@@ -1066,9 +1269,12 @@ const appointmentTitle = computed(() => {
     return 'Jadwal Konsultasi';
   }
   
-  switch (props.nextAppointment.status) {
+  const status = props.nextAppointment.status;
+  const checkedIn = isCheckedIn.value;
+  
+  switch (status) {
     case 'menunggu':
-      return 'Janji Temu - Menunggu Konfirmasi';
+      return checkedIn ? 'Menunggu Konfirmasi Staff' : 'Janji Temu Terjadwal';
     case 'dikonfirmasi':
       return 'Jadwal Konsultasi Berikutnya';
     case 'diproses':

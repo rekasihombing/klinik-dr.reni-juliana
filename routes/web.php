@@ -262,13 +262,23 @@ Route::middleware(['auth'])->group(function () {
     */
 });
 
-// route janji-temu, laporan-operasional, laporan keuangan
 Route::middleware(['auth'])->group(function () {
-    Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
-    Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index']);
-    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index']);
-});
+    // Route untuk halaman laporan keuangan
+    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
+        ->name('laporan-keuangan.index');
+    
+    // Route untuk download PDF
+    Route::post('/laporan-keuangan/download-pdf', [LaporanKeuanganController::class, 'downloadPDF'])
+        ->name('laporan-keuangan.download-pdf');
+    
+    // Route untuk mendapatkan detail transaksi (opsional untuk AJAX)
+    Route::get('/laporan-keuangan/detail-transaksi', [LaporanKeuanganController::class, 'getDetailTransaksi'])
+        ->name('laporan-keuangan.detail-transaksi');
 
+        Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
+     Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index']);
+});
+Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 Route::put('/appointment/{id}/mulai-konsultasi', [AppointmentController::class, 'mulaiKonsultasi'])
     ->name('appointment.mulai-konsultasi');
 
