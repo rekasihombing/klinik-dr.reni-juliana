@@ -1,12 +1,13 @@
-```vue
 <template>
-  <div class="min-h-screen bg-gray-50 font-sans text-gray-800 flex">
+  <Head title="Tambah Obat" />
+  
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
-    <SidebarStaff class="w-64 bg-white shadow-md" />
+    <SidebarStaff class="w-64 bg-white shadow-lg" />
 
     <!-- Main content -->
-    <main class="flex-1">
-      <!-- Header Section -->
+    <main class="flex-1 p-6">
+      <!-- Top bar -->
       <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
       <!-- Content Container -->
@@ -16,11 +17,6 @@
           <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-[#3674B5] rounded-xl flex items-center justify-center shadow-lg">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2"></path>
-                  </svg>
-                </div>
                 <h1 class="text-lg font-bold text-[#3674B5]">Daftar Pembayaran Pasien</h1>
               </div>
               <div class="flex items-center gap-3">
@@ -50,14 +46,14 @@
                     v-model="form.search"
                     type="text"
                     placeholder="Cari nama pasien atau nomor tagihan..."
-                    class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
                   />
                   <!-- Clear search button -->
                   <button
                     v-if="form.search"
                     @click="clearSearch"
                     type="button"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors bg-white"
                   >
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -71,7 +67,7 @@
                 <select
                   v-model="form.status"
                   @change="applyFilters"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
                 >
                   <option value="">Semua Status</option>
                   <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
@@ -85,7 +81,7 @@
                   v-model="form.start_date"
                   @change="applyFilters"
                   type="date"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
                 />
               </div>
               <div>
@@ -93,7 +89,7 @@
                   v-model="form.end_date"
                   @change="applyFilters"
                   type="date"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
                 />
               </div>
             </form>

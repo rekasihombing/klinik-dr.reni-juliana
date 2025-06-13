@@ -1,14 +1,14 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
+  <Head title="Tambah Obat" />
+  
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
-    <SidebarStaff class="w-64 bg-white shadow-md" />
-    
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col">
-      <!-- Header -->
-      <div class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-t-lg p-4 text-white">
-        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
-      </div>
+    <SidebarStaff class="w-64 bg-white shadow-lg" />
+
+    <!-- Main content -->
+    <main class="flex-1 p-6">
+      <!-- Top bar -->
+      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
       
       <!-- Main Content Area -->
       <div class="flex-1 px-6 pb-6">
@@ -126,12 +126,12 @@
                   <td class="px-3 py-3 whitespace-nowrap text-center">
                     <div class="flex items-center justify-center space-x-1">
                       <button
-  @click="viewPatient(pasien)"
-  :title="`Lihat detail ${pasien.nama_lengkap}`"
-  class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 rounded transition-all"
->
-  <i class="fas fa-eye text-xs"></i>
-</button>
+                        @click="viewPatient(pasien)"
+                        :title="`Lihat detail ${pasien.nama_lengkap}`"
+                        class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 rounded transition-all"
+                      >
+                        <i class="fas fa-eye text-xs"></i>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -186,7 +186,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 

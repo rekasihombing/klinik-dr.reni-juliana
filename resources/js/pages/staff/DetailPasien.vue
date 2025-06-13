@@ -1,11 +1,14 @@
 <template>
-    <div class="flex min-h-screen bg-gray-50">
-  <SidebarStaff class="w-64 bg-white shadow-md" />
-  <div class="bg-white font-sans min-h-screen">
-    <div class="max-w-4xl mx-auto p-4 pb-8">
-      <!-- Header with breadcrumb and datetime -->
-              <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+  <Head title="Tambah Obat" />
+  
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
+    <!-- Sidebar -->
+    <SidebarStaff class="w-64 bg-white shadow-lg" />
 
+    <!-- Main content -->
+    <main class="flex-1 p-6">
+      <!-- Top bar -->
+      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
       <!-- Main content card -->
       <div class="border border-slate-300 rounded-md shadow-sm p-6 mb-6" >
         <h2 class="font-bold text-lg mb-4 text-black">Detail Pasien</h2>
@@ -100,8 +103,7 @@
           <p>Konten Rekam Medis dan Resep Obat akan ditampilkan di sini.</p>
         </div>
       </div>
-    </div>
-  </div>
+    </main>
   </div>
 </template>
 

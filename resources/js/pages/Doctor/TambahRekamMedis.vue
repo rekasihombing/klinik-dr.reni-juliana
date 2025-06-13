@@ -33,7 +33,7 @@
             </div>
 
             <div class="flex justify-between text-[13px] mb-2">
-              <div>{{ clinicName || 'Klinik Praktek Dr. Rena Juliana Manurung' }}</div>
+              <div>{{ clinicName || 'Klinik Praktek Dr. Reni Juliana Manurung' }}</div>
               <div>No. Rekam Medis : {{ patientData.noRekamMedis || generateRecordNumber() }}</div>
             </div>
 

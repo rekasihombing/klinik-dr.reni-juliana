@@ -1,31 +1,31 @@
 <template>
   <div class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
-    <header
-      class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-white/20 sticky top-0 z-40"
-    >
-      <div class="font-semibold text-[#2D4480] text-lg">{{ clinicName }}</div>
-      <div class="flex items-center space-x-2 cursor-pointer hover:bg-blue-50 px-4 py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
-        <span class="font-medium">{{ patientName }}</span>
-        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-          <i class="fas fa-user text-white text-sm"></i>
-        </div>
+  <header class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-4 md:px-6 py-3 md:py-4 text-[#1B2A4D] text-xs md:text-sm font-sans border-b border-white/20 sticky top-0 z-40">
+    <div class="flex items-center space-x-2 md:space-x-3">
+      <img 
+        src="/images/logo-klinik.png" 
+        alt="Logo Klinik" 
+        class="w-8 h-8 md:w-10 md:h-10 object-contain"
+      />
+      <div class="font-semibold text-[#2D4480] text-sm md:text-base">{{ clinicName }}</div>
+    </div>
+    <div class="flex items-center space-x-1 md:space-x-2 cursor-pointer hover:bg-blue-50 px-2 md:px-4 py-1 md:py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
+      <span class="font-medium text-xs md:text-sm hidden sm:inline">{{ patientName }}</span>
+      <span class="font-medium text-xs md:text-sm sm:hidden">{{ patientName.split(' ')[0] }}</span>
+      <div class="w-6 h-6 md:w-8 md:h-8 bg-blue-700 rounded-full flex items-center justify-center">
+        <i class="fas fa-user text-white text-xs md:text-sm"></i>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar -->
       <Sidebar :patient-name="patientName" />
 
-      <main class="flex-grow p-6">
+      <main class="bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] flex-1 p-4 md:p-6 lg:p-10">
         <div class="max-w-7xl mx-auto">
-          <!-- Header Section -->
-          <div class="mb-6">
-            <h1 class="text-2xl font-bold text-[#2A4482] mb-2">Riwayat Rekam Medis</h1>
-            <p class="text-gray-600">Riwayat kunjungan dan rekam medis Anda</p>
-          </div>
 
-          <!-- Search and Filter Bar -->
-          <div class="bg-white rounded-xl shadow-sm p-4 mb-6 border border-white/50">
+
             <div class="flex flex-col md:flex-row gap-4 items-center">
               <div class="relative flex-1">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -33,13 +33,13 @@
                   v-model="searchQuery"
                   type="text" 
                   placeholder="Cari berdasarkan tanggal atau keluhan..."
-                  class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
                 >
               </div>
               <div class="flex gap-3">
                 <select 
                   v-model="statusFilter"
-                  class="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
+                  class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
                 >
                   <option value="">Semua Status</option>
                   <option value="selesai">Selesai</option>
@@ -47,7 +47,7 @@
                 </select>
                 <select 
                   v-model="sortBy"
-                  class="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
+                  class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
                 >
                   <option value="date-desc">Terbaru</option>
                   <option value="date-asc">Terlama</option>
@@ -139,18 +139,11 @@
               <i class="fas fa-file-medical text-gray-400 text-2xl"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">
-              {{ searchQuery || statusFilter ? 'Tidak Ada Hasil Ditemukan' : 'Belum Ada Riwayat Rekam Medis' }}
+              {{ searchQuery || statusFilter ? 'Tidak Ada Hasil Ditemukan' : 'Belum Ada Riwayat Janji Temu' }}
             </h3>
             <p class="text-gray-600 mb-4 max-w-md mx-auto text-sm">
-              {{ searchQuery || statusFilter ? 'Coba ubah filter pencarian Anda.' : 'Riwayat rekam medis dari kunjungan yang telah selesai akan muncul di sini.' }}
+              {{ searchQuery || statusFilter ? 'Coba ubah filter pencarian Anda.' : 'Riwayat janji temu dari kunjungan yang telah selesai akan muncul di sini.' }}
             </p>
-            <button 
-              v-if="!searchQuery && !statusFilter"
-              class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg text-sm"
-            >
-              Buat Janji Temu
-            </button>
-          </div>
         </div>
       </main>
     </div>
@@ -166,7 +159,7 @@
                 <i class="fas fa-file-medical text-white text-sm"></i>
               </div>
               <div>
-                <h2 class="text-lg font-bold">Detail Rekam Medis</h2>
+                <h2 class="text-lg font-bold">Detail Janji Temu</h2>
                 <p class="text-indigo-100 text-sm">{{ selectedAppointment?.date }} • {{ selectedAppointment?.time }}</p>
               </div>
             </div>
