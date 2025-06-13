@@ -36,11 +36,12 @@ class DetailPasienController extends Controller
             'appointmentData' => $appointments->map(function ($a) {
                 return [
                     'id' => $a->id,
+                    'queue_number' => $a->antrian ?? 'Belum tersedia', // Tambahkan nomor antrian
                     'date' => $a->tanggal,
                     'time' => $a->jam_konsultasi,
                     'complaint' => $a->keluhan,
                     'status' => $a->status,
-                    'notes' => $a->catatan ?? '', // pastikan field ini ada di tabel
+                    'notes' => $a->catatan ?? 'Tidak ada catatan',
                 ];
             }),
         ]);

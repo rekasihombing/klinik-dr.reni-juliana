@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class DaftarJanjiTemu extends Controller
 {
@@ -16,12 +17,15 @@ class DaftarJanjiTemu extends Controller
      */
     public function index(Request $request)
     {
+        Log::info('Fetching appointments with filters:', $request->all());
+
         // Build query with filters
         $query = Appointment::with(['pasien', 'dokter']);
 
         // Apply search filter
         if ($request->filled('search')) {
             $search = $request->get('search');
+            Log::info("Applying search filter: {$search}");
             $query->whereHas('pasien', function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', '%' . $search . '%');
             });
@@ -29,37 +33,58 @@ class DaftarJanjiTemu extends Controller
 
         // Apply date range filter
         if ($request->filled('date_from')) {
-            $query->whereDate('tanggal', '>=', $request->get('date_from'));
+            $date_from = $request->get('date_from');
+            Log::info("Applying date_from filter: {$date_from}");
+            $query->whereDate('tanggal', '>=', $date_from);
         }
 
         if ($request->filled('date_to')) {
-            $query->whereDate('tanggal', '<=', $request->get('date_to'));
+            $date_to = $request->get('date_to');
+            Log::info("Applying date_to filter: {$date_to}");
+            $query->whereDate('tanggal', '<=', $date_to);
         }
 
-        // Apply status filter
+        // Apply status filter - FIXED VERSION
         if ($request->filled('status')) {
-            $query->where('status', $request->get('status'));
+            $status = $request->get('status');
+            Log::info("Applying status filter: {$status}");
+            
+            // Define valid statuses
+            $validStatuses = ['menunggu', 'dikonfirmasi', 'diproses', 'selesai', 'dibatalkan'];
+            
+            if (in_array($status, $validStatuses)) {
+                $query->where('status', $status);
+                Log::info("Status filter applied successfully");
+            } else {
+                Log::warning("Invalid status filter received: {$status}");
+            }
         }
 
         // Order by date and time
         $query->orderBy('tanggal', 'asc')->orderBy('jam_konsultasi', 'asc');
 
+        // Get the results
         $appointments = $query->get();
+
+        Log::info('Appointments retrieved:', [
+            'count' => $appointments->count(),
+            'query_sql' => $query->toSql(),
+            'query_bindings' => $query->getBindings()
+        ]);
 
         $formattedAppointments = $appointments->map(function ($appointment) {
             return [
                 'id' => $appointment->id,
                 'nama' => $appointment->pasien->nama_lengkap ?? 'N/A',
-                'antrian' => 'A' . str_pad($appointment->id, 3, '0', STR_PAD_LEFT),
+                'antrian' => $appointment->antrian ?? '-',
                 'registrasi_number' => 'REG-' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT),
-                'tanggal' => $appointment->tanggal ?? 'N/A',
+                'tanggal' => $appointment->tanggal ? Carbon::parse($appointment->tanggal)->format('d/m/Y') : 'N/A',
                 'waktu' => $appointment->jam_konsultasi ?? 'N/A',
                 'keluhan' => $appointment->keluhan ?? '-',
-                'status' => $appointment->status ?? 'pending',
-                // Include patient data for detail modal
+                'status' => $appointment->status ?? 'menunggu',
                 'patient_data' => [
                     'nik' => $appointment->pasien->nik ?? 'N/A',
-                    'tanggal_lahir' => $appointment->pasien->tanggal_lahir ?? 'N/A',
+                    'tanggal_lahir' => $appointment->pasien->tanggal_lahir ? Carbon::parse($appointment->pasien->tanggal_lahir)->format('d/m/Y') : 'N/A',
                     'jenis_kelamin' => $appointment->pasien->jenis_kelamin ?? 'N/A',
                     'golongan_darah' => $appointment->pasien->golongan_darah ?? 'N/A',
                     'email' => $appointment->pasien->email ?? 'N/A',
@@ -72,21 +97,33 @@ class DaftarJanjiTemu extends Controller
             ];
         });
 
+        // Debug: Log the actual statuses in the database
+        $statusCounts = Appointment::selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->pluck('count', 'status')
+            ->toArray();
+        
+        Log::info('Status distribution in database:', $statusCounts);
+
         return Inertia::render('staff/listjanjitemu', [
             'appointments' => $formattedAppointments,
             'filters' => $request->only(['search', 'date_from', 'date_to', 'status']),
             'total' => $formattedAppointments->count(),
             'stats' => $this->getStatsData(),
+            'debug_info' => [
+                'status_counts' => $statusCounts,
+                'applied_filters' => $request->only(['search', 'date_from', 'date_to', 'status']),
+                'total_before_filter' => Appointment::count()
+            ]
         ]);
     }
 
     /**
      * Show detailed information about specific appointment
-     * This method is not needed anymore since detail data is included in index
      */
     public function show($id): Response
     {
-        // Redirect to index page - detail will be handled by frontend
         return redirect()->route('staff.appointments.index');
     }
 
@@ -98,15 +135,25 @@ class DaftarJanjiTemu extends Controller
         try {
             $appointment = Appointment::findOrFail($id);
             
+            if ($appointment->status !== 'menunggu') {
+                Log::warning("Cannot confirm appointment {$id}: Invalid status {$appointment->status}");
+                return redirect()->back()->with('error', 'Janji temu tidak dapat dikonfirmasi karena status tidak valid.');
+            }
+
             // Update status to confirmed
             $appointment->update([
-                'status' => 'confirmed',
+                'status' => 'dikonfirmasi',
                 'confirmed_at' => now(),
             ]);
 
+            // Reassign queue numbers for the day
+            Appointment::assignQueueNumbers($appointment->dokter_id, $appointment->tanggal);
+
+            Log::info("Appointment {$id} confirmed successfully");
             return redirect()->back()->with('success', 'Janji temu berhasil dikonfirmasi');
             
         } catch (\Exception $e) {
+            Log::error("Error confirming appointment {$id}: {$e->getMessage()}");
             return redirect()->back()->with('error', 'Gagal mengkonfirmasi janji temu');
         }
     }
@@ -119,15 +166,22 @@ class DaftarJanjiTemu extends Controller
         try {
             $appointment = Appointment::findOrFail($id);
             
+            if ($appointment->status !== 'dikonfirmasi') {
+                Log::warning("Cannot complete appointment {$id}: Invalid status {$appointment->status}");
+                return redirect()->back()->with('error', 'Janji temu tidak dapat diselesaikan karena status tidak valid.');
+            }
+
             // Update status to completed
             $appointment->update([
-                'status' => 'completed',
+                'status' => 'selesai',
                 'completed_at' => now(),
             ]);
 
+            Log::info("Appointment {$id} completed successfully");
             return redirect()->back()->with('success', 'Janji temu berhasil diselesaikan');
             
         } catch (\Exception $e) {
+            Log::error("Error completing appointment {$id}: {$e->getMessage()}");
             return redirect()->back()->with('error', 'Gagal menyelesaikan janji temu');
         }
     }
@@ -148,9 +202,9 @@ class DaftarJanjiTemu extends Controller
                 return [
                     'id' => $appointment->id,
                     'nama' => $appointment->pasien->nama_lengkap ?? 'N/A',
-                    'tanggal' => $appointment->tanggal ? $appointment->tanggal->format('d/m/Y') : 'N/A',
+                    'tanggal' => $appointment->tanggal ? Carbon::parse($appointment->tanggal)->format('d/m/Y') : 'N/A',
                     'waktu' => $appointment->jam_konsultasi ?? 'N/A',
-                    'status' => $appointment->status ?? 'pending',
+                    'status' => $appointment->status ?? 'menunggu',
                     'dokter_nama' => $appointment->dokter->nama ?? 'N/A',
                 ];
             });
@@ -171,10 +225,31 @@ class DaftarJanjiTemu extends Controller
         return [
             'total_appointments' => Appointment::count(),
             'today_appointments' => Appointment::whereDate('tanggal', $today)->count(),
-            'pending_appointments' => Appointment::where('status', 'pending')->count(),
-            'confirmed_appointments' => Appointment::where('status', 'confirmed')->count(),
-            'completed_appointments' => Appointment::where('status', 'completed')->count(),
-            'cancelled_appointments' => Appointment::where('status', 'cancelled')->count(),
+            'pending_appointments' => Appointment::where('status', 'menunggu')->count(),
+            'confirmed_appointments' => Appointment::where('status', 'dikonfirmasi')->count(),
+            'processed_appointments' => Appointment::where('status', 'diproses')->count(),
+            'completed_appointments' => Appointment::where('status', 'selesai')->count(),
+            'cancelled_appointments' => Appointment::where('status', 'dibatalkan')->count(),
         ];
+    }
+
+    /**
+     * Debug method to check status values in database
+     */
+    public function debugStatus(Request $request)
+    {
+        $appointments = Appointment::select(['id', 'status'])
+            ->get()
+            ->groupBy('status')
+            ->map(function ($group) {
+                return $group->count();
+            });
+
+        return response()->json([
+            'status_distribution' => $appointments,
+            'all_statuses' => Appointment::distinct('status')->pluck('status'),
+            'request_status' => $request->get('status'),
+            'sample_appointments' => Appointment::select(['id', 'status'])->limit(10)->get()
+        ]);
     }
 }

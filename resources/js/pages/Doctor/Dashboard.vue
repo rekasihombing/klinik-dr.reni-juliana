@@ -287,9 +287,9 @@ function formatTime(timeStr) {
 
 function generateQueueNumber(appointment, index) {
   // Jika appointment belum dikonfirmasi, tidak ada nomor antrian
-  if (appointment.status !== 'dikonfirmasi') {
-    return '-';
-  }
+  console.log('Appointment queue_number:', appointment.queue_number); // Debugging
+  return appointment.queue_number || '-';
+  
 
    // Hitung posisi berdasarkan appointments yang dikonfirmasi
   const confirmedAppointments = displayAppointments.value

@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar -->
-    <SidebarDoctror class="w-64 bg-white shadow-md" />
+    <SidebarDoctor class="w-64 bg-white shadow-md" />
     
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
@@ -193,8 +193,8 @@
 <script>
 import { Inertia } from '@inertiajs/inertia';
 import { ref, computed, watch } from 'vue';
-import SidebarDoctor from "../../layouts/staff/SidebarDoctor.vue";
-import HeaderDoctor from "../../layouts/staff/HeaderDoctor.vue";
+import SidebarDoctor from "../../layouts/dokter/SidebarDokter.vue";
+import HeaderDoctor from "../../layouts/dokter/HeaderDokter.vue";
 
 export default {
   name: 'PasienList',

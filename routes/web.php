@@ -86,8 +86,8 @@ Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
 
-Route::get('/staff.Pasien', [PatientController::class, 'index'])->name('patients.index');
-Route::get('/dokter.Pasien', [PatientController::class, 'index'])->name('patients.index');
+Route::get('/staff.Pasien', [PatientController::class, 'index'])->name('staff.pasien');
+Route::get('/dokter.Pasien', [PatientController::class, 'index'])->name('dokter.pasien');
 
 Route::get('/patients/{id}', [DetailPasienController::class, 'show'])->name('patients.show');
 
@@ -265,7 +265,8 @@ Route::middleware(['auth'])->group(function () {
 // route janji-temu, laporan-operasional, laporan keuangan
 Route::middleware(['auth'])->group(function () {
     Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
-    Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index']);
+    Route::get('/dokter.Laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('dokter.laporan-operasional');
+    Route::get('/staff.Laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('staff.laporan-operasional');
     Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index']);
 });
 

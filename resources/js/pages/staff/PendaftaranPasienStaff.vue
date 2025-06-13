@@ -565,6 +565,10 @@ export default {
       }
 
       form.post('/simpanpendaftar', {
+        data: {
+            ...form,
+            is_existing_patient: isExistingPatient.value // Tambahkan ini
+        },
         onSuccess: () => {
           isExistingPatient.value = false;
           isCheckingNik.value = false;
@@ -595,7 +599,7 @@ export default {
       showErrorToast,
       errorToastMessage,
       breadcrumbPages: [
-        { label: 'Dashboard', href: '/staff/dashboard' },
+        { label: 'Dashboard', href: '/dashboardstaff' },
         { label: 'Pendaftaran Pasien', href: '/pendaftaran' }
       ],
       checkNikExists,

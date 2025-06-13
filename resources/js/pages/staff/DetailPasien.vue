@@ -59,6 +59,7 @@
               <table class="w-full border-collapse">
                 <thead>
                   <tr class="bg-blue-600 text-white text-sm">
+                    <th class="border border-slate-300 px-4 py-3 text-left font-medium">No Antrian</th>
                     <th class="border border-slate-300 px-4 py-3 text-left font-medium">Tanggal</th>
                     <th class="border border-slate-300 px-4 py-3 text-left font-medium">Waktu</th>
                     <th class="border border-slate-300 px-4 py-3 text-left font-medium">Keluhan</th>
@@ -68,6 +69,9 @@
                 </thead>
                 <tbody>
                   <tr v-for="appointment in appointmentData" :key="appointment.id" class="text-sm text-slate-900">
+                    <td class="border border-slate-300 px-4 py-3">
+                      <span class="font-medium text-blue-600">{{ appointment.queue_number }}</span>
+                    </td>
                     <td class="border border-slate-300 px-4 py-3">{{ appointment.date }}</td>
                     <td class="border border-slate-300 px-4 py-3">{{ appointment.time }}</td>
                     <td class="border border-slate-300 px-4 py-3">{{ appointment.complaint }}</td>
@@ -75,7 +79,9 @@
                       <span 
                         :class="{
                           'bg-green-100 text-green-800': appointment.status === 'Selesai',
-                          'bg-red-100 text-red-800': appointment.status === 'Dibatalkan Pasien'
+                          'bg-red-100 text-red-800': appointment.status === 'Dibatalkan Pasien',
+                          'bg-yellow-100 text-yellow-800': appointment.status === 'Menunggu',
+                          'bg-blue-100 text-blue-800': appointment.status === 'Sedang Dilayani'
                         }"
                         class="px-2 py-1 rounded text-xs font-medium"
                       >
@@ -110,7 +116,8 @@ export default {
     HeaderStaff
   },
   props: {
-
+    patientData: Array,
+    appointmentData: Array,
     breadcrumbPages: {
         type: Array,
         default: () => ([
@@ -124,17 +131,6 @@ export default {
       activeTab: 'identitas',
     };
   },
-props: {
- patientData: Array,
-    appointmentData: Array,
-  breadcrumbPages: {
-    type: Array,
-    default: () => ([
-      { label: 'Dashboard', href: '/dashboardstaff' },
-      { label: 'Detail Pasien', href: '/patients' }
-    ])
-  }
-},
 
   mounted() {
     this.updateDateTime();

@@ -369,6 +369,8 @@
 import { router } from '@inertiajs/vue3'
 import SidebarStaff from '../../layouts/staff/SidebarStaff.vue'
 
+// Tambahkan script debugging ini di mounted() method Vue component
+
 export default {
   name: 'DashboardStaff',
   components: { SidebarStaff },
@@ -378,7 +380,8 @@ export default {
     totalMenungguKonfirmasi: Number,
     aktivitasMingguan: Array,
     currentDate: String,
-    currentTime: String
+    currentTime: String,
+    debug: Object // Tambahkan prop debug
   },
   data() {
     return {
@@ -395,7 +398,220 @@ export default {
       complaint: ''
     }
   },
-methods: {
+  mounted() {
+    // DEBUGGING: Log semua data yang diterima dari backend
+    console.group('=== DASHBOARD DEBUG ===');
+    console.log('Props received from backend:');
+    console.log('📊 pasienHariIni:', this.pasienHariIni);
+    console.log('📊 totalPasienHariIni:', this.totalPasienHariIni);
+    console.log('📊 totalMenungguKonfirmasi:', this.totalMenungguKonfirmasi);
+    console.log('📊 currentDate:', this.currentDate);
+    console.log('📊 currentTime:', this.currentTime);
+    console.log('📊 debug data:', this.debug);
+    
+    // Cek apakah data pasien ada dan valid
+    if (this.pasienHariIni) {
+      console.log('✅ pasienHariIni exists');
+      console.log('📝 Length:', this.pasienHariIni.length);
+      console.log('📝 Type:', typeof this.pasienHariIni);
+      console.log('📝 Is Array:', Array.isArray(this.pasienHariIni));
+      
+      if (this.pasienHariIni.length > 0) {
+        console.log('📝 First item:', this.pasienHariIni[0]);
+      } else {
+        console.warn('⚠️ pasienHariIni array is empty');
+      }
+    } else {
+      console.error('❌ pasienHariIni is null or undefined');
+    }
+    
+    // Cek struktur data
+    if (this.pasienHariIni && this.pasienHariIni.length > 0) {
+      const firstPatient = this.pasienHariIni[0];
+      console.log('🔍 First patient structure:');
+      Object.keys(firstPatient).forEach(key => {
+        console.log(`  ${key}:`, firstPatient[key]);
+      });
+    }
+    
+    console.groupEnd();
+    
+    // Panggil method debugging API
+    this.debugAppointmentData();
+  },
+  
+  methods: {
+    // Method untuk debugging data appointment
+    async debugAppointmentData() {
+      try {
+        console.log('🔍 Fetching debug data from API...');
+        
+        const response = await fetch('/debug-appointments', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const debugData = await response.json();
+          console.group('=== API DEBUG DATA ===');
+          console.log('🔍 Debug response:', debugData);
+          console.log('📅 Today date:', debugData.today);
+          console.log('📊 Total appointments in DB:', debugData.total_appointments);
+          console.log('📊 Today appointments count:', debugData.today_appointments);
+          console.log('📝 Sample appointments:', debugData.sample_appointments);
+          console.log('📝 Today appointments detail:', debugData.today_appointments_detail);
+          console.groupEnd();
+          
+          // Analisis masalah
+          this.analyzeIssue(debugData);
+        } else {
+          console.error('❌ Debug API request failed:', response.status);
+        }
+      } catch (error) {
+        console.error('❌ Error fetching debug data:', error);
+      }
+    },
+    
+    // Method untuk menganalisis masalah
+    analyzeIssue(debugData) {
+      console.group('=== ISSUE ANALYSIS ===');
+      
+      if (debugData.total_appointments === 0) {
+        console.warn('⚠️ ISSUE: No appointments in database at all');
+        console.log('💡 SOLUTION: Add some test appointment data to database');
+      } else if (debugData.today_appointments === 0) {
+        console.warn('⚠️ ISSUE: No appointments for today');
+        console.log('💡 SOLUTION: Check if appointment dates match today\'s date');
+        console.log('📅 Today is:', debugData.today);
+        console.log('📝 Sample appointment dates:', debugData.sample_appointments.map(a => a.tanggal));
+        
+        // Cek format tanggal
+        if (debugData.sample_appointments.length > 0) {
+          const sampleDate = debugData.sample_appointments[0].tanggal;
+          console.log('📅 Sample date format:', sampleDate);
+          console.log('📅 Today format:', debugData.today);
+          
+          if (sampleDate && sampleDate !== debugData.today) {
+            console.warn('⚠️ Date format mismatch detected!');
+            console.log('💡 SOLUTION: Check date format in database vs Carbon::today()');
+          }
+        }
+      } else if (debugData.today_appointments > 0 && this.pasienHariIni.length === 0) {
+        console.warn('⚠️ ISSUE: Appointments exist but filtered out by status');
+        console.log('📊 Appointments today:', debugData.today_appointments);
+        console.log('📊 Appointments after filter:', this.pasienHariIni.length);
+        console.log('💡 SOLUTION: Check appointment status values');
+        
+        // Cek status appointments
+        if (debugData.today_appointments_detail) {
+          const statuses = debugData.today_appointments_detail.map(a => a.status);
+          console.log('📝 Today appointment statuses:', statuses);
+          console.log('📝 Expected statuses:', ['menunggu', 'dikonfirmasi', 'diproses', 'selesai']);
+          
+          const unexpectedStatuses = statuses.filter(s => 
+            !['menunggu', 'dikonfirmasi', 'diproses', 'selesai'].includes(s)
+          );
+          
+          if (unexpectedStatuses.length > 0) {
+            console.warn('⚠️ Found unexpected statuses:', unexpectedStatuses);
+            console.log('💡 SOLUTION: Update status filter or appointment statuses');
+          }
+        }
+      } else {
+        console.log('✅ Data seems correct');
+        console.log('📊 Expected appointments:', debugData.today_appointments);
+        console.log('📊 Received appointments:', this.pasienHariIni.length);
+      }
+      
+      console.groupEnd();
+    },
+    
+    // Method untuk test manual create appointment
+    async testCreateAppointment() {
+      try {
+        const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        
+        const testData = {
+          tanggal: today,
+          jam_konsultasi: '10:00:00',
+          status: 'menunggu',
+          keluhan: 'Test keluhan'
+        };
+        
+        console.log('🧪 Creating test appointment:', testData);
+        
+        // Kirim request ke endpoint create appointment
+        const response = await fetch('/api/appointments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(testData)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('✅ Test appointment created:', result);
+          alert('Test appointment berhasil dibuat! Refresh halaman untuk melihat hasilnya.');
+        } else {
+          const error = await response.text();
+          console.error('❌ Failed to create test appointment:', error);
+          alert('Gagal membuat test appointment: ' + error);
+        }
+      } catch (error) {
+        console.error('❌ Error creating test appointment:', error);
+        alert('Error: ' + error.message);
+      }
+    },
+    
+    // Method untuk cek database secara manual
+    async checkDatabase() {
+      try {
+        console.log('🔍 Checking database status...');
+        
+        // Test database connection
+        const response = await fetch('/api/test-db', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('✅ Database connection OK:', result);
+          
+          // Test tabel appointments
+          const appointmentResponse = await fetch('/api/appointments/count', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (appointmentResponse.ok) {
+            const appointmentData = await appointmentResponse.json();
+            console.log('📊 Appointment table data:', appointmentData);
+          }
+        } else {
+          console.error('❌ Database connection failed');
+        }
+      } catch (error) {
+        console.error('❌ Error checking database:', error);
+      }
+    },
+    
+    // Existing methods...
     showDetail(patient) {
       this.registrasiNumber = patient.registrasi_number
       this.patientName = patient.nama_pasien
@@ -421,9 +637,6 @@ methods: {
       router.visit('/konfirmasi-pasien')
     },
     
-    // METODE TAGIHAN YANG DIPERBAIKI
-// Method handleTagihan yang sudah diperbaiki untuk otomatis load data
-// METODE TAGIHAN YANG DIPERBAIKI - Versi yang lebih robust
 async handleTagihan(patient) {
   console.log('=== DEBUG TAGIHAN START ===');
   console.log('Patient data:', patient);
