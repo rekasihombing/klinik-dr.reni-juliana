@@ -23,7 +23,7 @@ class AppointmentController extends Controller
 
         // VALIDASI PROFIL - WAJIB SEBELUM BUAT JANJI TEMU
         if (!$this->isProfileComplete($patient)) {
-            return redirect()->route('patient.profile.edit')
+            return redirect()->route('datapasien')
                 ->with('error', 'Anda harus melengkapi data profil terlebih dahulu sebelum membuat janji temu.');
         }
         
@@ -55,47 +55,61 @@ class AppointmentController extends Controller
     }   
     
     // Method baru untuk menampilkan riwayat janji temu
-    public function history()
-    {
-        $user = Auth::user();
-        $patient = $user->patient;
+   public function history()
+{
+    $user = Auth::user();
+    $patient = $user->patient;
 
-        if (!$patient) {
-            return redirect()->back()->withErrors(['error' => 'Data pasien tidak ditemukan']);
-        }
+    if (!$patient) {
+        // Render halaman dengan modal untuk data pasien tidak ditemukan
+        return Inertia::render('pasien/RiwayatJanjiTemu', [
+            'patientName' => null,
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
+            'appointments' => [],
+            'showPatientDataModal' => true, // Flag untuk menampilkan modal
+            'modalType' => 'missing_patient_data' // Tipe modal
+        ]);
+    }
 
-        // VALIDASI PROFIL JUGA UNTUK RIWAYAT
-        if (!$this->isProfileComplete($patient)) {
-            return redirect()->route('patient.profile.edit')
-                ->with('error', 'Silakan lengkapi profil Anda terlebih dahulu.');
-        }
-
-        // Ambil semua riwayat appointment milik pasien ini, urutkan berdasarkan tanggal terbaru
-        $appointments = Appointment::where('pasien_id', $patient->id)
-            ->orderBy('tanggal', 'desc')
-            ->orderBy('jam_konsultasi', 'desc')
-            ->get()
-            ->map(function ($appointment) {
-                return [
-                    'id' => $appointment->id,
-                    'date' => Carbon::parse($appointment->tanggal)->format('d-m-Y'),
-                    'time' => Carbon::parse($appointment->jam_konsultasi)->format('H.i'),
-                    'queueNumber' => $appointment->getQueueNumber(), // Use stored antrian from model
-                    'status' => $this->getStatusLabel($appointment->status),
-                    'keluhan' => $appointment->keluhan ?? '-',
-                    'originalStatus' => $appointment->status,
-                    'createdBy' => $appointment->dibuat_oleh,
-                    'checkedInAt' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('d-m-Y H:i') : null
-                ];
-            })
-            ->toArray();
-
+    // VALIDASI PROFIL JUGA UNTUK RIWAYAT
+    if (!$this->isProfileComplete($patient)) {
+        // Render halaman dengan modal untuk profil tidak lengkap
         return Inertia::render('pasien/RiwayatJanjiTemu', [
             'patientName' => $patient->nama_lengkap,
             'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
-            'appointments' => $appointments
+            'appointments' => [],
+            'showPatientDataModal' => true, // Flag untuk menampilkan modal
+            'modalType' => 'incomplete_profile' // Tipe modal
         ]);
     }
+
+    // Ambil semua riwayat appointment milik pasien ini, urutkan berdasarkan tanggal terbaru
+    $appointments = Appointment::where('pasien_id', $patient->id)
+        ->orderBy('tanggal', 'desc')
+        ->orderBy('jam_konsultasi', 'desc')
+        ->get()
+        ->map(function ($appointment) {
+            return [
+                'id' => $appointment->id,
+                'date' => Carbon::parse($appointment->tanggal)->format('d-m-Y'),
+                'time' => Carbon::parse($appointment->jam_konsultasi)->format('H.i'),
+                'queueNumber' => $appointment->getQueueNumber(),
+                'status' => $this->getStatusLabel($appointment->status),
+                'keluhan' => $appointment->keluhan ?? '-',
+                'originalStatus' => $appointment->status,
+                'createdBy' => $appointment->dibuat_oleh,
+                'checkedInAt' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('d-m-Y H:i') : null
+            ];
+        })
+        ->toArray();
+
+    return Inertia::render('pasien/RiwayatJanjiTemu', [
+        'patientName' => $patient->nama_lengkap,
+        'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
+        'appointments' => $appointments,
+        'showPatientDataModal' => false
+    ]);
+}
 
     // Helper method untuk mapping status
     private function getStatusLabel($status)
@@ -227,7 +241,7 @@ class AppointmentController extends Controller
 
             // VALIDASI PROFIL JUGA UNTUK CHECK-IN
             if (!$this->isProfileComplete($patient)) {
-                return redirect()->route('patient.profile.edit')
+                return redirect()->route('datapasien')
                     ->with('error', 'Silakan lengkapi profil Anda terlebih dahulu sebelum check-in.');
             }
 

@@ -343,7 +343,7 @@ const props = defineProps({
       keluhanUtama: '',
       rps: '',
       rpd: '',
-      riwayatAlergi: '',
+      Alergi: '',
       riwayatObat: ''
     })
   },

@@ -458,5 +458,12 @@ Route::middleware('auth')->group(function () {
             ->name('password.update');
     });
 });
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+    // Menyimpan tindakan baru untuk rekam medis tertentu
+    Route::post('/rekam-medis/{rekamMedis}/tindakan', [TindakanController::class, 'store'])->name('tindakan.store');
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

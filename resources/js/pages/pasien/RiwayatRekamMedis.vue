@@ -44,9 +44,6 @@
                   <option value="date-desc">Terbaru</option>
                   <option value="date-asc">Terlama</option>
                 </select>
-                <button class="px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg">
-                  <i class="fas fa-search mr-2"></i>Filter
-                </button>
               </div>
             </div>
           </div>
@@ -247,6 +244,8 @@
               <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.catatan_dokter }}</p>
             </div>
           </div>
+
+          
 
           <!-- Modal Footer -->
           <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
