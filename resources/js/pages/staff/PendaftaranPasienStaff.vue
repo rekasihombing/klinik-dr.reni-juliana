@@ -306,7 +306,7 @@
                       :disabled="form.processing || isCheckingNik"
                       :class="[
                         'px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2',
-                        form.processing || isCheckingNik ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg text-white'
+                        form.processing || isCheckingNik ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-[#00B87A] hover:bg-[#109568] shadow-md hover:shadow-lg text-white'
                       ]"
                     >
                       <svg v-if="form.processing || isCheckingNik" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

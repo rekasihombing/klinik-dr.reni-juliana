@@ -97,8 +97,8 @@
                   
                   <!-- Diagnosa -->
                   <div class="flex items-start space-x-3">
-                    <div class="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i class="fas fa-diagnoses text-green-500 text-xs"></i>
+                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-diagnoses text-blue-500 text-xs"></i>
                     </div>
                     <div class="min-w-0 flex-1">
                       <p class="text-sm font-medium text-gray-700 mb-1">Diagnosa</p>
@@ -127,7 +127,6 @@
                 <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 flex items-center">
-                      <i class="fas fa-pills text-blue-500 mr-1"></i>
                       Resep Obat
                     </span>
                     <span class="flex items-center text-xs text-blue-600 group-hover:text-indigo-700">
@@ -235,7 +234,7 @@
             <div class="mt-6 pt-4 border-t border-gray-200">
               <Link
                 :href="`/riwayat-resep-obat/${selectedResep.rekam_medis_id}`"
-                class="inline-flex items-center px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                class="inline-flex items-center px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg transition-colors duration-200"
               >
                 <i class="fas fa-eye mr-2"></i>
                 Lihat Detail Lengkap Resep
