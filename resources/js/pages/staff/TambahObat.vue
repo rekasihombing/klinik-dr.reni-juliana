@@ -186,7 +186,7 @@
                 <button
                   type="submit"
                   :disabled="form.processing"
-                  class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
+                  class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg p-4 text-white px-4 py-2 rounded-lg text-sm w-max"
                 >
                   <span v-if="form.processing" class="flex items-center">
                     <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

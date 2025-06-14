@@ -26,9 +26,35 @@
       <!-- Main Content -->
       <main class="bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] flex-1 p-4 md:p-6 lg:p-10">
 
-        <h1 class="text-[#2D4480] font-bold text-base md:text-lg mb-4 font-sans">
-          Selamat Datang, {{ patientName }}!
-        </h1>
+                <div
+          class="bg-gradient-to-r from-[#C4DCFE] via-[#b3d1fe] to-[#9BC3FC] rounded-2xl shadow-lg border border-white/30 backdrop-blur-sm p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden"
+        >
+          <!-- Decorative elements -->
+          <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+          
+          <div class="relative z-10">
+            <div class="flex items-center space-x-3 mb-2">
+              <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-[#2A4482]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xl font-bold text-[#2A4482]">Selamat Datang, {{ patientName }}!</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="relative z-10 text-right text-sm text-[#2A4482] mt-4 md:mt-0 bg-white/20 rounded-xl p-4 backdrop-blur-sm">
+            <div class="flex items-center space-x-2 mb-2">
+              <p class="font-medium">{{ currentDate || 'Senin, 12 Mei 2025' }}</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <p class="font-mono font-bold">{{ currentTime || '12 : 55 : 20' }}</p>
+            </div>
+          </div>
+        </div>
 
         <!-- Profile Completion Notification -->
         <transition name="fade">
@@ -448,15 +474,15 @@
           Lihat Hasil
         </button>
         <!-- Tombol untuk menyembunyikan janji temu yang selesai -->
-<button
-  @click.stop="hideFinishedAppointment"
-  class="mt-3 w-full bg-gray-300 hover:bg-gray-400 text-gray-700 text-sm rounded-lg px-3 py-2 font-medium transition-all duration-200"
->
-  <i class="fas fa-times mr-1"></i>
-  Selesai
-</button>
-      </div>
-    </template>
+      <button
+        @click.stop="hideFinishedAppointment"
+        class="mt-3 w-full bg-gray-300 hover:bg-gray-400 text-gray-700 text-sm rounded-lg px-3 py-2 font-medium transition-all duration-200"
+      >
+        <i class="fas fa-times mr-1"></i>
+        Selesai
+      </button>
+            </div>
+          </template>
 
     <!-- Status: Dibatalkan atau status lainnya -->
     <template v-else-if="nextAppointment.status === 'dibatalkan'">
@@ -555,23 +581,18 @@
       <!-- Info Singkat -->
       <div class="space-y-2 text-sm text-gray-600">
         <div class="flex items-center space-x-2">
-          <i class="fas fa-clock w-4"></i>
           <span>{{ lastMedicalRecord.jam_kunjungan }}</span>
         </div>
         <div class="flex items-center space-x-2">
-          <i class="fas fa-hashtag w-4"></i>
           <span>Antrian: {{ lastMedicalRecord.no_antrian }}</span>
         </div>
         <div v-if="lastMedicalRecord.keluhan" class="flex items-start space-x-2">
-          <i class="fas fa-notes-medical w-4 mt-0.5"></i>
           <span class="text-gray-700">{{ truncateText(lastMedicalRecord.keluhan, 60) }}</span>
         </div>
         <div v-if="lastMedicalRecord.diagnosa" class="flex items-start space-x-2">
-          <i class="fas fa-stethoscope w-4 mt-0.5"></i>
           <span class="text-gray-700 font-medium">{{ truncateText(lastMedicalRecord.diagnosa, 60) }}</span>
         </div>
         <div v-if="lastMedicalRecord.no_rekam_medis" class="flex items-center space-x-2">
-          <i class="fas fa-id-card w-4"></i>
           <span class="text-xs text-gray-500">{{ lastMedicalRecord.no_rekam_medis }}</span>
         </div>
       </div>
@@ -633,6 +654,7 @@
   v-if="showInfoModal"
   class="fixed inset-0 flex items-center justify-center z-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
+  @click.self="closeModal"
 >
   <div class="bg-white rounded-lg shadow-2xl text-center p-4 md:p-6 w-11/12 max-w-md mx-4">
       <div class="text-center">
@@ -660,6 +682,7 @@
   v-if="showAppointmentModal"
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
+  @click.self="closeModal"
 >
   <div class="bg-white rounded-lg p-4 md:p-8 w-11/12 max-w-lg mx-4 shadow-lg">
     <div class="text-center">
@@ -735,6 +758,7 @@
   v-if="showCancelConfirm"
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
+  @click.self="closeModal"
 >
   <div class="bg-white rounded-xl p-8 w-95 shadow-lg">
     <div class="text-center">
@@ -775,6 +799,7 @@
   v-if="showProfileWarningModal"
   class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
   style="background-color: rgba(0, 0, 0, 0.15);"
+  @click.self="closeModal"
 >
   <div class="bg-white rounded-xl p-4 md:p-6 w-11/12 max-w-md mx-4 shadow-lg">
     <div class="text-center">

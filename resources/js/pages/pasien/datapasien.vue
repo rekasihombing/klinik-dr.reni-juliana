@@ -259,10 +259,20 @@ import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../../layouts/pasien/Sidebar.vue'
 
+
 const props = defineProps({
-  patientName: String,
-  clinicName: String,
-  patient: Object, // For pre-filling existing data
+  patientName: {
+    type: String,
+  },
+  clinicName: {
+    type: String,
+    default: 'Klinik Praktek Dr. Reni Juliana Manurung'
+  },
+  appointments: {
+    type: Array,
+    default: () => []
+  },
+
 })
 
 const processing = ref(false)

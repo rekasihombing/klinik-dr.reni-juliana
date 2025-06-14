@@ -1,17 +1,18 @@
-<template>
-  <div class="flex min-h-screen bg-gray-50">
+<template> 
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
-    <SidebarStaff class="w-64 bg-white shadow-md" />
-    
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col">
-      <!-- Header -->
-      <div class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-t-lg p-4 text-white">
-        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
-      </div>
+    <SidebarStaff class="w-64 bg-white shadow-lg" />
+
+    <!-- Main content -->
+    <main class="flex-1 p-6">
+      <!-- Top bar -->
+      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+
+            <!-- Content Container with extra spacing -->
+      <div class="p-3 mt-2"></div>
       
       <!-- Main Content Area -->
-      <div class="flex-1 px-6 pb-6">
+      <div class="flex-1 px-7 pb-6">
         <!-- Search and Actions -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div class="relative">
@@ -19,7 +20,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Cari nama, NIK, atau jenis kelamin..."
-              class="border border-gray-300 rounded-lg text-sm pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-80 transition-all text-black placeholder-gray-500"
+              class="border border-gray-300 rounded-lg text-sm pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-80 transition-all text-black placeholder-gray-500 bg-white"
             />
             <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               <i class="fas fa-search"></i>
@@ -32,42 +33,36 @@
               <i class="fas fa-times"></i>
             </button>
           </div>
+          
+          <div class="flex items-center space-x-4 text-sm text-gray-500">
+            <span>Menampilkan {{ paginatedPatients.length }} dari {{ filteredPatients.length }} data</span>
+            <select 
+              v-model="itemsPerPage" 
+              class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+            >
+              <option value="5">5 per halaman</option>
+              <option value="10">10 per halaman</option>
+              <option value="25">25 per halaman</option>
+            </select>
+          </div>
         </div>
 
         <!-- Table Container -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-          <!-- Table Header -->
-          <div class="px-4 py-3 border-b border-gray-200">
-            <div class="flex justify-between items-center">
-              <h3 class="text-lg font-semibold text-gray-800">Data Pasien</h3>
-              <div class="flex items-center space-x-4 text-sm text-gray-500">
-                <span>Menampilkan {{ paginatedPatients.length }} dari {{ filteredPatients.length }} data</span>
-                <select 
-                  v-model="itemsPerPage" 
-                  class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="5">5 per halaman</option>
-                  <option value="10">10 per halaman</option>
-                  <option value="25">25 per halaman</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <!-- Table -->
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
+              <thead class="bg-[#3674B5]">
                 <tr>
-                  <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
-                  <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">NIK</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Gender</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Umur</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Gol. Darah</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">No HP</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                  <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                  <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">No</th>
+                  <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Nama</th>
+                  <th class="px-3 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">NIK</th>
+                  <th class="px-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Gender</th>
+                  <th class="px-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Umur</th>
+                  <th class="px-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Gol. Darah</th>
+                  <th class="px-3 text-center text-xs font-semibold text-white uppercase tracking-wider">No HP</th>
+                  <th class="px-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Email</th>
+                  <th class="px-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Aksi</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -92,7 +87,7 @@
                       </div>
                     </div>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-600 text-center font-mono">
+                  <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600">
                     {{ formatNIK(pasien.nik) }}
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap text-center">
@@ -117,21 +112,21 @@
                       {{ pasien.golongan_darah }}
                     </span>
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-600 text-center">
+                  <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600 text-center">
                     {{ pasien.no_hp || '-' }}
                   </td>
-                  <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-600 text-center max-w-[120px] truncate">
+                  <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600 text-center max-w-[120px] truncate">
                     {{ pasien.email ? pasien.email : '-' }}
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap text-center">
                     <div class="flex items-center justify-center space-x-1">
                       <button
-  @click="viewPatient(pasien)"
-  :title="`Lihat detail ${pasien.nama_lengkap}`"
-  class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 rounded transition-all"
->
-  <i class="fas fa-eye text-xs"></i>
-</button>
+                        @click="viewPatient(pasien)"
+                        :title="`Lihat detail ${pasien.nama_lengkap}`"
+                        class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 rounded transition-all"
+                      >
+                        <i class="fas fa-eye text-xs"></i>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -186,7 +181,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 

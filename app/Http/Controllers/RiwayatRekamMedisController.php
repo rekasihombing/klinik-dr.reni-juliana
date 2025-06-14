@@ -61,7 +61,7 @@ class RiwayatRekamMedisController extends Controller
         return Inertia::render('pasien/RiwayatRekamMedis', [
             'appointments' => $riwayatRekamMedis,
             'patientName' => $pasien->nama_lengkap ?? $pasien->name,
-            'clinicName' => 'Klinik Praktek Dr. Rena Juliana Manurung'
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung'
         ]);
     }
 
@@ -91,7 +91,7 @@ class RiwayatRekamMedisController extends Controller
                                  Carbon::parse($rekamMedis->appointment->jam_konsultasi)->format('H:i') : 
                                  Carbon::parse($rekamMedis->created_at)->format('H:i'),
                 'no_antrian' => $rekamMedis->appointment ? $rekamMedis->appointment->no_antrian : '-',
-                'dokter' => 'Dr. Rena Juliana Manurung', // Sesuai dengan nama klinik
+                'dokter' => 'Dr. Reni Juliana Manurung', // Sesuai dengan nama klinik
                 
                 // Anamnesis
                 'keluhan' => $rekamMedis->keluhan,
@@ -113,7 +113,7 @@ class RiwayatRekamMedisController extends Controller
                 'catatan_dokter' => $rekamMedis->catatan_dokter,
             ],
             'patientName' => $pasien->nama_lengkap ?? $pasien->name,
-            'clinicName' => 'Klinik Praktek Dr. Rena Juliana Manurung'
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung'
         ]);
     }
 }

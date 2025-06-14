@@ -255,15 +255,26 @@ import 'flatpickr/dist/flatpickr.min.css'
 import Sidebar from '../../layouts/pasien/Sidebar.vue'
 import { useForm } from '@inertiajs/vue3'
 
-// Props
 const props = defineProps({
-  patientName: String,
+  patientName: {
+    type: String,
+    default: ''
+  },
+  clinicName: {
+    type: String,
+    default: 'Klinik Praktek Dr. Reni Juliana Manurung'
+  },
+  appointments: {
+    type: Array,
+    default: () => []
+  },
+
   patientId: Number,
   doctorId: Number,
   existingAppointments: Array,
   flash: Object,
-  clinicName: String,
 })
+
 
 // Form
 const form = useForm({

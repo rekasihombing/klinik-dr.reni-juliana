@@ -56,7 +56,7 @@ class RiwayatResepObatController extends Controller
         return Inertia::render('pasien/RiwayatResepObat', [
             'resepObat' => $resepObat,
             'patientName' => $pasien->nama_lengkap ?? $pasien->name,
-            'clinicName' => 'Klinik Praktek Dr. Rena Juliana Manurung'
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung'
         ]);
     }
 
@@ -116,8 +116,8 @@ class RiwayatResepObatController extends Controller
                 'catatan_dokter' => $rekamMedis->catatan_dokter,
             ],
             'patientName' => $pasien->nama_lengkap ?? $pasien->name,
-            'clinicName' => 'Klinik Praktek Dr. Rena Juliana Manurung',
-            'doctorName' => 'Dr. Rena Juliana Manurung'
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
+            'doctorName' => 'Dr. Reni Juliana Manurung'
         ]);
     }
 }

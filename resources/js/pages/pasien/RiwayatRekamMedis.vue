@@ -1,25 +1,31 @@
 <template>
   <div class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
-    <header
-      class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-6 py-4 text-[#1B2A4D] text-sm font-sans border-b border-white/20 sticky top-0 z-40"
-    >
-      <div class="font-semibold text-[#2D4480] text-lg">{{ clinicName }}</div>
-      <div class="flex items-center space-x-2 cursor-pointer hover:bg-blue-50 px-4 py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
-        <span class="font-medium">{{ patientName }}</span>
-        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-          <i class="fas fa-user text-white text-sm"></i>
-        </div>
+  <header class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-4 md:px-6 py-3 md:py-4 text-[#1B2A4D] text-xs md:text-sm font-sans border-b border-white/20 sticky top-0 z-40">
+    <div class="flex items-center space-x-2 md:space-x-3">
+      <img 
+        src="/images/logo-klinik.png" 
+        alt="Logo Klinik" 
+        class="w-8 h-8 md:w-10 md:h-10 object-contain"
+      />
+      <div class="font-semibold text-[#2D4480] text-sm md:text-base">{{ clinicName }}</div>
+    </div>
+    <div class="flex items-center space-x-1 md:space-x-2 cursor-pointer hover:bg-blue-50 px-2 md:px-4 py-1 md:py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
+      <span class="font-medium text-xs md:text-sm hidden sm:inline">{{ patientName }}</span>
+      <span class="font-medium text-xs md:text-sm sm:hidden">{{ patientName.split(' ')[0] }}</span>
+      <div class="w-6 h-6 md:w-8 md:h-8 bg-blue-700 rounded-full flex items-center justify-center">
+        <i class="fas fa-user text-white text-xs md:text-sm"></i>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar -->
       <Sidebar :patient-name="patientName" />
 
-      <main class="flex-grow p-6">
+      <main class="bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] flex-1 p-4 md:p-6 lg:p-10">
         <div class="max-w-6xl mx-auto">
           <!-- Search and Filter Bar -->
-          <div class="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-white/50">
+          <div class="mb-8">
             <div class="flex flex-col md:flex-row gap-4 items-center">
               <div class="relative flex-1">
                 <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -27,7 +33,7 @@
                   v-model="searchQuery"
                   type="text" 
                   placeholder="Cari berdasarkan tanggal, diagnosa, atau catatan..."
-                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
                 >
               </div>
               <div class="flex gap-3">
@@ -38,8 +44,8 @@
                   <option value="date-desc">Terbaru</option>
                   <option value="date-asc">Terlama</option>
                 </select>
-                <button class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg">
-                  <i class="fas fa-filter mr-2"></i>Filter
+                <button class="px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg">
+                  <i class="fas fa-search mr-2"></i>Filter
                 </button>
               </div>
             </div>
@@ -51,59 +57,42 @@
               <div 
                 v-for="(appointment, index) in filteredAppointments" 
                 :key="appointment.id"
-                class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-white/50 overflow-hidden group cursor-pointer"
+                class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group cursor-pointer"
                 @click="viewDetail(appointment)"
               >
                 <!-- Card Header -->
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-4">
+                <div class="bg-gradient-to-r from-blue-100 to-indigo-100 p-3">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">#{{ appointment.queueNumber || index + 1 }}</span>
-                      </div>
                       <div>
-                        <h3 class="text-white font-semibold text-lg">{{ formatDate(appointment.date) }}</h3>
-                        <p class="text-blue-100 text-sm">{{ appointment.time }}</p>
+                        <h3 class="text-[#2A4482] font-semibold text-sm">{{ formatDate(appointment.date) }}</h3>
+                        <p class="text-gray-500 text-xs">{{ appointment.time }}</p>
                       </div>
-                    </div>
-                    <div class="text-white/80 group-hover:text-white transition-colors">
-                      <i class="fas fa-chevron-right"></i>
                     </div>
                   </div>
                 </div>
 
                 <!-- Card Body -->
-                <div class="p-4 space-y-4">
+                <div class="p-4 space-y-3">
                   <!-- Keluhan -->
                   <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i class="fas fa-stethoscope text-red-500 text-sm"></i>
+                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-stethoscope text-blue-500 text-xs"></i>
                     </div>
                     <div class="min-w-0 flex-1">
-                      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Keluhan Utama</p>
-                      <p class="text-sm text-gray-800 line-clamp-2">{{ appointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
+                      <p class="text-sm font-medium text-gray-700 mb-1">Keluhan Utama</p>
+                      <p class="text-sm text-gray-600 line-clamp-2">{{ appointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
                     </div>
                   </div>
                   
                   <!-- Diagnosa -->
                   <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i class="fas fa-diagnoses text-green-500 text-sm"></i>
+                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-diagnoses text-blue-500 text-xs"></i>
                     </div>
                     <div class="min-w-0 flex-1">
-                      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Diagnosa</p>
-                      <p class="text-sm text-gray-800 line-clamp-2">{{ appointment.diagnosa || 'Belum ada diagnosa' }}</p>
-                    </div>
-                  </div>
-                  
-                  <!-- Vital Signs -->
-                  <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i class="fas fa-heartbeat text-blue-500 text-sm"></i>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Vital Signs</p>
-                      <p class="text-sm text-gray-800 truncate">{{ getVitalSignsPreview(appointment) }}</p>
+                      <p class="text-sm font-medium text-gray-700 mb-1">Diagnosa</p>
+                      <p class="text-sm text-gray-600 line-clamp-2">{{ appointment.diagnosa || 'Belum ada diagnosa' }}</p>
                     </div>
                   </div>
                 </div>
@@ -112,12 +101,10 @@
                 <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 flex items-center">
-                      <i class="fas fa-calendar mr-1"></i>
-                      {{ appointment.date }}
                     </span>
-                    <span class="text-blue-600 group-hover:text-blue-700 font-medium">
+                    <span class="flex items-center text-xs text-blue-600 group-hover:text-indigo-700">
                       Lihat Detail
-                      <i class="fas fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                      <i class="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i>
                     </span>
                   </div>
                 </div>
@@ -132,211 +119,150 @@
             </div>
             <h3 class="text-xl font-semibold text-gray-900 mb-2">Belum Ada Riwayat Rekam Medis</h3>
             <p class="text-gray-600 mb-6 max-w-md mx-auto">Riwayat kunjungan medis Anda akan muncul di sini setelah pemeriksaan pertama.</p>
-            <button class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg">
-              Buat Janji Temu
-            </button>
           </div>
         </div>
       </main>
     </div>
 
-    <!-- Enhanced Modal Detail Rekam Medis -->
-    <Transition name="modal">
-      <div v-if="showModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
-          <!-- Modal Header -->
-          <div class="sticky top-0 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-6 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <i class="fas fa-file-medical-alt text-white"></i>
+    <!-- Updated Modal Detail Rekam Medis -->
+    <div 
+      v-if="showModal"
+      class="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-30"
+      @click.self="closeModal"
+      style="background-color: rgba(0, 0, 0, 0.15);"
+    >
+      <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fadeIn">
+        <!-- Modal Header -->
+        <div class="bg-[#3674B5] text-white px-6 py-4">
+          <h3 class="text-xl font-bold flex items-center space-x-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Detail Rekam Medis</span>
+          </h3>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="px-6 py-6 overflow-y-auto max-h-[calc(90vh-100px)]" v-if="selectedAppointment">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Nama Pasien</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ patientName }}</p>
               </div>
               <div>
-                <h2 class="text-xl font-bold">Detail Rekam Medis</h2>
-                <p class="text-blue-100 text-sm">{{ selectedAppointment?.date }} • {{ selectedAppointment?.time }}</p>
+                <label class="text-sm font-semibold text-gray-700">Tanggal</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.date }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Waktu</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.time }}</p>
               </div>
             </div>
-            <button 
-              @click="closeModal" 
-              class="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors duration-200"
-            >
-              <i class="fas fa-times text-white"></i>
-            </button>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Keluhan</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.keluhan || 'anjay aja' }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Status</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.status || 'menunggu' }}</p>
+              </div>
+            </div>
           </div>
-          
-          <div class="overflow-y-auto max-h-[calc(90vh-120px)]" v-if="selectedAppointment">
-            <div class="p-8 space-y-8">
-              <!-- Visit Info Cards -->
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <i class="fas fa-calendar text-white"></i>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-blue-800">Tanggal Kunjungan</p>
-                      <p class="text-lg font-bold text-blue-900">{{ formatDate(selectedAppointment.date) }}</p>
-                    </div>
-                  </div>
-                </div>
 
-                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                      <i class="fas fa-clock text-white"></i>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-green-800">Waktu</p>
-                      <p class="text-lg font-bold text-green-900">{{ selectedAppointment.time }}</p>
-                    </div>
-                  </div>
-                </div>
+          <!-- Additional Medical Information -->
+          <div class="mt-6 space-y-4">
+            <!-- Diagnosa -->
+            <div>
+              <label class="text-sm font-semibold text-gray-700">Diagnosa</label>
+              <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.diagnosa || 'Belum ada diagnosa' }}</p>
+            </div>
 
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                      <i class="fas fa-hashtag text-white"></i>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-purple-800">No. Antrian</p>
-                      <p class="text-lg font-bold text-purple-900">{{ selectedAppointment.queueNumber }}</p>
-                    </div>
-                  </div>
-                </div>
+            <!-- Riwayat Penyakit Sekarang -->
+            <div v-if="selectedAppointment.rps">
+              <label class="text-sm font-semibold text-gray-700">Riwayat Penyakit Sekarang</label>
+              <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.rps }}</p>
+            </div>
+            
+            <!-- Riwayat Penyakit Dahulu -->
+            <div v-if="selectedAppointment.rpd">
+              <label class="text-sm font-semibold text-gray-700">Riwayat Penyakit Dahulu</label>
+              <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.rpd }}</p>
+            </div>
+
+            <!-- Vital Signs Grid -->
+            <div v-if="hasVitalSigns" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div v-if="selectedAppointment.tekanan_darah">
+                <label class="text-sm font-semibold text-gray-700">Tekanan Darah</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.tekanan_darah }}</p>
               </div>
-
-              <!-- Anamnesis Section -->
-              <div class="bg-white rounded-xl border border-gray-200 p-6">
-                <div class="flex items-center space-x-3 mb-6">
-                  <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-clipboard-list text-white"></i>
-                  </div>
-                  <h3 class="text-xl font-bold text-gray-900">Anamnesis</h3>
-                </div>
-                
-                <div class="space-y-6">
-                  <div class="bg-gray-50 rounded-xl p-5 border-l-4 border-red-400">
-                    <label class="block font-semibold text-gray-800 mb-2">Keluhan Utama</label>
-                    <p class="text-gray-700 leading-relaxed">{{ selectedAppointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.rps" class="bg-gray-50 rounded-xl p-5 border-l-4 border-orange-400">
-                    <label class="block font-semibold text-gray-800 mb-2">Riwayat Penyakit Sekarang</label>
-                    <p class="text-gray-700 leading-relaxed">{{ selectedAppointment.rps }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.rpd" class="bg-gray-50 rounded-xl p-5 border-l-4 border-yellow-400">
-                    <label class="block font-semibold text-gray-800 mb-2">Riwayat Penyakit Dahulu</label>
-                    <p class="text-gray-700 leading-relaxed">{{ selectedAppointment.rpd }}</p>
-                  </div>
-                  
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div v-if="selectedAppointment.alergi" class="bg-red-50 rounded-xl p-5 border border-red-200">
-                      <label class="block font-semibold text-red-800 mb-2">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>Alergi
-                      </label>
-                      <p class="text-red-700">{{ selectedAppointment.alergi }}</p>
-                    </div>
-                    
-                    <div v-if="selectedAppointment.riwayat_obat" class="bg-blue-50 rounded-xl p-5 border border-blue-200">
-                      <label class="block font-semibold text-blue-800 mb-2">
-                        <i class="fas fa-pills mr-2"></i>Riwayat Obat
-                      </label>
-                      <p class="text-blue-700">{{ selectedAppointment.riwayat_obat }}</p>
-                    </div>
-                  </div>
-                </div>
+              
+              <div v-if="selectedAppointment.suhu_tubuh">
+                <label class="text-sm font-semibold text-gray-700">Suhu Tubuh</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.suhu_tubuh }}</p>
               </div>
-
-              <!-- Vital Signs Section -->
-              <div v-if="hasVitalSigns" class="bg-white rounded-xl border border-gray-200 p-6">
-                <div class="flex items-center space-x-3 mb-6">
-                  <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-heartbeat text-white"></i>
-                  </div>
-                  <h3 class="text-xl font-bold text-gray-900">Pemeriksaan Fisik</h3>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div v-if="selectedAppointment.tekanan_darah" class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-5 border border-red-200">
-                    <div class="flex items-center space-x-3 mb-2">
-                      <i class="fas fa-tint text-red-500"></i>
-                      <label class="font-semibold text-red-800">Tekanan Darah</label>
-                    </div>
-                    <p class="text-2xl font-bold text-red-900">{{ selectedAppointment.tekanan_darah }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.suhu_tubuh" class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-5 border border-orange-200">
-                    <div class="flex items-center space-x-3 mb-2">
-                      <i class="fas fa-thermometer-half text-orange-500"></i>
-                      <label class="font-semibold text-orange-800">Suhu Tubuh</label>
-                    </div>
-                    <p class="text-2xl font-bold text-orange-900">{{ selectedAppointment.suhu_tubuh }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.nadi" class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-5 border border-pink-200">
-                    <div class="flex items-center space-x-3 mb-2">
-                      <i class="fas fa-heartbeat text-pink-500"></i>
-                      <label class="font-semibold text-pink-800">Nadi</label>
-                    </div>
-                    <p class="text-2xl font-bold text-pink-900">{{ selectedAppointment.nadi }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.pernapasan" class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200">
-                    <div class="flex items-center space-x-3 mb-2">
-                      <i class="fas fa-lungs text-blue-500"></i>
-                      <label class="font-semibold text-blue-800">Pernapasan</label>
-                    </div>
-                    <p class="text-2xl font-bold text-blue-900">{{ selectedAppointment.pernapasan }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.berat_badan" class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-5 border border-green-200">
-                    <div class="flex items-center space-x-3 mb-2">
-                      <i class="fas fa-weight text-green-500"></i>
-                      <label class="font-semibold text-green-800">Berat Badan</label>
-                    </div>
-                    <p class="text-2xl font-bold text-green-900">{{ selectedAppointment.berat_badan }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.status_gizi" class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 border border-purple-200">
-                    <div class="flex items-center space-x-3 mb-2">
-                      <i class="fas fa-apple-alt text-purple-500"></i>
-                      <label class="font-semibold text-purple-800">Status Gizi</label>
-                    </div>
-                    <p class="text-2xl font-bold text-purple-900">{{ selectedAppointment.status_gizi }}</p>
-                  </div>
-                </div>
+              
+              <div v-if="selectedAppointment.nadi">
+                <label class="text-sm font-semibold text-gray-700">Nadi</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.nadi }}</p>
               </div>
-
-              <!-- Diagnosis Section -->
-              <div class="bg-white rounded-xl border border-gray-200 p-6">
-                <div class="flex items-center space-x-3 mb-6">
-                  <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-diagnoses text-white"></i>
-                  </div>
-                  <h3 class="text-xl font-bold text-gray-900">Diagnosa & Catatan</h3>
-                </div>
-                
-                <div class="space-y-6">
-                  <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
-                    <label class="block font-semibold text-indigo-800 mb-3">
-                      <i class="fas fa-diagnoses mr-2"></i>Diagnosa
-                    </label>
-                    <p class="text-indigo-900 text-lg leading-relaxed">{{ selectedAppointment.diagnosa || 'Belum ada diagnosa' }}</p>
-                  </div>
-                  
-                  <div v-if="selectedAppointment.catatan_dokter" class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
-                    <label class="block font-semibold text-gray-800 mb-3">
-                      <i class="fas fa-notes-medical mr-2"></i>Catatan Dokter
-                    </label>
-                    <p class="text-gray-700 leading-relaxed">{{ selectedAppointment.catatan_dokter }}</p>
-                  </div>
-                </div>
+              
+              <div v-if="selectedAppointment.pernapasan">
+                <label class="text-sm font-semibold text-gray-700">Pernapasan</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.pernapasan }}</p>
+              </div>
+              
+              <div v-if="selectedAppointment.berat_badan">
+                <label class="text-sm font-semibold text-gray-700">Berat Badan</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.berat_badan }}</p>
+              </div>
+              
+              <div v-if="selectedAppointment.status_gizi">
+                <label class="text-sm font-semibold text-gray-700">Status Gizi</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.status_gizi }}</p>
               </div>
             </div>
+
+            <!-- Alergi dan Riwayat Obat -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-if="selectedAppointment.alergi">
+                <label class="text-sm font-semibold text-red-700 flex items-center">
+                  <i class="fas fa-exclamation-triangle mr-1"></i>Alergi
+                </label>
+                <p class="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.alergi }}</p>
+              </div>
+              
+              <div v-if="selectedAppointment.riwayat_obat">
+                <label class="text-sm font-semibold text-blue-700 flex items-center">
+                  Riwayat Obat
+                </label>
+                <p class="text-sm text-blue-600 bg-blue-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.riwayat_obat }}</p>
+              </div>
+            </div>
+
+            <!-- Catatan Dokter -->
+            <div v-if="selectedAppointment.catatan_dokter">
+              <label class="text-sm font-semibold text-gray-700">Catatan Dokter</label>
+              <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.catatan_dokter }}</p>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
+            <button 
+              @click="closeModal"
+              class="inline-flex items-center px-6 py-2 border border-gray-300 text-sm font-medium rounded-lg text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              Tutup
+            </button>
           </div>
         </div>
       </div>
-    </Transition>
+    </div>
   </div>
 </template>
 
@@ -434,6 +360,22 @@ const getVitalSignsPreview = (appointment) => {
   overflow: hidden;
 }
 
+/* Animation for modal */
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Smooth transitions */
 .card-enter-active,
 .card-leave-active {
@@ -450,43 +392,23 @@ const getVitalSignsPreview = (appointment) => {
   transform: translateY(-20px);
 }
 
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
-}
-
 /* Custom scrollbar */
 .overflow-y-auto::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-track {
   background: #f1f5f9;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #3b82f6, #6366f1);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #2563eb, #4f46e5);
-}
-
-/* Hover effects */
-.group:hover .group-hover\:scale-105 {
-  transform: scale(1.05);
-}
-
-.group:hover .group-hover\:translate-x-1 {
-  transform: translateX(4px);
 }
 
 /* Focus styles */
