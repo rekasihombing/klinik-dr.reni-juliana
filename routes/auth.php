@@ -30,6 +30,7 @@ Route::middleware('guest')->group(function () {
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
+    // Ubah dari PUT ke POST dan ubah nama route
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });

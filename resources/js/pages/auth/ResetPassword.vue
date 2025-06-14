@@ -152,7 +152,8 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(route('password.update'), {
+  // Menggunakan 'password.store' sesuai dengan route yang ada di auth.php
+  form.post(route('password.store'), {
     onFinish: () => {
       // Clear password fields on error
       if (Object.keys(form.errors).length > 0) {
