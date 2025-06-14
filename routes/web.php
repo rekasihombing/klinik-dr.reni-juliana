@@ -35,6 +35,8 @@ use App\Http\Controllers\RiwayatResepObatController;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\JadwalKontrolController;
+use App\Http\Controllers\StaffPengingatController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -121,8 +123,8 @@ Route::get('/invoice', function () {
 Route::get('/staff.Pasien', [PatientController::class, 'index'])->name('staff.pasien');
 Route::get('/dokter.Pasien', [PatientController::class, 'index'])->name('dokter.pasien');
 
-Route::get('/patients/{id}', [DetailPasienController::class, 'show'])->name('patients.show');
-
+Route::get('/dokter.Pasien/{id}', [DetailPasienController::class, 'show'])->name('dokter.pasien.show');
+Route::get('/staff.Pasien/{id}', [DetailPasienController::class, 'show'])->name('staff.pasien.show');
 
 
 Route::get('/clinic-schedules', [ClinicScheduleController::class, 'index'])->name('clinic.schedules.index');
@@ -326,7 +328,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('laporan-keuangan.detail-transaksi');
 
         Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
-     Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index']);
+        Route::get('/dokter.Laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('dokter.laporan-operasional');
+    Route::get('/staff.Laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('staff.laporan-operasional');
 });
 Route::get('/janji-temu', [JanjiTemuController::class, 'index']);
 Route::put('/appointment/{id}/mulai-konsultasi', [AppointmentController::class, 'mulaiKonsultasi'])
@@ -374,6 +377,8 @@ Route::get('/tagihan/invoice/{id}', [TagihanController::class, 'invoice'])->name
     Route::get('/resep-obat/get-stock/{obatId}', [ResepObatController::class, 'getStock'])->name('resep-obat.get-stock');
 
     Route::get('/tindakan/create/{rekamMedis}', [TindakanController::class, 'create'])->name('tindakan.create');
+    Route::get('/rekam-medis/{rekamMedis}/tindakan/create', [TindakanController::class, 'create'])->name('tindakan.create');
+    Route::post('/rekam-medis/{rekamMedis}/tindakan', [TindakanController::class, 'store'])->name('tindakan.store');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -447,6 +452,22 @@ Route::middleware(['auth'])->group(function () {
 //         return Inertia::render('Auth/Register');
 //     })->name('register');
 // });
+
+
+// use App\Http\Controllers\StaffPengingatController;
+
+
+
+    Route::get('/jadwal-kontrol/{rekamMedis}', [JadwalKontrolController::class, 'create'])->name('jadwal-kontrol.create');
+    Route::post('/jadwal-kontrol/{rekamMedis}', [JadwalKontrolController::class, 'store'])->name('jadwal-kontrol.store');
+
+
+// Route::middleware(['auth', 'role:staff'])->group(function () {
+    Route::get('/pengingat-kontrol', [StaffPengingatController::class, 'index'])->name('pengingat-kontrol.index');
+     Route::post('/pengingat-kontrol/{jadwalKontrol}', [StaffPengingatController::class, 'kirimPengingat'])->name('pengingat-kontrol.kirim');
+// });
+
+    Route::put('/jadwal-kontrol/{jadwalKontrol}/batalkan', [JadwalKontrolController::class, 'batalkan'])->name('jadwal-kontrol.batalkan');
 
 Route::middleware('auth')->group(function () {
     // Settings routes
