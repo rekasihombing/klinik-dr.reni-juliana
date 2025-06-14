@@ -40,33 +40,92 @@ class Appointment extends Model
      */
 public static function assignQueueNumbers($doctorId, $date)
 {
-    // Fetch all appointments for the doctor on the given date
-    $appointments = self::where('dokter_id', $doctorId)
-        ->where('tanggal', $date)
-        ->whereIn('status', ['menunggu', 'dikonfirmasi', 'diproses'])
-        ->orderBy('jam_konsultasi')
-        ->orderBy('created_at')
-        ->get();
+    return \DB::transaction(function () use ($doctorId, $date) {
+        \Log::info('Starting assignQueueNumbers:', [
+            'doctor_id' => $doctorId,
+            'date' => $date,
+        ]);
 
-    // Find the highest existing queue number for the day (including 'selesai')
-    $existingQueueNumbers = self::where('dokter_id', $doctorId)
-        ->where('tanggal', $date)
-        ->whereNotNull('antrian')
-        ->pluck('antrian')
-        ->map(function ($queueNumber) {
-            return (int) substr($queueNumber, 1); // Extract number from 'A01', 'A02', etc.
-        })
-        ->max();
+        // Fetch all confirmed appointments for the doctor and date with locking
+        $appointments = self::where('dokter_id', $doctorId)
+            ->where('tanggal', $date)
+            ->where('status', 'dikonfirmasi')
+            ->whereNotNull('checked_in_at')
+            ->orderBy('checked_in_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->lockForUpdate() // Prevent concurrent modifications
+            ->get();
 
-    $startingIndex = $existingQueueNumbers ? $existingQueueNumbers : 0;
+        \Log::info('Appointments to process:', [
+            'count' => $appointments->count(),
+            'appointments' => $appointments->map(function ($appt) {
+                return [
+                    'id' => $appt->id,
+                    'checked_in_at' => $appt->checked_in_at,
+                    'antrian' => $appt->antrian,
+                    'dibuat_oleh' => $appt->dibuat_oleh,
+                ];
+            })->toArray(),
+        ]);
 
-    // Assign queue numbers only to appointments without a queue number
-    foreach ($appointments as $index => $appointment) {
-        if (!$appointment->antrian) { // Only assign if no queue number exists
-            $queueNumber = 'A' . str_pad($startingIndex + $index + 1, 2, '0', STR_PAD_LEFT);
+        // Fetch existing queue numbers
+        $existingQueueNumbers = self::where('dokter_id', $doctorId)
+            ->where('tanggal', $date)
+            ->where('status', 'dikonfirmasi')
+            ->whereNotNull('antrian')
+            ->pluck('antrian')
+            ->map(function ($queueNumber) {
+                return (int) substr($queueNumber, 1);
+            })->toArray();
+
+        $startingIndex = empty($existingQueueNumbers) ? 0 : max($existingQueueNumbers);
+
+        \Log::info('Queue number calculation:', [
+            'existing_queue_numbers' => $existingQueueNumbers,
+            'starting_index' => $startingIndex,
+        ]);
+
+        // Assign queue numbers
+        foreach ($appointments as $appointment) {
+            // Skip if the appointment already has a valid queue number
+            if ($appointment->antrian && in_array((int) substr($appointment->antrian, 1), $existingQueueNumbers)) {
+                \Log::info('Skipping appointment with existing queue number:', [
+                    'appointment_id' => $appointment->id,
+                    'queue_number' => $appointment->antrian,
+                    'checked_in_at' => $appointment->checked_in_at,
+                ]);
+                continue;
+            }
+
+            $startingIndex++;
+            $queueNumber = 'A' . str_pad($startingIndex, 2, '0', STR_PAD_LEFT);
+
+            // Check for duplicate queue number
+            if (in_array($startingIndex, $existingQueueNumbers)) {
+                \Log::warning('Queue number already exists:', [
+                    'queue_number' => $queueNumber,
+                    'appointment_id' => $appointment->id,
+                ]);
+                continue;
+            }
+
             $appointment->update(['antrian' => $queueNumber]);
+            \Log::info('Assigned queue number:', [
+                'appointment_id' => $appointment->id,
+                'queue_number' => $queueNumber,
+                'starting_index' => $startingIndex,
+                'checked_in_at' => $appointment->checked_in_at,
+            ]);
+
+            $existingQueueNumbers[] = $startingIndex;
         }
-    }
+
+        \Log::info('Completed assignQueueNumbers:', [
+            'doctor_id' => $doctorId,
+            'date' => $date,
+            'total_assigned' => count($existingQueueNumbers),
+        ]);
+    });
 }
 
     /**

@@ -27,23 +27,37 @@ public function index()
             'appointments' => $allAppointmentsToday->toArray()
         ]);
 
-        $pasienHariIni = Appointment::whereIn('status', ['menunggu', 'dikonfirmasi', 'diproses', 'selesai'])
+        // Log distinct statuses
+        \Log::info('Distinct appointment statuses:', [
+            'statuses' => Appointment::distinct()->pluck('status')->toArray(),
+        ]);
+
+        $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'diproses', 'selesai'])
             ->whereDate('tanggal', $today)
-            ->whereNotNull('checked_in_at') // Filter for checked-in patients
+            ->whereNotNull('checked_in_at')
             ->with(['pasien' => function($query) {
                 $query->select('id', 'nama_lengkap', 'nik', 'tanggal_lahir', 'jenis_kelamin', 'golongan_darah', 'no_hp', 'alamat');
             }])
-            ->orderBy('jam_konsultasi', 'asc') // Sort by check-in time
+            ->orderBy('jam_konsultasi', 'asc')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        \Log::info('Query for today appointments:', [
+        $pasienMenungguKonfirmasi = Appointment::whereNotNull('checked_in_at')
+            ->where('dibuat_oleh', 'pasien')
+            ->where('status', 'menunggu')
+            ->whereDate('tanggal', $today)
+            ->get();
+
+        \Log::info('Pasien Menunggu Konfirmasi Debug:', [
             'date' => $today->toDateString(),
-            'statuses' => ['menunggu', 'dikonfirmasi', 'diproses', 'selesai'],
-            'count' => $pasienHariIni->count(),
-            'raw_query' => Appointment::whereIn('status', ['menunggu', 'dikonfirmasi', 'diproses', 'selesai'])
+            'count' => $pasienMenungguKonfirmasi->count(),
+            'appointments' => $pasienMenungguKonfirmasi->toArray(),
+            'raw_query' => Appointment::where('status', 'menunggu')
                 ->whereDate('tanggal', $today)
-                ->toSql()
+                ->toSql(),
+            'bindings' => Appointment::where('status', 'menunggu')
+                ->whereDate('tanggal', $today)
+                ->getBindings(),
         ]);
 
         $otherStatusAppointments = Appointment::whereDate('tanggal', $today)
@@ -84,16 +98,12 @@ public function index()
             ];
         });
 
-        $pasienMenungguKonfirmasi = Appointment::where('status', 'menunggu')
-            ->whereDate('tanggal', $today)
-            ->count();
-
         $aktivitasMingguan = $this->getWeeklyActivity();
 
         \Log::info('Final data sent to frontend:', [
             'pasienHariIni_count' => $pasienHariIniWithQueue->count(),
             'totalPasienHariIni' => $pasienHariIni->count(),
-            'totalMenungguKonfirmasi' => $pasienMenungguKonfirmasi,
+            'totalMenungguKonfirmasi' => $pasienMenungguKonfirmasi->count(),
             'today_string' => $today->toDateString(),
             'current_time' => Carbon::now()->toDateTimeString()
         ]);
@@ -101,7 +111,7 @@ public function index()
         return Inertia::render('staff/DashboardStaff', [
             'pasienHariIni' => $pasienHariIniWithQueue,
             'totalPasienHariIni' => $pasienHariIni->count(),
-            'totalMenungguKonfirmasi' => $pasienMenungguKonfirmasi,
+            'totalMenungguKonfirmasi' => $pasienMenungguKonfirmasi->count(),
             'aktivitasMingguan' => $aktivitasMingguan,
             'currentDate' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY'),
             'currentTime' => Carbon::now()->format('H:i:s'),
@@ -109,7 +119,8 @@ public function index()
                 'today' => $today->toDateString(),
                 'total_appointments' => $totalAppointments,
                 'all_today_count' => $allAppointmentsToday->count(),
-                'filtered_today_count' => $pasienHariIni->count()
+                'filtered_today_count' => $pasienHariIni->count(),
+                'menunggu_count' => $pasienMenungguKonfirmasi->count(),
             ]
         ]);
     } catch (\Exception $e) {

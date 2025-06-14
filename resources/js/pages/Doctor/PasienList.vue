@@ -1,3 +1,4 @@
+
 <template>
   <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar -->
@@ -5,11 +6,9 @@
     
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
- 
       <main class="flex-1 p-6">
-
-             <!-- Header -->
-      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+        <!-- Header -->
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
         <!-- Content Container with extra spacing -->
         <div class="p-3 mt-2"></div>
@@ -125,7 +124,7 @@
                       <div class="flex items-center justify-center space-x-1">
                         <button
                           @click="viewPatient(pasien)"
-                            :title='`Lihat detail ${pasien.nama_lengkap}`'
+                          :title="`Lihat detail ${pasien.nama_lengkap}`"
                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 rounded transition-all"
                         >
                           <i class="fas fa-eye text-xs"></i>
@@ -329,7 +328,7 @@ export default {
 
     // View patient detail
     function viewPatient(pasien) {
-      Inertia.visit(`/patients/${pasien.id}`);
+      Inertia.visit(`/dokter.Pasien/${pasien.id}`);
     }
 
     return {

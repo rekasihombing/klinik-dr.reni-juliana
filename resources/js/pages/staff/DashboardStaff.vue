@@ -91,7 +91,7 @@
               <div class="flex items-center justify-between mb-4">
                 <div>
                   <p class="text-white/80 text-sm font-medium mb-2">Menunggu Konfirmasi</p>
-                  <p class="text-3xl font-bold">{{ totalMenungguKonfirmasi && totalMenungguKonfirmasi.length > 0 ? totalMenungguKonfirmasi.length : '0' }}</p>
+                  <p class="text-3xl font-bold">{{ totalMenungguKonfirmasi || '0' }}</p>
                   <p class="text-white/60 text-xs mt-1">Pasien online pending</p>
                 </div>
                 <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
