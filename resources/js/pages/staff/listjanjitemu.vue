@@ -13,14 +13,14 @@
       <div class="p-6 mt-2">
         <div>
           <!-- Header Section -->
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 text- text-gray-500">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-                Total {{ appointments.length }} Pasien
-              </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-gray-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              Total {{ appointments.length }} Pasien
             </div>
+          </div>
 
           <!-- Filter Section with more spacing -->
           <div class="px-6 py-5 bg-gray-50 border-b border-gray-200">
@@ -44,20 +44,21 @@
                 </div>
               </div>
               
-              <div class="flex items-center gap-2">
-                <label class="text-sm font-medium text-gray-700">Status:</label>
-                <select 
-                  v-model="filters.status" 
-                  @change="applyFilters"
-                  class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                >
-                  <option value="">Semua Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="confirmed">Confirmed</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
+ <div class="flex items-center gap-2">
+      <label class="text-sm font-medium text-gray-700">Status:</label>
+      <select 
+        v-model="filters.status" 
+        @change="handleStatusChange"
+        class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+      >
+        <option value="">Semua Status</option>
+        <option value="menunggu">Menunggu</option>
+        <option value="dikonfirmasi">Dikonfirmasi</option>
+        <option value="diproses">Konsultasi Berlangsung</option>
+        <option value="selesai">Selesai</option>
+        <option value="dibatalkan">Dibatalkan</option>
+      </select>
+    </div>
               
               <div class="flex-1 min-w-[200px]">
                 <div class="relative">
@@ -82,106 +83,104 @@
             <p class="mt-2 text-gray-600">Memuat data...</p>
           </div>
 
-            <!-- Table Section with rounded corners -->
-            <div v-else class="shadow-sm overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-[#3674B5]">
-                  <tr>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      Pasien
-                    </th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                      Tanggal
-                    </th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                      Waktu
-                    </th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      Keluhan
-                    </th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                      Aksi
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <tr 
-                    v-for="appointment in appointments" 
-                    :key="appointment.id"
-                    class="hover:bg-gray-50 transition-colors duration-150"
-                  >
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      <div class="flex items-center gap-3">
-                        <div>
-                          <div class="font-medium text-gray-900">{{ appointment.nama }}</div>
-                          <div class="text-sm text-gray-500">No. {{ appointment.antrian }}</div>
-                        </div>
+          <!-- Table Section with rounded corners -->
+          <div v-else class="shadow-sm overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-[#3674B5]">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                    Pasien
+                  </th>
+                  <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
+                    Tanggal
+                  </th>
+                  <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
+                    Waktu
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                    Keluhan
+                  </th>
+                  <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr 
+                  v-for="appointment in appointments" 
+                  :key="appointment.id"
+                  class="hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <div class="flex items-center gap-3">
+                      <div>
+                        <div class="font-medium text-gray-900">{{ appointment.nama }}</div>
+                        <div class="text-sm text-gray-500">No. {{ appointment.antrian }}</div>
                       </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
-                      <span class="font-medium">{{ appointment.tanggal }}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-blue-600">
-                      <span class="font-medium">{{ appointment.waktu }}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div>{{ appointment.keluhan }}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                      <span 
-                        :class="getStatusClass(appointment.status)"
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      >
-                        {{ getStatusText(appointment.status) }}
-                      </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                      <button 
-                        @click="showDetail(appointment)"
-                        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg inline-flex items-center gap-1 px-3 py-1.5 text-white text-sm rounded-md transition-colors"
-                      >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                        Detail
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
+                    <span class="font-medium">{{ appointment.tanggal }}</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-blue-600">
+                    <span class="font-medium">{{ appointment.waktu }}</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div>{{ appointment.keluhan }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <span 
+                      :class="getStatusClass(appointment.status)"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    >
+                      {{ getStatusText(appointment.status) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <button 
+                      @click="showDetail(appointment)"
+                      class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg inline-flex items-center gap-1 px-3 py-1.5 text-white text-sm rounded-md transition-colors"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                      Detail
+                    </button>
+                  </td>
+                </tr>
+                <tr v-if="appointments.length === 0">
+                  <td colspan="6" class="px-6 py-12 text-center">
+                    <div class="flex flex-col items-center">
+                      <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                      </svg>
+                      <p class="text-gray-500 mb-3">
+                        {{ filters.search ? 'Tidak ada janji temu yang ditemukan' : 'Belum ada data janji temu' }}
+                      </p>
+                      <button v-if="!filters.search" @click="tambahJanjiTemu" class="text-blue-600 hover:text-blue-800 font-medium">
+                        Tambah janji temu pertama →
                       </button>
-                    </td>
-                  </tr>
-                  <tr v-if="appointments.length === 0">
-                    <td colspan="6" class="px-6 py-12 text-center">
-                      <div class="flex flex-col items-center">
-                        <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                        </svg>
-                        <p class="text-gray-500 mb-3">
-                          {{ searchQuery ? 'Tidak ada janji temu yang ditemukan' : 'Belum ada data janji temu' }}
-                        </p>
-                        <button v-if="!searchQuery" @click="tambahJanjiTemu" class="text-blue-600 hover:text-blue-800 font-medium">
-                          Tambah janji temu pertama →
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           
-            <div><!-- Empty State -->
-            <div v-if="appointments.length === 0" class="text-center py-12">
-              <svg class="mx-auto w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data ditemukan</h3>
-              <p class="text-gray-500">Coba ubah filter atau kata kunci pencarian</p>
-            </div>
+          <div v-if="appointments.length === 0" class="text-center py-12">
+            <svg class="mx-auto w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data ditemukan</h3>
+            <p class="text-gray-500">Coba ubah filter atau kata kunci pencarian</p>
           </div>
 
-          <!-- Reset Button Section - Moved below table -->
-          <div class="mt-6 flex justify-start ">
+          <!-- Reset Button Section -->
+          <div class="mt-6 flex justify-start">
             <button 
               type="button"
               @click="clearFilters"
@@ -197,9 +196,9 @@
     <!-- Modal Detail -->
     <Transition name="modal">
       <div v-if="isDetailVisible" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" 
-      @click="closeModal"
-      style="background-color: rgba(0, 0, 0, 0.20);">
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" 
+        @click="closeModal"
+        style="background-color: rgba(0, 0, 0, 0.20);">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" @click.stop>
           <!-- Modal Header -->
           <div class="px-6 py-4 border-b border-gray-200">
@@ -298,7 +297,7 @@
               Tutup
             </button>
             <button 
-              v-if="selectedAppointment.status === 'pending'"
+              v-if="selectedAppointment.status === 'menunggu'"
               @click="confirmAppointment" 
               :disabled="loading"
               class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
@@ -306,7 +305,7 @@
               {{ loading ? 'Memproses...' : 'Konfirmasi' }}
             </button>
             <button 
-              v-if="selectedAppointment.status === 'confirmed'"
+              v-if="selectedAppointment.status === 'dikonfirmasi'"
               @click="completeAppointment" 
               :disabled="loading"
               class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -321,22 +320,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { usePage } from '@inertiajs/inertia-vue3'
-import SidebarStaff from '@/layouts/staff/SidebarStaff.vue'
-import HeaderStaff from '@/layouts/staff/HeaderStaff.vue'
+// Perbaikan untuk script Vue.js
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import { usePage } from '@inertiajs/inertia-vue3';
+import SidebarStaff from '@/layouts/staff/SidebarStaff.vue';
+import HeaderStaff from '@/layouts/staff/HeaderStaff.vue';
 
 // Props dari Inertia
 const props = defineProps({
-    breadcrumbPages: {
-      type: Array,
-      default: () => ([
-        { label: 'Dashboard', href: '/dashboardstaff' },
-        { label: 'Daftar Janji Temu', href: '/daftar-janji-temu' }
-      ])
-    },
-
+  breadcrumbPages: {
+    type: Array,
+    default: () => ([
+      { label: 'Dashboard', href: '/dashboardstaff' },
+      { label: 'Daftar Janji Temu', href: '/daftar-janji-temu' }
+    ])
+  },
   appointments: {
     type: Array,
     default: () => []
@@ -353,139 +352,196 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   }
-})
+});
 
 // Reactive data
-const loading = ref(false)
-const isDetailVisible = ref(false)
-const isModalVisible = ref(false)
-const selectedAppointment = ref({})
+const loading = ref(false);
+const isDetailVisible = ref(false);
+const isModalVisible = ref(false);
+const selectedAppointment = ref({});
 
-// Form filters
+// Form filters - PERBAIKAN: Pastikan nilai default yang benar
 const filters = ref({
   search: props.filters.search || '',
   date_from: props.filters.date_from || '',
   date_to: props.filters.date_to || '',
   status: props.filters.status || ''
-})
+});
 
 // Breadcrumb configuration
-const breadcrumbPages = computed(() => props.breadcrumbPages)
+const breadcrumbPages = computed(() => props.breadcrumbPages);
 
 // Computed properties
-const appointments = computed(() => props.appointments || [])
+const appointments = computed(() => props.appointments || []);
 
-// Methods
+// PERBAIKAN: Debounce untuk search input
+let searchTimeout;
+const debouncedApplyFilters = () => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
+  searchTimeout = setTimeout(() => {
+    applyFilters();
+  }, 300);
+};
+
+// PERBAIKAN: Method applyFilters yang diperbaiki
 const applyFilters = () => {
-  loading.value = true
+  console.log('=== APPLYING FILTERS ===');
+  console.log('Current filters:', filters.value);
+  console.log('Status filter:', filters.value.status);
+  console.log('Status type:', typeof filters.value.status);
+  console.log('Status length:', filters.value.status?.length);
   
-  // Build query parameters
-  const params = {}
-  if (filters.value.search) params.search = filters.value.search
-  if (filters.value.date_from) params.date_from = filters.value.date_from
-  if (filters.value.date_to) params.date_to = filters.value.date_to
-  if (filters.value.status) params.status = filters.value.status
+  loading.value = true;
   
-  // Navigate with filters
+  // Build query parameters - PERBAIKAN: Pastikan nilai yang dikirim benar
+  const params = {};
+  
+  if (filters.value.search && filters.value.search.trim() !== '') {
+    params.search = filters.value.search.trim();
+  }
+  
+  if (filters.value.date_from && filters.value.date_from !== '') {
+    params.date_from = filters.value.date_from;
+  }
+  
+  if (filters.value.date_to && filters.value.date_to !== '') {
+    params.date_to = filters.value.date_to;
+  }
+  
+  if (filters.value.status && filters.value.status !== '' && filters.value.status !== 'all') {
+    params.status = filters.value.status;
+    console.log('Status parameter being sent:', params.status);
+  }
+  
+  console.log('Final parameters:', params);
+
   Inertia.get(route('staff.appointments.index'), params, {
     preserveState: true,
     preserveScroll: true,
-    onFinish: () => {
-      loading.value = false
-    }
-  })
-}
-
-const confirmAppointment = () => {
-  if (!selectedAppointment.value.id) return
-  
-  loading.value = true
-  
-  Inertia.patch(route('staff.appointments.confirm', selectedAppointment.value.id), {}, {
-    onSuccess: () => {
-      closeModal()
-      // Show success notification
-      alert('Janji temu berhasil dikonfirmasi!')
+    replace: true,
+    onSuccess: (page) => {
+      console.log('Filter applied successfully');
+      console.log('New appointments count:', page.props.appointments?.length);
+      console.log('New filters from server:', page.props.filters);
     },
     onError: (errors) => {
-      console.error('Error confirming appointment:', errors)
-      alert('Gagal mengkonfirmasi janji temu. Silakan coba lagi.')
+      console.error('Error applying filters:', errors);
+      alert('Gagal menerapkan filter. Silakan coba lagi.');
     },
     onFinish: () => {
-      loading.value = false
+      loading.value = false;
     }
-  })
-}
+  });
+};
 
-const completeAppointment = () => {
-  if (!selectedAppointment.value.id) return
-  
-  const confirmed = confirm('Apakah Anda yakin ingin menyelesaikan janji temu ini?')
-  if (!confirmed) return
-  
-  loading.value = true
-  
-  Inertia.patch(route('staff.appointments.complete', selectedAppointment.value.id), {}, {
-    onSuccess: () => {
-      closeModal()
-      // Show success notification
-      alert('Janji temu berhasil diselesaikan!')
-    },
-    onError: (errors) => {
-      console.error('Error completing appointment:', errors)
-      alert('Gagal menyelesaikan janji temu. Silakan coba lagi.')
-    },
-    onFinish: () => {
-      loading.value = false
-    }
-  })
-}
+// PERBAIKAN: Handle perubahan filter secara terpisah
+const handleSearchChange = () => {
+  debouncedApplyFilters();
+};
 
+const handleDateChange = () => {
+  applyFilters();
+};
+
+const handleStatusChange = (event) => {
+  console.log('Status changed to:', event.target.value);
+  filters.value.status = event.target.value;
+  applyFilters();
+};
+
+// PERBAIKAN: Method untuk reset filters
 const clearFilters = () => {
+  console.log('Clearing filters...');
   filters.value = {
     search: '',
     date_from: '',
     date_to: '',
     status: ''
-  }
-  applyFilters()
-}
+  };
+  applyFilters();
+};
 
-onMounted(() => {
-  console.log('Appointments from props:', props.appointments)
-})
+// Methods untuk appointment actions
+const confirmAppointment = () => {
+  if (!selectedAppointment.value.id) return;
+  
+  const confirmed = confirm('Apakah Anda yakin ingin mengkonfirmasi janji temu ini?');
+  if (!confirmed) return;
+  
+  loading.value = true;
+  
+  Inertia.patch(route('staff.appointments.confirm', selectedAppointment.value.id), {}, {
+    onSuccess: () => {
+      closeModal();
+      alert('Janji temu berhasil dikonfirmasi!');
+    },
+    onError: (errors) => {
+      console.error('Error confirming appointment:', errors);
+      alert('Gagal mengkonfirmasi janji temu. Silakan coba lagi.');
+    },
+    onFinish: () => {
+      loading.value = false;
+    }
+  });
+};
+
+const completeAppointment = () => {
+  if (!selectedAppointment.value.id) return;
+  
+  const confirmed = confirm('Apakah Anda yakin ingin menyelesaikan janji temu ini?');
+  if (!confirmed) return;
+  
+  loading.value = true;
+  
+  Inertia.patch(route('staff.appointments.complete', selectedAppointment.value.id), {}, {
+    onSuccess: () => {
+      closeModal();
+      alert('Janji temu berhasil diselesaikan!');
+    },
+    onError: (errors) => {
+      console.error('Error completing appointment:', errors);
+      alert('Gagal menyelesaikan janji temu. Silakan coba lagi.');
+    },
+    onFinish: () => {
+      loading.value = false;
+    }
+  });
+};
 
 const showDetail = (appointment) => {
-  selectedAppointment.value = appointment
-  isDetailVisible.value = true
-  isModalVisible.value = true
-}
+  selectedAppointment.value = appointment;
+  isDetailVisible.value = true;
+  isModalVisible.value = true;
+};
 
 const closeModal = () => {
-  isDetailVisible.value = false
-  isModalVisible.value = false
-  selectedAppointment.value = {}
-}
+  isDetailVisible.value = false;
+  isModalVisible.value = false;
+  selectedAppointment.value = {};
+};
 
 const getInitials = (name) => {
-  if (!name) return 'N/A'
+  if (!name) return 'N/A';
   return name
     .split(' ')
     .map(word => word.charAt(0))
     .join('')
     .toUpperCase()
-    .substring(0, 2)
-}
+    .substring(0, 2);
+};
 
 const getStatusClass = (status) => {
   const statusClasses = {
     'menunggu': 'bg-yellow-100 text-yellow-800',
     'dikonfirmasi': 'bg-green-100 text-green-800',
+    'diproses': 'bg-orange-100 text-orange-800',
     'selesai': 'bg-blue-100 text-blue-800',
     'dibatalkan': 'bg-red-100 text-red-800'
-  }
-  return statusClasses[status] || 'bg-gray-100 text-gray-800'
-}
+  };
+  return statusClasses[status] || 'bg-gray-100 text-gray-800';
+};
 
 const getStatusText = (status) => {
   const statusTexts = {
@@ -494,31 +550,47 @@ const getStatusText = (status) => {
     'diproses': 'Konsultasi Berlangsung',
     'selesai': 'Selesai',
     'dibatalkan': 'Dibatalkan'
-  }
-  return statusTexts[status] || 'Tidak Diketahui'
-}
+  };
+  return statusTexts[status] || 'Tidak Diketahui';
+};
 
-
-// Lifecycle hooks
-onMounted(() => {
-  // Any initialization logic if needed
-  console.log('Appointments loaded:', appointments.value.length)
-})
+// Watch untuk perubahan props
+watch(() => props.filters, (newFilters) => {
+  console.log('Props filters changed:', newFilters);
+  filters.value = {
+    search: newFilters.search || '',
+    date_from: newFilters.date_from || '',
+    date_to: newFilters.date_to || '',
+    status: newFilters.status || ''
+  };
+}, { immediate: true });
 
 // Handle keyboard shortcuts
 const handleKeydown = (event) => {
   if (event.key === 'Escape' && isDetailVisible.value) {
-    closeModal()
+    closeModal();
   }
-}
+};
 
+// Lifecycle hooks
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+  console.log('Component mounted');
+  console.log('Initial appointments:', appointments.value);
+  console.log('Initial filters:', filters.value);
+  
+  const availableStatuses = appointments.value.map(app => app.status);
+  const uniqueStatuses = [...new Set(availableStatuses)];
+  console.log('Available statuses:', uniqueStatuses);
+  
+  document.addEventListener('keydown', handleKeydown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+  document.removeEventListener('keydown', handleKeydown);
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
+});
 </script>
 
 <style scoped>
@@ -536,7 +608,6 @@ onUnmounted(() => {
   transform: scale(1);
 }
 
-/* Custom table styling for rounded corners */
 table {
   border-radius: 0.5rem;
   overflow: hidden;

@@ -93,7 +93,8 @@ class LaporanOperasionalController extends Controller
     // 5. Hitung rata-rata pasien
     $averagePatients = $activity->avg('patients' ?? 'count');
 
-    return Inertia::render('Doctor/LaporanOperasional', [
+    if ($request->is('dokter.Laporan-operasional') || $request->routeIs('dokter.laporan-operasional')) {
+        return Inertia::render('Doctor/LaporanOperasional', [
         'totalPatients' => $totalPatients,
         'newPatients' => $newPatients,
         'visitFrequency' => $visitFrequency,
@@ -105,6 +106,22 @@ class LaporanOperasionalController extends Controller
         })->toArray(),
         'averagePatients' => round($averagePatients),
     ]);
+    }
+
+    if ($request->is('staff.Laporan-operasional') || $request->routeIs('staff.laporan-operasional')) {
+return Inertia::render('staff/LaporanOperasional', [
+        'totalPatients' => $totalPatients,
+        'newPatients' => $newPatients,
+        'visitFrequency' => $visitFrequency,
+        'weeklyActivity' => $activity->map(function ($a) {
+            return [
+                'label' => $a->label ?? $a['label'],
+                'patients' => $a->count ?? $a['patients'],
+            ];
+        })->toArray(),
+        'averagePatients' => round($averagePatients),
+    ]);
+    }
 }
 
 }

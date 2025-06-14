@@ -75,15 +75,12 @@ class AppointmentController extends Controller
             ->orderBy('tanggal', 'desc')
             ->orderBy('jam_konsultasi', 'desc')
             ->get()
-            ->map(function ($appointment, $index) {
-                // Generate nomor antrian berdasarkan urutan pada hari yang sama
-                $queueNumber = $this->generateQueueNumber($appointment);
-                
+            ->map(function ($appointment) {
                 return [
                     'id' => $appointment->id,
                     'date' => Carbon::parse($appointment->tanggal)->format('d-m-Y'),
                     'time' => Carbon::parse($appointment->jam_konsultasi)->format('H.i'),
-                    'queueNumber' => $queueNumber,
+                    'queueNumber' => $appointment->getQueueNumber(), // Use stored antrian from model
                     'status' => $this->getStatusLabel($appointment->status),
                     'keluhan' => $appointment->keluhan ?? '-',
                     'originalStatus' => $appointment->status,
@@ -100,30 +97,6 @@ class AppointmentController extends Controller
         ]);
     }
 
-    // Helper method untuk generate nomor antrian
-    private function generateQueueNumber($appointment)
-    {
-        // Cari posisi appointment ini berdasarkan waktu pada tanggal yang sama
-        $sameDataAppointments = Appointment::where('dokter_id', $appointment->dokter_id)
-            ->where('tanggal', $appointment->tanggal)
-            ->whereIn('status', ['menunggu', 'dikonfirmasi', 'selesai']) // Tidak termasuk yang dibatalkan
-            ->orderBy('jam_konsultasi')
-            ->orderBy('created_at')
-            ->get();
-
-        $position = $sameDataAppointments->search(function ($item) use ($appointment) {
-            return $item->id === $appointment->id;
-        });
-
-        // Jika tidak ditemukan atau dibatalkan, return "-"
-        if ($position === false || $appointment->status === 'dibatalkan') {
-            return '-';
-        }
-
-        // Generate format antrian: A01, A02, dst
-        return 'A' . str_pad($position + 1, 2, '0', STR_PAD_LEFT);
-    }
-
     // Helper method untuk mapping status
     private function getStatusLabel($status)
     {
@@ -137,8 +110,14 @@ class AppointmentController extends Controller
         return $statusMap[$status] ?? ucfirst($status);
     }
     
-    public function store(Request $request) 
+    public function store(Request $request)
     {
+        $validated = $request->validate([
+            'tanggal' => 'required|date',
+            'jam_konsultasi' => 'required|date_format:H:i',
+            'keluhan' => 'required|string|max:1000',
+        ]);
+
         $user = Auth::user();
         $patient = $user->patient;
 
@@ -146,19 +125,7 @@ class AppointmentController extends Controller
             return redirect()->back()->withErrors(['pasien_id' => 'Data pasien tidak ditemukan untuk user ini.']);
         }
 
-        // VALIDASI PROFIL - WAJIB SEBELUM SIMPAN APPOINTMENT
-        if (!$this->isProfileComplete($patient)) {
-            return redirect()->route('patient.profile.edit')
-                ->with('error', 'Profil belum lengkap. Silakan lengkapi data profil terlebih dahulu.');
-        }
-
-        $validated = $request->validate([
-            'tanggal' => 'required|date',
-            'jam_konsultasi' => 'required|date_format:H:i',
-            'keluhan' => 'required|string|max:1000',
-        ]);
-
-        // Cek jika sudah ada janji temu aktif
+        // Check for active appointments
         $existingAppointment = Appointment::where('pasien_id', $patient->id)
             ->whereIn('status', ['menunggu', 'dikonfirmasi'])
             ->first();
@@ -167,7 +134,7 @@ class AppointmentController extends Controller
             return redirect()->back()->withErrors(['error' => 'Anda sudah memiliki janji temu yang masih aktif.']);
         }
 
-        // Tambahan validasi: Cek apakah slot waktu masih tersedia
+        // Check if slot is taken
         $doctorId = 1;
         $slotTaken = Appointment::where('dokter_id', $doctorId)
             ->where('tanggal', $validated['tanggal'])
@@ -181,7 +148,7 @@ class AppointmentController extends Controller
             ])->withInput();
         }
 
-        // Tambahan validasi: Cek apakah waktu yang dipilih sudah lewat
+        // Check if appointment time is in the past
         $appointmentDateTime = Carbon::parse($validated['tanggal'] . ' ' . $validated['jam_konsultasi']);
         if ($appointmentDateTime->isPast()) {
             return redirect()->back()->withErrors([
@@ -193,7 +160,11 @@ class AppointmentController extends Controller
         $validated['dibuat_oleh'] = 'pasien';
         $validated['dokter_id'] = $doctorId;
 
+        // Create appointment
         $appointment = Appointment::create($validated);
+
+        // Assign queue numbers for the day
+        Appointment::assignQueueNumbers($doctorId, $validated['tanggal']);
 
         return redirect()->route('dashboard')->with('success', 'Janji temu berhasil dibuat!');
     }
@@ -216,24 +187,21 @@ class AppointmentController extends Controller
                 return back()->withErrors(['error' => 'Data pasien tidak ditemukan']);
             }
 
-            // Cari appointment berdasarkan ID dan pasien_id
             $appointment = Appointment::where('id', $appointmentId)
-                                    ->where('pasien_id', $patient->id)
-                                    ->first();
+                ->where('pasien_id', $patient->id)
+                ->first();
 
             if (!$appointment) {
                 return back()->withErrors(['error' => 'Janji temu tidak ditemukan']);
             }
 
-            // Cek apakah bisa dibatalkan (tidak boleh setelah check-in)
-            if ($appointment->checked_in_at) {
-                return back()->withErrors(['error' => 'Janji temu tidak dapat dibatalkan setelah check-in']);
-            }
-
-            // Update status menjadi 'dibatalkan' (sesuai enum yang sudah ada)
             $appointment->update([
                 'status' => 'dibatalkan'
+                // Tidak mengosongkan antrian: 'antrian' => null dihapus
             ]);
+
+            // Regenerasi nomor antrian untuk hari yang sama
+            Appointment::assignQueueNumbers($appointment->dokter_id, $appointment->tanggal);
 
             return back()->with('success', 'Janji temu berhasil dibatalkan');
 
@@ -243,7 +211,7 @@ class AppointmentController extends Controller
         }
     }
 
-   public function checkIn(Request $request) 
+    public function checkIn(Request $request) 
     {
         try {
             $request->validate([
@@ -299,6 +267,9 @@ class AppointmentController extends Controller
         $appointment = Appointment::findOrFail($id);
         $appointment->status = 'diproses';
         $appointment->save();
+
+        // Regenerasi nomor antrian
+        Appointment::assignQueueNumbers($appointment->dokter_id, $appointment->tanggal);
 
         return back()->with('success', 'Status pasien diubah menjadi Diproses.');
     }

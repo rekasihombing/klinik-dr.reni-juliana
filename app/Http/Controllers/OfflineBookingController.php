@@ -45,31 +45,38 @@ class OfflineBookingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
             'nik' => 'required|string|max:20',
-            'keluhan' => 'required|string|min:10',
-            'nama_lengkap' => 'nullable|string|max:255',
-            'tanggal_lahir' => 'nullable|date|before:today',
+            'tanggal_lahir' => 'required|date',
             'golongan_darah' => 'nullable|string|max:5',
-            'jenis_kelamin' => 'nullable|in:L,P',
+            'jenis_kelamin' => 'required|in:L,P',
             'alamat' => 'nullable|string',
             'no_hp' => 'nullable|string|max:20',
+            'keluhan' => 'required|string',
         ]);
 
         $tanggal = Carbon::now()->toDateString();
         $jam = Carbon::now()->format('H:i');
         $checkedInAt = Carbon::now()->format('Y-m-d H:i:s');
+        $doctorId = 1;
 
-        // Check if patient exists
+        // Check if patient already exists by NIK
         $patient = Patient::where('nik', $validated['nik'])->first();
 
-        if (!$patient) {
-            // Validate required fields for new patient
-            $request->validate([
-                'nama_lengkap' => 'required|string|max:255',
-                'tanggal_lahir' => 'required|date|before:today',
-                'jenis_kelamin' => 'required|in:L,P',
+        if ($patient) {
+            Log::info("Using existing patient with NIK: {$validated['nik']}, ID: {$patient->id}");
+            // Update patient data if necessary
+            $patient->update([
+                'nama_lengkap' => $validated['nama_lengkap'],
+                'tanggal_lahir' => $validated['tanggal_lahir'],
+                'golongan_darah' => $validated['golongan_darah'] ?? $patient->golongan_darah,
+                'jenis_kelamin' => $validated['jenis_kelamin'],
+                'alamat' => $validated['alamat'] ?? $patient->alamat,
+                'no_hp' => $validated['no_hp'] ?? $patient->no_hp,
             ]);
-
+        } else {
+            Log::info("Creating new patient with NIK: {$validated['nik']}");
+            // Create new patient
             $patient = Patient::create([
                 'user_id' => null,
                 'nama_lengkap' => $validated['nama_lengkap'],
@@ -82,22 +89,10 @@ class OfflineBookingController extends Controller
             ]);
         }
 
-        // Check for existing appointments on the same day
-        $existingAppointment = Appointment::where('pasien_id', $patient->id)
-            ->where('tanggal', $tanggal)
-            ->where('status', '!=', 'selesai')
-            ->first();
-
-        if ($existingAppointment) {
-            throw ValidationException::withMessages([
-                'nik' => 'Pasien ini sudah memiliki janji temu yang belum selesai hari ini.',
-            ]);
-        }
-
         // Create appointment
-        Appointment::create([
+        $appointment = Appointment::create([
             'pasien_id' => $patient->id,
-            'dokter_id' => 1, // Consider making this dynamic
+            'dokter_id' => $doctorId,
             'tanggal' => $tanggal,
             'jam_konsultasi' => $jam,
             'keluhan' => $validated['keluhan'],
@@ -105,6 +100,9 @@ class OfflineBookingController extends Controller
             'dibuat_oleh' => 'staff',
             'checked_in_at' => $checkedInAt,
         ]);
+
+        // Assign queue numbers for the day
+        Appointment::assignQueueNumbers($doctorId, $tanggal);
 
         return redirect()->route('dashboardstaff')->with('success', 'Pendaftaran berhasil.');
     }

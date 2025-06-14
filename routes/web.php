@@ -118,8 +118,8 @@ Route::get('/invoice', function () {
     return Inertia::render('staff/invoice');
 })->name('Invoice');
 
-Route::get('/staff.Pasien', [PatientController::class, 'index'])->name('patients.index');
-Route::get('/dokter.Pasien', [PatientController::class, 'index'])->name('patients.index');
+Route::get('/staff.Pasien', [PatientController::class, 'index'])->name('staff.pasien');
+Route::get('/dokter.Pasien', [PatientController::class, 'index'])->name('dokter.pasien');
 
 Route::get('/patients/{id}', [DetailPasienController::class, 'show'])->name('patients.show');
 
@@ -448,5 +448,15 @@ Route::middleware(['auth'])->group(function () {
 //     })->name('register');
 // });
 
+Route::middleware('auth')->group(function () {
+    // Settings routes
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('password', [PasswordController::class, 'edit'])
+            ->name('password.edit');
+        
+        Route::put('password', [PasswordController::class, 'update'])
+            ->name('password.update');
+    });
+});
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
