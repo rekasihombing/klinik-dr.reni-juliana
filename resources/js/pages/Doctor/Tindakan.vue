@@ -1,22 +1,22 @@
 <template>
   <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-    <div>{{ clinicName }}</div>
-    <div class="flex items-center space-x-1 cursor-pointer">
-      <span>{{ patientData.nama || patientName }}</span>
-    </div>
+      <div class="flex items-center space-x-1 cursor-pointer">
+      </div>
 
+    <!-- Main Container -->
     <div class="flex flex-1 overflow-hidden">
+      <!-- Sidebar -->
       <Sidebar :patient-name="patientData.nama || patientName" />
-      <main class="bg-gray-200 flex-1 font-sans text-[13px] leading-tight text-black">
+
+      <!-- Main content -->
+      <main class="bg-gray-100 flex-1 p-6 font-sans text-[13px] leading-tight text-black">
+        
+        <!-- Top bar -->
         <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
-        <div class="max-w-4xl mx-auto p-4">
+        <div class="max-w-6xl mx-auto p-4">
           <section class="bg-white rounded-lg shadow-lg p-6 select-text" style="min-width:320px">
-            <div class="flex items-center space-x-3 mb-6 pb-4 border-b-2 border-blue-100">
-              <div>
-                <h2 class="text-[#2A4482] font-bold text-lg">Tindakan</h2>
-                <p class="text-gray-600 text-sm">Kelola tindakan medis untuk pasien</p>
-              </div>
+            <div>
             </div>
 
             <!-- Display Error Messages -->
@@ -116,19 +116,19 @@
                 <div></div>
                 <div class="flex space-x-3">
                   <button
+                    type="submit"
+                    :disabled="form.processing"
+                    class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+                  >
+                    <span v-if="form.processing">Menyimpan...</span>
+                    <span v-else>Simpan Tindakan</span>
+                  </button>
+                                    <button
                     type="button"
                     @click="cancelForm"
                     class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm"
                   >
                     Batal
-                  </button>
-                  <button
-                    type="submit"
-                    :disabled="form.processing"
-                    class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
-                  >
-                    <span v-if="form.processing">Menyimpan...</span>
-                    <span v-else>Simpan Tindakan</span>
                   </button>
                 </div>
               </div>

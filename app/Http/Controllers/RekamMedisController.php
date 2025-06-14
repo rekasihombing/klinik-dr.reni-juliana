@@ -27,7 +27,7 @@ class RekamMedisController extends Controller
                 'noRekamMedis' => $appointment->pasien->no_rekam_medis,
             ],
             'appointment' => $appointment,
-            'clinicName' => 'Klinik Praktek Dr. Rena Juliana Manurung'
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung'
         ]);
     }
 

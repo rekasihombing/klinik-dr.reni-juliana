@@ -242,7 +242,7 @@
           <div class="mt-8 flex justify-center gap-3">
             <button
               @click="editObat(selectedObat)"
-              class="shadow-md hover:shadow-lg bg-[#3674B5] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors duration-200"
+              class="shadow-md hover:shadow-lg bg-[#3F86D0] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors duration-200"
             >
               Edit Obat
             </button>

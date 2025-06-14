@@ -137,7 +137,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-center">
                       <button 
                         @click="showDetail(appointment)"
-                        class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg inline-flex items-center gap-1 px-3 py-1.5 text-white text-sm rounded-md transition-colors"
+                        class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg inline-flex items-center gap-1 px-3 py-1.5 text-white text-sm rounded-md transition-colors"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -180,129 +180,131 @@
       </div>
     </main>
 
-    <!-- Modal Detail -->
-    <Transition name="modal">
-      <div v-if="isDetailVisible" 
-        class="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-30"
-        @click="closeModal"
-        style="background-color: rgba(0, 0, 0, 0.20);">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" @click.stop>
-          <!-- Modal Header -->
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-semibold text-[#2A4482]">Detail Janji Temu</h2>
-              <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    <!-- Modal Detail Janji Temu - NEW DESIGN -->
+    <div 
+      v-if="isDetailVisible"
+      class="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-30"
+      @click.self="closeModal"
+      style="background-color: rgba(0, 0, 0, 0.15);"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-gray-200">
+        <!-- Header with gradient background -->
+        <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] text-white px-6 py-4">
+          <h3 class="text-xl font-bold flex items-center space-x-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>Detail Janji Temu</span>
+          </h3>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="overflow-y-auto max-h-[calc(90vh-100px)]" v-if="selectedAppointment">
+          <div class="px-6 py-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Left Column -->
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Nama Pasien</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.nama || 'N/A' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Tanggal</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.tanggal || 'N/A' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Waktu</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.waktu || 'N/A' }}</p>
+                </div>
+              </div>
+              
+              <!-- Right Column -->
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Keluhan</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.keluhan || 'N/A' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Status</label>
+                  <div class="mt-1">
+                    <span 
+                      :class="getStatusClass(selectedAppointment.status)"
+                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                    >
+                      {{ getStatusText(selectedAppointment.status) }}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">No. Antrian</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.antrian || 'N/A' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Patient Data Section -->
+            <div class="mt-6 pt-6 border-t border-gray-200" v-if="selectedAppointment.patient_data">
+              <h4 class="text-lg font-semibold text-[#2A4482] mb-4">Data Pasien</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">NIK</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.patient_data?.nik || 'N/A' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Tanggal Lahir</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.patient_data?.tanggal_lahir || 'N/A' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">Jenis Kelamin</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.patient_data?.jenis_kelamin || 'N/A' }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-gray-700">No. HP</label>
+                  <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.patient_data?.no_hp || 'N/A' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
+              <button 
+                @click="closeModal"
+                class="inline-flex items-center px-6 py-2 border border-gray-300 text-sm font-medium rounded-lg text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 shadow-md hover:shadow-lg"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
+                Tutup
+              </button>
+              
+              <button 
+                v-if="selectedAppointment.status === 'menunggu'"
+                @click="confirmAppointment" 
+                :disabled="processing"
+                class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+                </svg>
+                {{ processing ? 'Memproses...' : 'Konfirmasi' }}
+              </button>
+              
+              <button 
+                v-if="selectedAppointment.status === 'dikonfirmasi'"
+                @click="completeAppointment" 
+                :disabled="processing"
+                class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                {{ processing ? 'Memproses...' : 'Selesaikan' }}
               </button>
             </div>
           </div>
-          
-          <!-- Modal Content -->
-          <div class="p-6 space-y-6">
-            <!-- Patient Info -->
-            <div class="flex items-center gap-4 pb-4 border-b border-gray-100">
-              <div>
-                <h3 class="text-xl font-semibold text-[#2A4482]">{{ selectedAppointment.nama || 'N/A' }}</h3>
-                <p class="text-sm text-gray-600">No. Registrasi: {{ selectedAppointment.registrasi_number || 'N/A' }}</p>
-                <p class="text-sm text-gray-600">No. Antrian: {{ selectedAppointment.antrian || 'N/A' }}</p>
-              </div>
-            </div>
-            
-            <!-- Appointment Details -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
-                <p class="text-sm text-gray-900">{{ selectedAppointment.tanggal || 'N/A' }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Waktu</label>
-                <p class="text-sm text-gray-900">{{ selectedAppointment.waktu || 'N/A' }}</p>
-              </div>
-              <div class="col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Keluhan</label>
-                <p class="text-sm text-gray-900">{{ selectedAppointment.keluhan || 'N/A' }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Dokter</label>
-                <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.dokter_nama || 'N/A' }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                <span 
-                  :class="getStatusClass(selectedAppointment.status)"
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                >
-                  {{ getStatusText(selectedAppointment.status) }}
-                </span>
-              </div>
-            </div>
-            
-            <!-- Patient Data -->
-            <div class="border-t border-gray-100 pt-4">
-              <h4 class="text-lg font-semibold text-[#2A4482] mb-3">Data Pasien</h4>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">NIK</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.nik || 'N/A' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Lahir</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.tanggal_lahir || 'N/A' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis Kelamin</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.jenis_kelamin || 'N/A' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">Golongan Darah</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.golongan_darah || 'N/A' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">No. HP</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.no_hp || 'N/A' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.email || 'N/A' }}</p>
-                </div>
-                <div class="col-span-2">
-                  <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
-                  <p class="text-sm text-gray-900">{{ selectedAppointment.patient_data?.alamat || 'N/A' }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Modal Footer -->
-          <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-            <button 
-              @click="closeModal" 
-              class="bg-gray-500 hover:bg-gray-600 px-4 py-2 text-white rounded-md transition-colors"
-            >
-              Tutup
-            </button>
-            <button 
-              v-if="selectedAppointment.status === 'menunggu'"
-              @click="confirmAppointment" 
-              :disabled="processing"
-              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
-            >
-              {{ processing ? 'Memproses...' : 'Konfirmasi' }}
-            </button>
-            <button 
-              v-if="selectedAppointment.status === 'dikonfirmasi'"
-              @click="completeAppointment" 
-              :disabled="processing"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              {{ processing ? 'Memproses...' : 'Selesaikan' }}
-            </button>
-          </div>
         </div>
       </div>
-    </Transition>
+    </div>
   </div>
 </template>
 
@@ -567,6 +569,23 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Animation classes */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Modal transition effects */
 .modal-enter-active, .modal-leave-active {
   transition: all 0.3s ease;
 }
@@ -581,6 +600,7 @@ onUnmounted(() => {
   transform: scale(1);
 }
 
+/* Table styling */
 table {
   border-radius: 0.5rem;
   overflow: hidden;

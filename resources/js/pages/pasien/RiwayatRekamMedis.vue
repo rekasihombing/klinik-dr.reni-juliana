@@ -61,19 +61,13 @@
                 @click="viewDetail(appointment)"
               >
                 <!-- Card Header -->
-                <div class="bg-[#3674B5] p-4">
+                <div class="bg-gradient-to-r from-blue-100 to-indigo-100 p-3">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <span class="text-white font-bold text-xl">{{ appointment.queueNumber || index + 1 }}</span>
-                      </div>
                       <div>
-                        <h3 class="text-white font-semibold text-lg">{{ formatDate(appointment.date) }}</h3>
-                        <p class="text-blue-100 text-sm">{{ appointment.time }}</p>
+                        <h3 class="text-[#2A4482] font-semibold text-sm">{{ formatDate(appointment.date) }}</h3>
+                        <p class="text-gray-500 text-xs">{{ appointment.time }}</p>
                       </div>
-                    </div>
-                    <div class="text-white/80 group-hover:text-white transition-colors">
-                      <i class="fas fa-chevron-right"></i>
                     </div>
                   </div>
                 </div>
@@ -86,8 +80,8 @@
                       <i class="fas fa-stethoscope text-blue-500 text-xs"></i>
                     </div>
                     <div class="min-w-0 flex-1">
-                      <p class="text-xs font-medium text-gray-700 mb-1">Keluhan Utama</p>
-                      <p class="text-sm text-gray-800 line-clamp-2">{{ appointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
+                      <p class="text-sm font-medium text-gray-700 mb-1">Keluhan Utama</p>
+                      <p class="text-sm text-gray-600 line-clamp-2">{{ appointment.keluhan || 'Tidak ada keluhan khusus' }}</p>
                     </div>
                   </div>
                   
@@ -97,8 +91,8 @@
                       <i class="fas fa-diagnoses text-blue-500 text-xs"></i>
                     </div>
                     <div class="min-w-0 flex-1">
-                      <p class="text-xs font-medium text-gray-700 mb-1">Diagnosa</p>
-                      <p class="text-sm text-gray-800 line-clamp-2">{{ appointment.diagnosa || 'Belum ada diagnosa' }}</p>
+                      <p class="text-sm font-medium text-gray-700 mb-1">Diagnosa</p>
+                      <p class="text-sm text-gray-600 line-clamp-2">{{ appointment.diagnosa || 'Belum ada diagnosa' }}</p>
                     </div>
                   </div>
                 </div>
@@ -108,9 +102,9 @@
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 flex items-center">
                     </span>
-                    <span class="text-blue-600 group-hover:text-blue-700 font-medium">
+                    <span class="flex items-center text-xs text-blue-600 group-hover:text-indigo-700">
                       Lihat Detail
-                      <i class="fas fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                      <i class="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i>
                     </span>
                   </div>
                 </div>
@@ -139,7 +133,7 @@
     >
       <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fadeIn">
         <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] text-white px-6 py-4">
+        <div class="bg-[#3674B5] text-white px-6 py-4">
           <h3 class="text-xl font-bold flex items-center space-x-3">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -149,7 +143,7 @@
         </div>
 
         <!-- Modal Content -->
-        <div class="px-6 py-6 max-h-[70vh] overflow-y-auto" v-if="selectedAppointment">
+        <div class="px-6 py-6 overflow-y-auto max-h-[calc(90vh-100px)]" v-if="selectedAppointment">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
               <div>
@@ -241,7 +235,7 @@
               
               <div v-if="selectedAppointment.riwayat_obat">
                 <label class="text-sm font-semibold text-blue-700 flex items-center">
-                  <i class="fas fa-pills mr-1"></i>Riwayat Obat
+                  Riwayat Obat
                 </label>
                 <p class="text-sm text-blue-600 bg-blue-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment.riwayat_obat }}</p>
               </div>

@@ -1,34 +1,36 @@
 <template>
-  <div class="min-h-screen bg-gray-100 font-sans text-base text-gray-800 flex">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
-    <SidebarStaff class="w-64 bg-white shadow-md" />
+    <SidebarStaff class="w-64 bg-white shadow-lg" />
 
     <!-- Main content -->
-    <main :class="{ 'opacity-50': isModalVisible }" class="flex-1 p-6 transition-opacity duration-300">
+    <main class="flex-1 p-6">
       <!-- Top bar -->
       <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
+      <!-- Content Container with extra spacing -->
+      <div class="p-2 mt-2"></div>
+
       <!-- Title & Search -->
-      <div class="flex justify-between items-center mb-3">
-        <h1 class="text-gray-900 font-normal text-base">Daftar Pasien Online Menunggu Konfirmasi</h1>
+      <div class="flex justify-between items-center mb-5">
         <input
           type="search"
           placeholder="Cari nama pasien..."
           v-model="searchQuery"
-          class="text-xs rounded-md px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          class="border border-gray-300 rounded-lg text-sm pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-80 transition-all text-black placeholder-gray-500 bg-white"
         />
       </div>
 
       <!-- Table -->
-      <div class="overflow-x-auto rounded-md shadow-md">
-        <table class="min-w-full border-collapse bg-white rounded-md">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
           <thead>
-            <tr class="bg-blue-600 text-white text-xs font-semibold text-center">
-              <th class="py-2 px-3 border border-blue-700">No</th>
-              <th class="py-2 px-3 border border-blue-700 text-left">Nama Pasien</th>
-              <th class="py-2 px-3 border border-blue-700">Waktu</th>
-              <th class="py-2 px-3 border border-blue-700">Status</th>
-              <th class="py-2 px-3 border border-blue-700">Detail</th>
+            <tr class="bg-[#3674B5] text-white text-xs font-semibold text-center">
+              <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">No</th>
+              <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider text-left">Nama Pasien</th>
+              <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Waktu</th>
+              <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Status</th>
+              <th class="px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Detail</th>
             </tr>
           </thead>
           <tbody class="text-xs text-gray-900">
@@ -143,7 +145,7 @@ export default {
       loading: false,
       breadcrumbPages: [
         { label: "Dashboard", href: "/dashboardstaff" },
-        { label: "Daftar Pasien Menunggu Konfirmasi", href: "/konfirmasi-pasien" },
+        { label: "Daftar Pasien Online Menunggu Konfirmasi", href: "/konfirmasi-pasien" },
       ],
       detailFields: {
         antrian: "No Antrian",
