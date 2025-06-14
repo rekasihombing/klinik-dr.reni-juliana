@@ -33,20 +33,17 @@
                   v-model="searchQuery"
                   type="text" 
                   placeholder="Cari berdasarkan tanggal, diagnosa, atau catatan..."
-                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-700"
                 >
               </div>
               <div class="flex gap-3">
                 <select 
                   v-model="sortBy"
-                  class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-800"
                 >
                   <option value="date-desc">Terbaru</option>
                   <option value="date-asc">Terlama</option>
                 </select>
-                <button class="px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg">
-                  <i class="fas fa-search mr-2"></i>Filter
-                </button>
               </div>
             </div>
           </div>

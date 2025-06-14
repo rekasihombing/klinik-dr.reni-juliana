@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
-    <!-- Main Container -->
-    <div class="flex flex-1 overflow-hidden">
-      <SidebarStaff class="w-64 bg-white shadow-md" />
+  <div class="min-h-screen bg-gray-50 font-sans text-base text-gray-800 flex">
+    <!-- Sidebar -->
+    <SidebarStaff class="w-64 bg-white shadow-lg" />
 
-      <!-- Main content -->
-      <main class="bg-gradient-to-br from-gray-50 to-gray-100 flex-1 font-sans text-[13px] leading-tight text-gray-800">
-        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+    <!-- Main content -->
+    <main class="flex-1 p-6">
+      <!-- Top bar -->
+      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
         <!-- Content -->
         <div class="max-w-5xl mx-auto p-6">
@@ -324,7 +324,6 @@
           </div>
         </main>
       </div>
-    </div>
   </template>
 
 <script>
