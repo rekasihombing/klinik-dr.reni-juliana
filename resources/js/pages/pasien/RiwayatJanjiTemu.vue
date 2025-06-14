@@ -45,13 +45,13 @@
                 v-model="searchQuery"
                 type="text" 
                 placeholder="Cari berdasarkan tanggal atau keluhan..."
-                class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-700"
               >
             </div>
             <div class="flex gap-3">
               <select 
                 v-model="statusFilter"
-                class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
+                class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm text-gray-800"
               >
                 <option value="">Semua Status</option>
                 <option value="selesai">Selesai</option>
@@ -62,14 +62,14 @@
               </select>
               <select 
                 v-model="sortBy"
-                class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
+                class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm text-gray-800"
               >
                 <option value="date-desc">Terbaru</option>
                 <option value="date-asc">Terlama</option>
               </select>
               <select 
                 v-model="viewMode"
-                class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
+                class="px-5 py-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm text-gray-800"
               >
                 <option value="history">Riwayat (Selesai/Batal)</option>
                 <option value="all">Semua Janji Temu</option>

@@ -42,8 +42,9 @@ class OfflineBookingController extends Controller
         return response()->json(['exists' => false]);
     }
 
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    return \DB::transaction(function () use ($request) {
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nik' => 'required|string|max:20',
@@ -57,7 +58,7 @@ class OfflineBookingController extends Controller
 
         $tanggal = Carbon::now()->toDateString();
         $jam = Carbon::now()->format('H:i');
-        $checkedInAt = Carbon::now()->format('Y-m-d H:i:s');
+        $checkedInAt = Carbon::now()->format('Y-m-d H:i:s.u'); // Microsecond precision
         $doctorId = 1;
 
         // Check if patient already exists by NIK
@@ -65,7 +66,6 @@ class OfflineBookingController extends Controller
 
         if ($patient) {
             Log::info("Using existing patient with NIK: {$validated['nik']}, ID: {$patient->id}");
-            // Update patient data if necessary
             $patient->update([
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'tanggal_lahir' => $validated['tanggal_lahir'],
@@ -76,7 +76,6 @@ class OfflineBookingController extends Controller
             ]);
         } else {
             Log::info("Creating new patient with NIK: {$validated['nik']}");
-            // Create new patient
             $patient = Patient::create([
                 'user_id' => null,
                 'nama_lengkap' => $validated['nama_lengkap'],
@@ -86,6 +85,23 @@ class OfflineBookingController extends Controller
                 'jenis_kelamin' => $validated['jenis_kelamin'],
                 'alamat' => $validated['alamat'] ?? null,
                 'no_hp' => $validated['no_hp'] ?? null,
+            ]);
+        }
+
+        // Check for existing confirmed appointment
+        $existingAppointment = Appointment::where('pasien_id', $patient->id)
+            ->where('tanggal', $tanggal)
+            ->where('status', 'dikonfirmasi')
+            ->whereNotNull('checked_in_at')
+            ->first();
+
+        if ($existingAppointment) {
+            Log::info("Patient already has a confirmed appointment for today:", [
+                'patient_id' => $patient->id,
+                'appointment_id' => $existingAppointment->id,
+            ]);
+            throw ValidationException::withMessages([
+                'nik' => 'Pasien ini sudah memiliki janji temu yang dikonfirmasi untuk hari ini.',
             ]);
         }
 
@@ -101,9 +117,17 @@ class OfflineBookingController extends Controller
             'checked_in_at' => $checkedInAt,
         ]);
 
-        // Assign queue numbers for the day
+        Log::info('Created appointment:', [
+            'appointment_id' => $appointment->id,
+            'pasien_id' => $patient->id,
+            'checked_in_at' => $checkedInAt,
+            'antrian' => $appointment->antrian,
+        ]);
+
+        // Assign queue numbers
         Appointment::assignQueueNumbers($doctorId, $tanggal);
 
         return redirect()->route('dashboardstaff')->with('success', 'Pendaftaran berhasil.');
-    }
+    });
+}
 }

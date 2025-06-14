@@ -225,4 +225,9 @@ class RekamMedis extends Model
             }
         );
     }
+    // App/Models/RekamMedis.php
+    public function jadwalKontrol()
+    {
+        return $this->hasMany(JadwalKontrol::class, 'rekam_medis_id');
+    }
 }

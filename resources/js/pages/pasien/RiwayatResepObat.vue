@@ -41,24 +41,27 @@
                   v-model="searchQuery"
                   type="text" 
                   placeholder="Cari berdasarkan tanggal, diagnosa, atau nama obat..."
-                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                  class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-700"
                 >
               </div>
               <div class="flex gap-3">
                 <select 
                   v-model="statusFilter"
-                  class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-800"
                 >
                   <option value="">Semua Status</option>
                   <option value="aktif">Sedang Berlangsung</option>
                   <option value="selesai">Selesai</option>
                 </select>
+<<<<<<< HEAD
                 <button 
                   @click="applyFilter"
                   class="px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   <i class="fas fa-search mr-2"></i>Filter
                 </button>
+=======
+>>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
               </div>
             </div>
           </div>
@@ -108,8 +111,8 @@
                   
                   <!-- Diagnosa -->
                   <div class="flex items-start space-x-3">
-                    <div class="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i class="fas fa-diagnoses text-green-500 text-xs"></i>
+                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-diagnoses text-blue-500 text-xs"></i>
                     </div>
                     <div class="min-w-0 flex-1">
                       <p class="text-sm font-medium text-gray-700 mb-1">Diagnosa</p>
@@ -180,8 +183,12 @@
                 <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 flex items-center">
+<<<<<<< HEAD
                       <i class="fas fa-pills text-blue-500 mr-1"></i>
                       Resep & Obat Luar
+=======
+                      Resep Obat
+>>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
                     </span>
                     <span class="flex items-center text-xs text-blue-600 group-hover:text-indigo-700">
                       Lihat Detail
@@ -206,6 +213,117 @@
         </div>
       </main>
     </div>
+<<<<<<< HEAD
+=======
+
+    <!-- Updated Modal Detail Resep Obat -->
+    <div 
+      v-if="showModal"
+      class="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-30"
+      @click.self="closeModal"
+      style="background-color: rgba(0, 0, 0, 0.15);"
+    >
+      <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-fadeIn">
+        <!-- Modal Header -->
+        <div class="bg-[#3674B5] text-white px-6 py-4">
+          <h3 class="text-xl font-bold flex items-center space-x-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+            <span>Detail Resep Obat</span>
+          </h3>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="px-6 py-6 overflow-y-auto max-h-[calc(90vh-100px)]" v-if="selectedResep">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Nama Pasien</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ patientName }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Tanggal Kunjungan</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedResep.tanggal_kunjungan }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Waktu</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedResep.jam_kunjungan }}</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-gray-700">No. Rekam Medis</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedResep.no_rekam_medis }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Status</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">
+                  <span
+                    :class="{
+                      'bg-green-100 text-green-800': selectedResep.status_aktif,
+                      'bg-gray-100 text-gray-600': !selectedResep.status_aktif
+                    }"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  >
+                    {{ selectedResep.status_aktif ? 'Sedang Berlangsung' : 'Selesai' }}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-gray-700">Total Jenis Obat</label>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedResep.total_obat }} jenis</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Information -->
+          <div class="mt-6 space-y-4">
+            <!-- Diagnosa -->
+            <div>
+              <label class="text-sm font-semibold text-gray-700">Diagnosa</label>
+              <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedResep.diagnosa || 'Tidak ada diagnosa' }}</p>
+            </div>
+
+            <!-- Tanggal Berakhir -->
+            <div>
+              <label class="text-sm font-semibold text-orange-700 flex items-center">
+                <i class="fas fa-calendar-times mr-1"></i>Tanggal Berakhir
+              </label>
+              <p class="text-sm text-orange-600 bg-orange-50 rounded-lg px-3 py-2 mt-1">{{ formatDate(selectedResep.tanggal_terakhir) }}</p>
+            </div>
+
+            <!-- Link Detail Resep -->
+            <div class="mt-6 pt-4 border-t border-gray-200">
+              <Link
+                :href="`/riwayat-resep-obat/${selectedResep.rekam_medis_id}`"
+                class="inline-flex items-center px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg transition-colors duration-200"
+              >
+                <i class="fas fa-eye mr-2"></i>
+                Lihat Detail Lengkap Resep
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </Link>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
+            <button 
+              @click="closeModal"
+              class="inline-flex items-center px-6 py-2 border border-gray-300 text-sm font-medium rounded-lg text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+>>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
   </div>
 </template>
 

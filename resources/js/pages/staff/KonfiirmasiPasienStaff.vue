@@ -154,7 +154,7 @@ export default {
         tanggal_lahir: "Tanggal Lahir",
         jenis_kelamin: "Jenis Kelamin",
         golongan_darah: "Golongan Darah",
-        nomor_hp: "Nomor HP",
+        no_hp: "Nomor HP",
         alamat: "Alamat",
         keluhan: "Keluhan",
         checked_in_at: "Waktu Check-In",
@@ -258,8 +258,8 @@ export default {
       if (key === "golongan_darah") {
         return this.selectedPasien.pasien?.golongan_darah || "-";
       }
-      if (key === "nomor_hp") {
-        return this.selectedPasien.pasien?.nomor_hp || "-";
+      if (key === "no_hp") {
+        return this.selectedPasien.pasien?.no_hp || "-";
       }
       if (key === "alamat") {
         return this.selectedPasien.pasien?.alamat || "-";

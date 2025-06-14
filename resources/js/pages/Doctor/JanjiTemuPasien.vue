@@ -16,19 +16,19 @@
             <!-- Filter Section -->
             <div class="flex items-center space-x-4 mb-6">
               <div class="flex items-center space-x-2">
-                <label class="text-gray-700 font-medium">Dari:</label>
+                <label class="text-gray-700 font-sm">Dari:</label>
                 <input 
                   type="date" 
                   v-model="filterFrom"
-                  class="bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                  class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40 text-gray-700"
                 >
               </div>
               <div class="flex items-center space-x-2">
-                <label class="text-gray-700 font-medium">Sampai:</label>
+                <label class="text-gray-700 font-sm">Sampai:</label>
                 <input 
                   type="date" 
                   v-model="filterTo"
-                  class="bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                  class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40 text-gray-700"
                 >
               </div>
               <div class="ml-auto">

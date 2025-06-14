@@ -3,12 +3,12 @@
   
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
-    <SidebarStaff class="w-64 bg-white shadow-lg" />
+    <SidebarDokter class="w-64 bg-white shadow-lg" />
 
     <!-- Main content -->
     <main class="flex-1 p-6">
       <!-- Top bar -->
-      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+      <HeaderDokter :breadcrumbPages="breadcrumbPages" />
       
       <!-- Main content card -->
       <div class="border border-slate-300 rounded-md shadow-sm p-6 mb-6">
@@ -269,14 +269,14 @@
 </template>
 
 <script>
-import SidebarStaff from '@/layouts/staff/SidebarStaff.vue';
-import HeaderStaff from '@/layouts/staff/HeaderStaff.vue';
+import SidebarDokter from '@/layouts/dokter/SidebarDokter.vue';
+import HeaderDokter from '@/layouts/dokter/HeaderDokter.vue';
 
 export default {
   name: 'DetailPasien',
   components: {
-    SidebarStaff,
-    HeaderStaff
+    SidebarDokter,
+    HeaderDokter
   },
   props: {
     patientData: Array,

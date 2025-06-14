@@ -34,6 +34,7 @@
               ]"
               placeholder="Masukkan nama lengkap"
               @input="validateName"
+              @keypress="preventNumbers"
             />
             <p v-if="errors.name" class="text-red-500 text-xs mt-1 flex items-center gap-1">
               <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -179,8 +180,21 @@ const form = useForm({
   password_confirmation: '',
 })
 
+// Fungsi untuk mencegah input angka pada nama dan menampilkan validasi
+const preventNumbers = (event) => {
+  const char = event.key
+  // Cek apakah karakter yang diinput adalah angka (0-9)
+  if (/[0-9]/.test(char)) {
+    event.preventDefault() // Mencegah input angka
+    errors.name = 'Nama hanya boleh berisi huruf dan spasi.' // Langsung tampilkan error
+  }
+}
+
 const validateName = () => {
-  errors.name = ''
+  // Jangan reset error jika sedang menampilkan error dari preventNumbers
+  if (errors.name !== 'Nama hanya boleh berisi huruf dan spasi.') {
+    errors.name = ''
+  }
   
   if (!form.name.trim()) {
     errors.name = 'Nama lengkap wajib diisi.'
@@ -192,6 +206,15 @@ const validateName = () => {
     return false
   }
   
+  // Validasi untuk memastikan nama hanya berisi huruf dan spasi
+  const nameRegex = /^[a-zA-Z\s]+$/
+  if (!nameRegex.test(form.name.trim())) {
+    errors.name = 'Nama hanya boleh berisi huruf dan spasi.'
+    return false
+  }
+  
+  // Clear error jika validasi berhasil
+  errors.name = ''
   return true
 }
 

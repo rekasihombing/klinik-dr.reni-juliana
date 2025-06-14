@@ -75,7 +75,7 @@
       </div>
 
       <!-- Table -->
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-[#3674B5]">
@@ -101,7 +101,7 @@
                 <td class="px-4 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                     <div class="ml-3">
-                      <div class="text-sm font-medium text-gray-900">{{ item.obat.nama_obat }}</div>
+                      <div class="text-sm font-bold text-gray-900">{{ item.obat.nama_obat }}</div>
                     </div>
                   </div>
                 </td>
@@ -110,10 +110,10 @@
                     {{ item.jumlah }} unit
                   </span>
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {{ formatDate(item.tanggal_kadaluarsa) }}
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-center">
+                <td class="px-4 py-4 whitespace-nowrap text-center ">
                   <span :class="getStatusClass(item.tanggal_kadaluarsa)">
                     {{ getStatusText(item.tanggal_kadaluarsa) }}
                   </span>

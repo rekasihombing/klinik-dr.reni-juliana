@@ -1,3 +1,4 @@
+
 <template>
   <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar -->
@@ -5,11 +6,9 @@
     
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
- 
       <main class="flex-1 p-6">
-
-             <!-- Header -->
-      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+        <!-- Header -->
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
         <!-- Content Container with extra spacing -->
         <div class="p-3 mt-2"></div>
@@ -23,7 +22,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Cari nama, NIK, atau jenis kelamin..."
-                class="border border-gray-300 rounded-lg text-sm pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-80 transition-all text-black placeholder-gray-500 bg-white"
+                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-80"
               />
               <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <i class="fas fa-search"></i>
@@ -41,7 +40,7 @@
               <span>Menampilkan {{ paginatedPatients.length }} dari {{ filteredPatients.length }} data</span>
               <select 
                 v-model="itemsPerPage" 
-                class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+                class="block w-full pl-5 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40"
               >
                 <option value="5">5 per halaman</option>
                 <option value="10">10 per halaman</option>
@@ -125,7 +124,7 @@
                       <div class="flex items-center justify-center space-x-1">
                         <button
                           @click="viewPatient(pasien)"
-                            :title='`Lihat detail ${pasien.nama_lengkap}`'
+                          :title="`Lihat detail ${pasien.nama_lengkap}`"
                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 rounded transition-all"
                         >
                           <i class="fas fa-eye text-xs"></i>
@@ -329,7 +328,7 @@ export default {
 
     // View patient detail
     function viewPatient(pasien) {
-      Inertia.visit(`/patients/${pasien.id}`);
+      Inertia.visit(`/dokter.Pasien/${pasien.id}`);
     }
 
     return {

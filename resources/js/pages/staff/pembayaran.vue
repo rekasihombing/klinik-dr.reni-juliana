@@ -1,6 +1,4 @@
 <template>
-  <Head title="Tambah Obat" />
-  
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
     <SidebarStaff class="w-64 bg-white shadow-lg" />
@@ -10,31 +8,12 @@
       <!-- Top bar -->
       <HeaderStaff :breadcrumbPages="breadcrumbPages" />
 
-      <!-- Content Container -->
-      <div class="p-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 max-w-7xl mx-auto">
-          <!-- Header Section -->
-          <div class="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <h1 class="text-lg font-bold text-[#3674B5]">Daftar Pembayaran Pasien</h1>
-              </div>
-              <div class="flex items-center gap-3">
-                <InertiaLink
-                  href="/tambah-tagihan"
-                  class="inline-flex items-center gap-2 bg-[#3AC8A4] hover:bg-[#3CA48C] shadow-md hover:shadow-lg text-white px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                  Buat Tagihan Baru
-                </InertiaLink>
-              </div>
-            </div>
-          </div>
+      <!-- Content Container with extra spacing -->
+      <div class="p-1 mt-1">
+        <div class="max-w-7xl mx-auto">
 
           <!-- Filter & Search Section -->
-          <div class="px-8 py-6 border-b border-gray-200 bg-gray-50">
+          <div class="px-5 py-6">
             <form @submit.prevent="applyFilters" class="grid grid-cols-1 md:grid-cols-5 gap-4">
               <!-- Search -->
               <div class="md:col-span-2">
@@ -46,7 +25,8 @@
                     v-model="form.search"
                     type="text"
                     placeholder="Cari nama pasien atau nomor tagihan..."
-                    class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+
                   />
                   <!-- Clear search button -->
                   <button
@@ -96,18 +76,18 @@
           </div>
 
           <!-- Bills Table -->
-          <div class="px-8 py-6">
-            <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-5 py-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div class="overflow-x-auto">
                 <table class="w-full">
                   <thead class="bg-[#3674B5]">
                     <tr>
-                      <th class="text-left py-4 px-4 font-semibold text-sm text-white">No. Tagihan</th>
-                      <th class="text-left py-4 px-4 font-semibold text-sm text-white">Nama Pasien</th>
-                      <th class="text-center py-4 px-4 font-semibold text-sm text-white">Tanggal</th>
-                      <th class="text-center py-4 px-4 font-semibold text-sm text-white">Total</th>
-                      <th class="text-center py-4 px-4 font-semibold text-sm text-white">Status</th>
-                      <th class="text-center py-4 px-4 font-semibold text-sm text-white">Aksi</th>
+                      <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">No. Tagihan</th>
+                      <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Nama Pasien</th>
+                      <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">Tanggal</th>
+                      <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">Total</th>
+                      <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">Status</th>
+                      <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">Aksi</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-100">
@@ -118,17 +98,17 @@
                     </tr>
                     <tr v-for="bill in tagihan?.data" :key="bill.id" class="hover:bg-gray-50 transition-colors">
                       <td class="py-4 px-4">
-                        <div class="font-medium text-gray-900">{{ bill.nomor_tagihan }}</div>
+                        <div class="text-sm font-semibold text-gray-900">{{ bill.nomor_tagihan }}</div>
                         <div class="text-xs text-gray-500">{{ formatTime(bill.created_at) }}</div>
                       </td>
                       <td class="py-4 px-4">
-                        <div class="font-medium text-gray-900">{{ bill.rekam_medis?.pasien?.nama_lengkap || '-' }}</div>
+                        <div class="text-sm font-semibold text-gray-900">{{ bill.rekam_medis?.pasien?.nama_lengkap || '-' }}</div>
                       </td>
                       <td class="py-4 px-4 text-center">
-                        <div class="text-sm text-gray-900">{{ formatDate(bill.tanggal_tagihan) }}</div>
+                        <div class="text-sm font-medium text-gray-900">{{ formatDate(bill.tanggal_tagihan) }}</div>
                       </td>
                       <td class="py-4 px-4 text-center">
-                        <div class="font-semibold text-gray-900">Rp {{ formatCurrency(bill.subtotal) }}</div>
+                        <div class="text-sm font-semibold text-gray-900">Rp {{ formatCurrency(bill.subtotal) }}</div>
                       </td>
                       <td class="py-4 px-4 text-center">
                         <span :class="getStatusClass(bill.status)" class="px-3 py-1 rounded-full text-xs font-medium">
@@ -174,9 +154,23 @@
                 </table>
               </div>
             </div>
+                      <!-- Header Section -->
+            <div class="mt-6 flex justify-start space-x-4">
+              <div class="flex items-center gap-3">
+                <InertiaLink
+                  href="/tambah-tagihan"
+                  class="inline-flex items-center gap-2 bg-[#00B87A] hover:bg-[#109568] shadow-md hover:shadow-lg text-white px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Buat Tagihan Baru
+                </InertiaLink>
+              </div>
+            </div>
 
             <!-- Pagination -->
-            <div class="flex items-center justify-between mt-6">
+            <div class="flex items-center justify-between mt-2">
               <div class="text-sm text-gray-600">
                 Menampilkan {{ tagihan?.from || 0 }} - {{ tagihan?.to || 0 }}
                 dari {{ tagihan?.total || 0 }} tagihan
@@ -185,7 +179,7 @@
                 <InertiaLink
                   :href="tagihan?.prev_page_url"
                   :disabled="!tagihan?.prev_page_url"
-                  class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+                  class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all bg-white"
                 >
                   Previous
                 </InertiaLink>
@@ -193,7 +187,7 @@
                 <InertiaLink
                   :href="tagihan?.next_page_url"
                   :disabled="!tagihan?.next_page_url"
-                  class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+                  class="px-3 py-2 border border-gray-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all bg-white"
                 >
                   Next
                 </InertiaLink>
@@ -235,11 +229,11 @@
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <div class="text-sm text-gray-600 mb-1">Nama Pasien:</div>
-                    <div class="font-semibold text-gray-900">{{ selectedBill?.rekam_medis?.pasien?.nama_lengkap || '-' }}</div>
+                    <div class="font-medium text-gray-900">{{ selectedBill?.rekam_medis?.pasien?.nama_lengkap || '-' }}</div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-600 mb-1">Tanggal:</div>
-                    <div class="font-semibold text-gray-900">{{ formatDateTime(selectedBill?.tanggal_tagihan) || '-' }}</div>
+                    <div class="font-medium text-gray-900">{{ formatDateTime(selectedBill?.tanggal_tagihan) || '-' }}</div>
                   </div>
                 </div>
               </div>
@@ -299,8 +293,8 @@
             <!-- Total -->
             <div class="border-t-2 border-gray-300 pt-4 mb-6">
               <div class="flex justify-between items-center bg-blue-50 rounded-lg p-4">
-                <span class="text-lg font-bold text-gray-900">TOTAL TAGIHAN</span>
-                <span class="text-lg font-bold text-[#3674B5]">Rp {{ formatCurrency(selectedBill?.subtotal) || '0' }}</span>
+                <span class="text-lg font-semibold text-gray-900">Total Tagihan</span>
+                <span class="text-lg font-semibold text-[#3674B5]">Rp {{ formatCurrency(selectedBill?.subtotal) || '0' }}</span>
               </div>
             </div>
 
@@ -316,7 +310,7 @@
                 <button
                   v-if="selectedBill?.status === 'menunggu_pembayaran'"
                   @click="markAsPaid(selectedBill)"
-                  class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all"
+                  class="bg-[#00B87A] hover:bg-[#109568] text-white px-4 py-2 rounded-lg transition-all"
                 >
                   Tandai Sudah Dibayar
                 </button>
@@ -357,7 +351,7 @@
               <button
                 @click="confirmPayment"
                 :disabled="isProcessing"
-                class="bg-[#3674B5] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {{ isProcessing ? 'Memproses...' : 'Konfirmasi' }}
               </button>

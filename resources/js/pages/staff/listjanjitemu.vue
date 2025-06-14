@@ -22,14 +22,14 @@
                     type="date" 
                     v-model="filters.date_from" 
                     @change="applyFilters"
-                    class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white" 
+                    class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40"
                   />
                   <span class="text-gray-500">s/d</span>
                   <input 
                     type="date" 
                     v-model="filters.date_to" 
                     @change="applyFilters"
-                    class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white" 
+                    class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40"
                   />
                 </div>
               </div>
@@ -39,7 +39,7 @@
                     <select 
                       v-model="filters.status" 
                       @change="handleStatusChange"
-                      class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                      class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40"
                     >
                       <option value="">Semua Status</option>
                       <option value="menunggu">Menunggu</option>
@@ -57,9 +57,9 @@
                     v-model="filters.search"
                     @input="applyFilters"
                     placeholder="Cari nama pasien..." 
-                    class="w-full border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white" 
+                    class="block w-full pl-10 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-60"
                   />
-                  <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="absolute left-3 top-3.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
                 </div>
@@ -167,7 +167,7 @@
             </div>
           </div>
                       <!-- Reset Button Section with spacing -->
-            <div class="mt-8 flex justify-start">
+            <div class="mt-6 flex justify-start space-x-4">
               <button 
                 type="button"
                 @click="clearFilters"

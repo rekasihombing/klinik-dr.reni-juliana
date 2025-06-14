@@ -37,18 +37,19 @@
               <div>No. Rekam Medis : {{ patientData.noRekamMedis || generateRecordNumber() }}</div>
             </div>
 
-            <form @submit.prevent="submitForm">
+<form @submit.prevent="submitForm">
               <table class="w-full border-collapse text-[13px]">
                 <tbody>
                   <tr>
-                    <th
-                      class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
-                      colspan="2"
-                    >
+                    <th class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5" colspan="2">
                       Informasi Pasien
                     </th>
                   </tr>
-
+                  <!-- Tambahkan Nama Pasien -->
+                  <tr>
+                    <td class="border border-gray-300 px-2 py-0.5">Nama Pasien</td>
+                    <td class="border border-gray-300 px-2 py-0.5">{{ patientData.nama || '-' }}</td>
+                  </tr>
                   <tr>
                     <td class="border border-gray-300 px-2 py-0.5">Umur</td>
                     <td class="border border-gray-300 px-2 py-0.5">{{ patientData.umur || calculateAge() }}</td>
@@ -62,13 +63,10 @@
                     <td class="border border-gray-300 px-2 py-0.5">{{ patientData.golonganDarah || '-' }}</td>
                   </tr>
                   <tr>
-                    <td colspan="2" class="px-2 py-0.5"></td> <!-- Baris kosong -->
+                    <td colspan="2" class="px-2 py-0.5"></td>
                   </tr>
                   <tr>
-                    <th
-                      class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5"
-                      colspan="2"
-                    >
+                    <th class="text-[#2A4482] border-gray-300 text-left font-semibold px-2 py-0.5" colspan="2">
                       Riwayat Kunjungan
                     </th>
                   </tr>
@@ -306,8 +304,7 @@
 </template>
 
 <script setup>
-// Bagian script yang diperbaiki untuk komponen Vue
-import { defineProps, onMounted, ref, computed } from "vue";
+import { defineProps, onMounted, ref } from "vue";
 import { useForm } from '@inertiajs/vue3';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
@@ -332,10 +329,7 @@ const props = defineProps({
       golonganDarah: '',
       noRekamMedis: ''
     })
-
-    
   },
-
   visitHistory: {
     type: Object,
     default: () => ({
@@ -347,11 +341,9 @@ const props = defineProps({
       riwayatObat: ''
     })
   },
-  errors: Object // Tambahkan untuk menangani error dari server
+  errors: Object
 });
 
-
-// Breadcrumb data
 const breadcrumbPages = [
   { label: "Dashboard", href: "/dashboarddokter" },
   { label: "Tambah Rekam Medis", href: "/tambahrekammedis" }
@@ -361,32 +353,23 @@ const showInfoModal = ref(false);
 const currentTime = ref('');
 const recordNumber = ref('');
 
-// Form dengan Inertia - pastikan semua field sesuai dengan validasi backend
 const form = useForm({
-  // Data pasien dan appointment - pastikan ada nilai
-  patient_id: props.patientData?.id || props.appointment?.patient_id || props.patient?.id || '',
+  patient_id: props.patientData?.id || props.appointment?.patient_id || props.pasien?.id || '',
   appointment_id: props.appointment?.id || '',
   no_rekam_medis: props.patientData?.noRekamMedis || generateRecordNumber(),
-  tanggal_kunjungan: props.visitHistory?.tanggalKunjungan || new Date().toISOString().split('T')[0],
-  
-  // Anamnesis
+  tanggal_kunjungan: props.appointment?.tanggal || new Date().toISOString().split('T')[0],
   keluhan: props.visitHistory?.keluhan || '',
   rps: props.visitHistory?.rps || '',
   rpd: props.visitHistory?.rpd || '',
   alergi: props.visitHistory?.Alergi || '',
   riwayat_obat: props.visitHistory?.riwayatObat || '',
-  
-  // Pemeriksaan Fisik
   tekanan_darah: '',
   suhu_tubuh: '',
   nadi: '',
   pernapasan: '',
   berat_badan: '',
   status_gizi: '',
-  
-  // Diagnosa dan Tindakan
   diagnosa: '',
-  // tindakan: '',
   catatan_dokter: ''
 });
 
@@ -402,66 +385,61 @@ function generateRecordNumber() {
   return recordNumber.value;
 }
 
-// Hitung umur dari tanggal lahir
 function calculateAge() {
   if (!props.patientData?.tanggalLahir) return '';
-  
   const birthDate = new Date(props.patientData.tanggalLahir);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
   return age + ' tahun';
 }
 
 function formatVisitDate() {
-  const rawDate = props.visitHistory?.tanggalKunjungan;
-  if (!rawDate) return '';
-
+  const rawDate = props.appointment?.tanggal || props.visitHistory?.tanggalKunjungan;
+  console.log('Raw Date:', rawDate); // Debugging
+  if (!rawDate) {
+    console.log('No date available, returning empty string');
+    return '';
+  }
   // Asumsikan format YYYY-MM-DD
-  const [year, month, day] = rawDate.split('-');
-  return `${day}-${month}-${year}`;
+  try {
+    const [year, month, day] = rawDate.split('-');
+    const formattedDate = `${day}-${month}-${year}`;
+    console.log('Formatted Date:', formattedDate); // Debugging
+    return formattedDate;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return '';
+  }
 }
 
-// Update waktu setiap detik
 function updateTime() {
   const now = new Date();
-
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
   currentTime.value = `${hours}:${minutes}:${seconds}`;
 }
 
-/// Submit form ke database - diperbaiki
-// Submit form ke database - diperbaiki
 function submitForm() {
-  // Validasi data sebelum submit
   if (!form.patient_id) {
     alert('Data pasien tidak ditemukan. Silakan refresh halaman.');
     return;
   }
-
   if (!form.keluhan.trim()) {
     alert('Keluhan utama harus diisi.');
     return;
   }
-
   if (!form.diagnosa.trim()) {
     alert('Diagnosa harus diisi.');
     return;
   }
-
-  // Submit menggunakan Inertia form
   form.post('/rekam-medis', {
-    onSuccess: (page) => {
-      // Success handler - Inertia akan handle redirect otomatis
+    onSuccess: () => {
       console.log('Rekam medis berhasil disimpan');
-      // Redirect sudah ditangani oleh controller dengan Inertia::location()
     },
     onError: (errors) => {
       console.error('Validation errors:', errors);
@@ -472,19 +450,15 @@ function submitForm() {
     },
     preserveScroll: false,
     preserveState: false,
-    // Pastikan untuk tidak mencegah redirect
     replace: false
   });
 }
 
-// Download record sebagai PDF - placeholder untuk fitur masa depan
 function downloadRecord() {
-  // Validasi apakah data sudah disimpan
   if (!form.isDirty && !form.recentlySuccessful) {
     alert('Silakan simpan rekam medis terlebih dahulu sebelum mendownload.');
     return;
   }
-
   const recordData = {
     patient: props.patientData,
     visitHistory: props.visitHistory,
@@ -496,82 +470,34 @@ function downloadRecord() {
       berat_badan: form.berat_badan,
       status_gizi: form.status_gizi,
       diagnosa: form.diagnosa,
-      // tindakan: form.tindakan,
       catatan_dokter: form.catatan_dokter
     },
     recordNumber: form.no_rekam_medis,
     visitDate: formatVisitDate()
   };
-  
   console.log('Downloading medical record...', recordData);
-  // TODO: Implementasi download PDF
   alert('Fitur download PDF akan segera tersedia');
 }
 
 onMounted(() => {
-  // Initialize calendar
   flatpickr("#calendar", {
     inline: true,
     locale: {
       firstDayOfWeek: 1,
       weekdays: {
         shorthand: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
-        longhand: [
-          "Minggu",
-          "Senin",
-          "Selasa",
-          "Rabu",
-          "Kamis",
-          "Jumat",
-          "Sabtu",
-        ],
+        longhand: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"],
       },
       months: {
-        shorthand: [
-          "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-          "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
-        ],
-        longhand: [
-          "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-          "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-        ],
+        shorthand: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        longhand: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
       },
     },
   });
-
-  // Start time updates
   updateTime();
   setInterval(updateTime, 1000);
-
-  // Log untuk debugging
-  console.log('Patient Data:', props.patientData);
+  console.log('Props Appointment:', props.appointment); // Debugging
   console.log('Form Data:', form.data());
-});
-
-function handleJanjiTemuClick() {
-  if (props.nextAppointment?.tanggal && props.nextAppointment?.jam_konsultasi) {
-    showInfoModal.value = true;
-  } else {
-    router.visit("/janjitemu");
-  }
-}
-
-function createPrescription() {
-  console.log('Creating prescription for:', props.patientData?.nama);
-  // Gunakan Inertia visit dengan data
-  router.visit('/resep', {
-    method: 'get',
-    data: {
-      patient_id: props.patientData?.id,
-      patient_name: props.patientData?.nama,
-      medical_record_id: form.no_rekam_medis
-    },
-    preserveState: true
-  });
-}
-
-onMounted(() => {
-  console.log('Patient ID:', props.patientData?.id);
 });
 </script>
 
