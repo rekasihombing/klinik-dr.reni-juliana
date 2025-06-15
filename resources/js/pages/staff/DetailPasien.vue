@@ -298,7 +298,7 @@ export default {
       type: Array,
       default: () => ([
         { label: 'Dashboard', href: '/dashboardstaff' },
-        { label: 'Daftar Pasien', href: '/staff.Pasien' },
+        { label: 'Daftar Pasien', href: '/dashboardstaff' },
         { label: 'Detail Pasien', href: '/DetailPasien' }
       ])
     }

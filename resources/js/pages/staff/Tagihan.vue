@@ -133,12 +133,7 @@
           <!-- Action Buttons -->
           <div class="px-8 py-6 border-t border-gray-200 bg-white rounded-b-xl">
             <div class="flex justify-end gap-4">
-              <button 
-                @click="resetForm"
-                class="bg-[#717070] hover:bg-[#555555] shadow-md hover:shadow-lg px-4 py-3 rounded-lg text-sm text-white font-medium transition-all duration-200"
-              >
-                Reset Form
-              </button>
+
               <button 
                 v-if="!isPaid"
                 @click="showConfirmModal = true"

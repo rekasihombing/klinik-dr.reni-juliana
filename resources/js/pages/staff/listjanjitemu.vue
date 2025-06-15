@@ -2,6 +2,7 @@
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
     <!-- Sidebar -->
     <SidebarStaff class="w-64 bg-white shadow-lg" />
+    
 
     <!-- Main content -->
     <main class="flex-1 p-6">
@@ -161,15 +162,7 @@
             </div>
           </div>
                       <!-- Reset Button Section with spacing -->
-            <div class="mt-6 flex justify-start space-x-4">
-              <button 
-                type="button"
-                @click="clearFilters"
-                class="shadow-md hover:shadow-lg px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded-md transition-colors"
-              >
-                Reset Janji Temu
-              </button>
-            </div>
+
         </div>
       </div>
     </main>
