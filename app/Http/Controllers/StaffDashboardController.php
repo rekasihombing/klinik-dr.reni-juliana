@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment;
 use App\Models\RekamMedis;
 use App\Models\Tagihan;
+use App\Models\Staff;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -18,6 +20,16 @@ public function index()
         Carbon::setLocale('id');
         date_default_timezone_set('Asia/Jakarta');
         $today = Carbon::today();
+        
+
+        // Ambil data staff berdasarkan user yang login
+        $staff = Staff::where('user_id', Auth::id())->first();
+
+        // Pastikan staff ada, jika tidak, berikan nilai default atau tangani error
+        if (!$staff) {
+            \Log::error('Staff not found for user_id: ' . Auth::id());
+            throw new \Exception('Data staff tidak ditemukan');
+        }
 
         \Log::info('Today date:', ['today' => $today->toDateString()]);
         $totalAppointments = Appointment::count();
@@ -122,6 +134,7 @@ $pasienHariIniWithQueue = $pasienHariIni->map(function($appointment) {
             'aktivitasMingguan' => $aktivitasMingguan,
             'currentDate' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY'),
             'currentTime' => Carbon::now()->format('H:i:s'),
+            'staffName' => $staff->nama_lengkap,
             'debug' => [
                 'today' => $today->toDateString(),
                 'total_appointments' => $totalAppointments,
@@ -142,6 +155,7 @@ $pasienHariIniWithQueue = $pasienHariIni->map(function($appointment) {
             'aktivitasMingguan' => [],
             'currentDate' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY'),
             'currentTime' => Carbon::now()->format('H:i:s'),
+            'staffName' => 'Staff', // Nama default jika error
             'debug' => [
                 'error' => $e->getMessage()
             ]

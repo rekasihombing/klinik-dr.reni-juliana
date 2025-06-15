@@ -23,7 +23,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xl font-bold text-[#2A4482]">Selamat datang, Marvitha!</p>
+                <p class="text-xl font-bold text-[#2A4482]">Selamat datang, {{ staffName || 'Staff' }}!</p>
               </div>
             </div>
           </div>
@@ -413,6 +413,7 @@ export default {
     aktivitasMingguan: Array,
     currentDate: String,
     currentTime: String,
+    staffName: String,
     debug: Object // Prop for debugging data
   },
   data() {

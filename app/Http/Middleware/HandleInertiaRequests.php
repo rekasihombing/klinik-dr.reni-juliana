@@ -45,12 +45,26 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
+                'staff' => $request->user() ? $this->getStaffData($request->user()) : null,
             ],
             'ziggy' => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ];
+    }
+    private function getStaffData($user)
+    {
+        if (!$user || !$user->staff) {
+            return null;
+        }
+
+        return [
+            'id' => $user->staff->id,
+            'nama_lengkap' => $user->staff->nama_lengkap,
+            'telepon' => $user->staff->telepon,
+            'initial' => strtoupper(substr($user->staff->nama_lengkap, 0, 1)),
         ];
     }
 }

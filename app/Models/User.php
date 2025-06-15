@@ -52,6 +52,10 @@ public function patient()
 {
     return $this->hasOne(Doctor::class);
 }
+    public function staff()
+{
+    return $this->hasOne(Staff::class);
+}
 
 public function rekamMedis()
 {
