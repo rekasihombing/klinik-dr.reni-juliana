@@ -176,60 +176,105 @@
                     </button>
                   </td>
 
-              <!-- Improved button template with better error handling and loading state -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div v-if="patient.status === 'selesai'">
-                    <button
-                      @click="handleTagihan(patient)"
-                      :disabled="isProcessingBilling"
-                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200"
-                      :class="[
-                        isProcessingBilling 
-                          ? 'bg-gray-400 text-white cursor-not-allowed' 
-                          : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md active:scale-95'
-                      ]"
-                    >
-                      <!-- Loading spinner -->
-                      <svg 
-                        v-if="isProcessingBilling" 
-                        class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        fill="none" 
-                        viewBox="0 0 24 24"
-                      >
-                        <circle 
-                          class="opacity-25" 
-                          cx="12" 
-                          cy="12" 
-                          r="10" 
-                          stroke="currentColor" 
-                          stroke-width="4"
-                        ></circle>
-                        <path 
-                          class="opacity-75" 
-                          fill="currentColor" 
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      
-                      <!-- Button text -->
-                      <span v-if="!isProcessingBilling">Buat Tagihan</span>
-                      <span v-else>Processing...</span>
-                    </button>
-                  </div>
-                  
-                  <div v-else-if="patient.status === 'dalam_pemeriksaan'">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      Dalam Pemeriksaan
-                    </span>
-                  </div>
-                  
-                  <div v-else-if="patient.status === 'menunggu'">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Menunggu
-                    </span>
-                  </div>
-                </td>
+<td class="px-6 py-4 whitespace-nowrap" @click.stop>
+  <div v-if="patient.status === 'selesai'">
+    <!-- Button untuk yang belum ada tagihan atau belum bayar -->
+    <button
+      v-if="!patient.has_tagihan || !patient.is_paid"
+      @click="handleTagihan(patient)"
+      :disabled="isProcessingBilling"
+      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200"
+      :class="[
+        isProcessingBilling 
+          ? 'bg-gray-400 text-white cursor-not-allowed' 
+          : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md active:scale-95 cursor-pointer'
+      ]"
+    >
+      <!-- Loading spinner -->
+      <svg 
+        v-if="isProcessingBilling" 
+        class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24"
+      >
+        <circle 
+          class="opacity-25" 
+          cx="12" 
+          cy="12" 
+          r="10" 
+          stroke="currentColor" 
+          stroke-width="4"
+        ></circle>
+        <path 
+          class="opacity-75" 
+          fill="currentColor" 
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      
+      <!-- Button text -->
+      <span v-if="!isProcessingBilling">Buat Tagihan</span>
+      <span v-else>Processing...</span>
+    </button>
+    
+    <!-- Button untuk yang sudah bayar -->
+    <button
+      v-else
+      @click="handleTagihan(patient)"
+      :disabled="isProcessingBilling"
+      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200"
+      :class="[
+        isProcessingBilling 
+          ? 'bg-gray-400 text-white cursor-not-allowed' 
+          : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md active:scale-95 cursor-pointer'
+      ]"
+    >
+      <!-- Loading spinner -->
+      <svg 
+        v-if="isProcessingBilling" 
+        class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24"
+      >
+        <circle 
+          class="opacity-25" 
+          cx="12" 
+          cy="12" 
+          r="10" 
+          stroke="currentColor" 
+          stroke-width="4"
+        ></circle>
+        <path 
+          class="opacity-75" 
+          fill="currentColor" 
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      
+      <!-- Success icon -->
+      <svg 
+        v-if="!isProcessingBilling" 
+        class="w-3 h-3 mr-1" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+      
+      <!-- Button text -->
+      <span v-if="!isProcessingBilling">Pembayaran Berhasil</span>
+      <span v-else>Processing...</span>
+    </button>
+  </div>
+</td>
                 </tr>
                 <tr v-if="!pasienHariIni || pasienHariIni.length === 0">
                   <td colspan="5" class="px-6 py-12 text-center">
@@ -251,27 +296,21 @@
         </div>
 
         <!-- Weekly Activity Chart Section -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] px-6 py-4">
-            <h2 class="text-white text-xl font-bold flex items-center space-x-3">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-              </svg>
-              <span>Aktivitas Pasien Mingguan</span>
-            </h2>
-          </div>
-          <div class="p-6">
-            <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center">
-              <img
-                alt="Bar chart showing weekly patient activity"
-                class="max-w-full h-auto rounded-lg shadow-sm"
-                height="200"
-                src="https://storage.googleapis.com/a1aa/image/8a8293ba-6d88-45be-aa06-e88320e64b92.jpg"
-                width="400"
-              />
-            </div>
-          </div>
-        </div>
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+  <div class="bg-gradient-to-r from-[#3674B5] to-[#4a7bc8] px-6 py-4">
+    <h2 class="text-white text-xl font-bold flex items-center space-x-3">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+      </svg>
+      <span>Aktivitas Pasien Mingguan</span>
+    </h2>
+  </div>
+  <div class="p-6">
+    <div class="bg-gray-50 rounded-xl p-4">
+      <canvas id="weeklyActivityChart"></canvas>
+    </div>
+  </div>
+</div>
       </main>
     </div>
 
@@ -360,10 +399,9 @@
 
 
 <script>
-import { router } from '@inertiajs/vue3'
-import SidebarStaff from '../../layouts/staff/SidebarStaff.vue'
-
-// Tambahkan script debugging ini di mounted() method Vue component
+import { router } from '@inertiajs/vue3';
+import SidebarStaff from '../../layouts/staff/SidebarStaff.vue';
+import Chart from 'chart.js/auto'; // Import Chart.js for weekly activity chart
 
 export default {
   name: 'DashboardStaff',
@@ -375,7 +413,7 @@ export default {
     aktivitasMingguan: Array,
     currentDate: String,
     currentTime: String,
-    debug: Object // Tambahkan prop debug
+    debug: Object // Prop for debugging data
   },
   data() {
     return {
@@ -389,11 +427,13 @@ export default {
       phoneNumber: '',
       address: '',
       isProcessingBilling: false,
-      complaint: ''
-    }
+      complaint: '',
+      weeklyChart: null, // Store Chart.js instance
+      isProcessingBilling: false
+    };
   },
   mounted() {
-    // DEBUGGING: Log semua data yang diterima dari backend
+    // Log debugging information for received props
     console.group('=== DASHBOARD DEBUG ===');
     console.log('Props received from backend:');
     console.log('📊 pasienHariIni:', this.pasienHariIni);
@@ -403,7 +443,7 @@ export default {
     console.log('📊 currentTime:', this.currentTime);
     console.log('📊 debug data:', this.debug);
     
-    // Cek apakah data pasien ada dan valid
+    // Validate pasienHariIni data
     if (this.pasienHariIni) {
       console.log('✅ pasienHariIni exists');
       console.log('📝 Length:', this.pasienHariIni.length);
@@ -419,7 +459,7 @@ export default {
       console.error('❌ pasienHariIni is null or undefined');
     }
     
-    // Cek struktur data
+    // Log structure of first patient if available
     if (this.pasienHariIni && this.pasienHariIni.length > 0) {
       const firstPatient = this.pasienHariIni[0];
       console.log('🔍 First patient structure:');
@@ -430,12 +470,130 @@ export default {
     
     console.groupEnd();
     
-    // Panggil method debugging API
+    // Initialize Chart.js for weekly activity
+    this.initializeWeeklyChart();
+    
+    // Fetch debug data from API
     this.debugAppointmentData();
   },
-  
   methods: {
-    // Method untuk debugging data appointment
+    // Initialize Chart.js for weekly activity
+    initializeWeeklyChart() {
+      const ctx = document.getElementById('weeklyActivityChart')?.getContext('2d');
+      if (!ctx) {
+        console.error('❌ Cannot find canvas element for weeklyActivityChart');
+        return;
+      }
+      
+      // Prepare chart data from aktivitasMingguan
+      const labels = this.aktivitasMingguan.map(item => item.label || item.date);
+      const totalData = this.aktivitasMingguan.map(item => item.total || 0);
+      const confirmedData = this.aktivitasMingguan.map(item => item.status_counts?.dikonfirmasi || 0);
+      const inProgressData = this.aktivitasMingguan.map(item => item.status_counts?.diproses || 0);
+      const completedData = this.aktivitasMingguan.map(item => item.status_counts?.selesai || 0);
+
+      // Destroy existing chart if it exists to prevent memory leaks
+      if (this.weeklyChart) {
+        this.weeklyChart.destroy();
+      }
+
+      // Chart.js configuration
+      this.weeklyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Dikonfirmasi',
+              data: confirmedData,
+              backgroundColor: 'rgba(59, 130, 246, 0.6)', // Blue
+              borderColor: 'rgba(59, 130, 246, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Diproses',
+              data: inProgressData,
+              backgroundColor: 'rgba(234, 179, 8, 0.6)', // Yellow
+              borderColor: 'rgba(234, 179, 8, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Selesai',
+              data: completedData,
+              backgroundColor: 'rgba(34, 197, 94, 0.6)', // Green
+              borderColor: 'rgba(34, 197, 94, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Total',
+              type: 'line',
+              data: totalData,
+              borderColor: 'rgba(239, 68, 68, 1)', // Red
+              backgroundColor: 'rgba(239, 68, 68, 0.2)',
+              borderWidth: 2,
+              fill: false,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: '#1F2937', // Text-gray-800
+                font: {
+                  size: 12
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Aktivitas Pasien Mingguan',
+              color: '#1F2937',
+              font: {
+                size: 16,
+                weight: 'bold'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Jumlah Pasien',
+                color: '#1F2937'
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)'
+              },
+              ticks: {
+                color: '#1F2937',
+                stepSize: 1
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Tanggal',
+                color: '#1F2937'
+              },
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#1F2937'
+              }
+            }
+          }
+        }
+      });
+    },
+
+    // Debug appointment data via API
     async debugAppointmentData() {
       try {
         console.log('🔍 Fetching debug data from API...');
@@ -460,7 +618,7 @@ export default {
           console.log('📝 Today appointments detail:', debugData.today_appointments_detail);
           console.groupEnd();
           
-          // Analisis masalah
+          // Analyze potential issues
           this.analyzeIssue(debugData);
         } else {
           console.error('❌ Debug API request failed:', response.status);
@@ -470,7 +628,7 @@ export default {
       }
     },
     
-    // Method untuk menganalisis masalah
+    // Analyze issues in debug data
     analyzeIssue(debugData) {
       console.group('=== ISSUE ANALYSIS ===');
       
@@ -483,7 +641,6 @@ export default {
         console.log('📅 Today is:', debugData.today);
         console.log('📝 Sample appointment dates:', debugData.sample_appointments.map(a => a.tanggal));
         
-        // Cek format tanggal
         if (debugData.sample_appointments.length > 0) {
           const sampleDate = debugData.sample_appointments[0].tanggal;
           console.log('📅 Sample date format:', sampleDate);
@@ -500,7 +657,6 @@ export default {
         console.log('📊 Appointments after filter:', this.pasienHariIni.length);
         console.log('💡 SOLUTION: Check appointment status values');
         
-        // Cek status appointments
         if (debugData.today_appointments_detail) {
           const statuses = debugData.today_appointments_detail.map(a => a.status);
           console.log('📝 Today appointment statuses:', statuses);
@@ -524,7 +680,7 @@ export default {
       console.groupEnd();
     },
     
-    // Method untuk test manual create appointment
+    // Test manual creation of appointment
     async testCreateAppointment() {
       try {
         const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
@@ -538,7 +694,6 @@ export default {
         
         console.log('🧪 Creating test appointment:', testData);
         
-        // Kirim request ke endpoint create appointment
         const response = await fetch('/api/appointments', {
           method: 'POST',
           headers: {
@@ -564,12 +719,11 @@ export default {
       }
     },
     
-    // Method untuk cek database secara manual
+    // Check database connection
     async checkDatabase() {
       try {
         console.log('🔍 Checking database status...');
         
-        // Test database connection
         const response = await fetch('/api/test-db', {
           method: 'GET',
           headers: {
@@ -583,7 +737,6 @@ export default {
           const result = await response.json();
           console.log('✅ Database connection OK:', result);
           
-          // Test tabel appointments
           const appointmentResponse = await fetch('/api/appointments/count', {
             method: 'GET',
             headers: {
@@ -605,263 +758,254 @@ export default {
       }
     },
     
-    // Existing methods...
+    // Show patient details in popup
     showDetail(patient) {
-      this.registrasiNumber = patient.registrasi_number
-      this.patientName = patient.nama_pasien
-      this.nik = patient.nik
-      this.birthDate = patient.tanggal_lahir
-      this.gender = patient.jenis_kelamin
-      this.bloodType = patient.golongan_darah
-      this.phoneNumber = patient.nomor_hp
-      this.address = patient.alamat
-      this.complaint = patient.keluhan
-      this.isDetailVisible = true
+      this.registrasiNumber = patient.registrasi_number;
+      this.patientName = patient.nama_pasien;
+      this.nik = patient.nik;
+      this.birthDate = patient.tanggal_lahir;
+      this.gender = patient.jenis_kelamin;
+      this.bloodType = patient.golongan_darah;
+      this.phoneNumber = patient.nomor_hp;
+      this.address = patient.alamat;
+      this.complaint = patient.keluhan;
+      this.isDetailVisible = true;
     },
     
+    // Handle edit button click
     handleEdit() {
-      alert('Tombol Ubah diklik')
+      alert('Tombol Ubah diklik');
     },
     
+    // Navigate to registration page
     goToRegistration() {
-      router.visit('/pendaftaran')
+      router.visit('/pendaftaran');
     },
     
+    // Navigate to confirmation page
     goToConfirmation() {
-      router.visit('/konfirmasi-pasien')
+      router.visit('/konfirmasi-pasien');
     },
     
-async handleTagihan(patient) {
-  console.log('=== DEBUG TAGIHAN START ===');
-  console.log('Patient data:', patient);
-  
-  // Validasi data patient lebih ketat
-  if (!patient) {
-    alert('Data pasien tidak valid');
-    return;
-  }
-
-  if (!patient.id && !patient.appointment_id && !patient.rekam_medis_id) {
-    alert('ID Pasien atau Appointment ID tidak ditemukan');
-    console.error('Missing patient identifiers:', {
-      id: patient.id,
-      appointment_id: patient.appointment_id,
-      rekam_medis_id: patient.rekam_medis_id
-    });
-    return;
-  }
-  
-  // Set loading state
-  this.isProcessingBilling = true;
-  
-  try {
-    let rekamMedisId = patient.rekam_medis_id;  
-    console.log('Initial Rekam Medis ID:', rekamMedisId);
-    
-    // Jika tidak ada rekam_medis_id, coba cari
-    if (!rekamMedisId) {
-      console.log('No rekam_medis_id, checking patient status...');
+    // Handle billing creation
+    async handleTagihan(patient) {
+      console.log('=== DEBUG TAGIHAN START ===');
+      console.log('Patient data:', patient);
       
-      if (patient.status !== 'selesai') {
-        alert('Pasien belum menyelesaikan pemeriksaan. Tagihan hanya bisa dibuat setelah pemeriksaan selesai.');
-        this.isProcessingBilling = false;
+      if (!patient) {
+        alert('Data pasien tidak valid');
         return;
       }
       
-      // Cari rekam medis berdasarkan appointment_id atau patient_id
-      const searchId = patient.appointment_id || patient.id;
-      if (!searchId) {
-        alert('Tidak dapat menemukan referensi untuk mencari rekam medis');
-        this.isProcessingBilling = false;
+      if (!patient.id && !patient.appointment_id && !patient.rekam_medis_id) {
+        alert('ID Pasien atau Appointment ID tidak ditemukan');
+        console.error('Missing patient identifiers:', {
+          id: patient.id,
+          appointment_id: patient.appointment_id,
+          rekam_medis_id: patient.rekam_medis_id
+        });
         return;
       }
+      
+      this.isProcessingBilling = true;
       
       try {
-        console.log('Searching rekam medis for ID:', searchId);
+        let rekamMedisId = patient.rekam_medis_id;  
+        console.log('Initial Rekam Medis ID:', rekamMedisId);
         
-        const response = await fetch(`/api/rekam-medis/check/${searchId}`, {
+        if (!rekamMedisId) {
+          console.log('No rekam_medis_id, checking patient status...');
+          
+          if (patient.status !== 'selesai') {
+            alert('Pasien belum menyelesaikan pemeriksaan. Tagihan hanya bisa dibuat setelah pemeriksaan selesai.');
+            this.isProcessingBilling = false;
+            return;
+          }
+          
+          const searchId = patient.appointment_id || patient.id;
+          if (!searchId) {
+            alert('Tidak dapat menemukan referensi untuk mencari rekam medis');
+            this.isProcessingBilling = false;
+            return;
+          }
+          
+          try {
+            console.log('Searching rekam medis for ID:', searchId);
+            
+            const response = await fetch(`/api/rekam-medis/check/${searchId}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+              }
+            });
+            
+            console.log('API Response status:', response.status);
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log('API Response data:', data);
+              
+              if (data.rekam_medis_id) {
+                rekamMedisId = data.rekam_medis_id;
+                console.log('Found rekam_medis_id:', rekamMedisId);
+              } else {
+                alert('Rekam medis belum dibuat oleh dokter. Silakan hubungi dokter terlebih dahulu.');
+                this.isProcessingBilling = false;
+                return;
+              }
+            } else {
+              const errorText = await response.text();
+              console.error('API Error response:', errorText);
+              throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+          } catch (apiError) {
+            console.error('Error checking rekam medis:', apiError);
+            alert('Tidak dapat mengecek status rekam medis. Error: ' + apiError.message);
+            this.isProcessingBilling = false;
+            return;
+          }
+        }
+        
+        if (!rekamMedisId) {
+          alert('Rekam medis ID tidak ditemukan. Tidak dapat membuat tagihan.');
+          this.isProcessingBilling = false;
+          return;
+        }
+        
+        const patientName = patient.nama_pasien || patient.name || 'Unknown';
+        const noAntrian = patient.no_antrian || patient.queue_number || '';
+        
+        const params = new URLSearchParams({
+          rekam_medis_id: rekamMedisId,
+          patient_name: patientName,
+          no_antrian: noAntrian
+        });
+        
+        const url = `/tagihan/create?${params.toString()}`;
+        
+        console.log('Final URL:', url);
+        console.log('=== STARTING NAVIGATION ===');
+        
+        router.visit(url, {
+          method: 'get',
+          preserveScroll: false,
+          preserveState: false,
+          replace: false,
+          onStart: () => {
+            console.log('Navigation started to:', url);
+          },
+          onProgress: (progress) => {
+            console.log('Navigation progress:', progress.percentage + '%');
+          },
+          onSuccess: (page) => {
+            console.log('Navigation successful');
+            console.log('New page component:', page.component);
+            this.isProcessingBilling = false;
+          },
+          onError: (errors) => {
+            console.error('=== NAVIGATION ERROR ===');
+            console.error('Full error object:', errors);
+            
+            let errorMessage = 'Terjadi kesalahan saat mengakses halaman tagihan:\n\n';
+            
+            if (typeof errors === 'object' && errors !== null) {
+              if (errors.message) {
+                errorMessage += 'Pesan: ' + errors.message + '\n';
+              }
+              
+              Object.keys(errors).forEach(key => {
+                if (key !== 'message') {
+                  errorMessage += `${key}: ${errors[key]}\n`;
+                }
+              });
+            } else if (typeof errors === 'string') {
+              errorMessage += errors;
+            } else {
+              errorMessage += 'Error tidak diketahui: ' + JSON.stringify(errors);
+            }
+            
+            if (errorMessage.includes('404') || errorMessage.includes('Not Found')) {
+              errorMessage += '\n\nKemungkinan penyebab:\n';
+              errorMessage += '- Route /tagihan/create belum didefinisikan di web.php\n';
+              errorMessage += '- Controller TagihanController tidak ditemukan\n';
+              errorMessage += '- Method create() tidak ada di controller';
+            }
+            
+            if (errorMessage.includes('500') || errorMessage.includes('Internal Server Error')) {
+              errorMessage += '\n\nKemungkinan penyebab:\n';
+              errorMessage += '- Error di dalam TagihanController->create()\n';
+              errorMessage += '- Database connection error\n';
+              errorMessage += '- Missing dependencies atau model\n';
+              errorMessage += '- Periksa log Laravel untuk detail lengkap';
+            }
+            
+            alert(errorMessage);
+            this.isProcessingBilling = false;
+          },
+          onFinish: () => {
+            console.log('Navigation finished');
+            this.isProcessingBilling = false;
+          }
+        });
+        
+      } catch (error) {
+        console.error('=== UNEXPECTED ERROR ===');
+        console.error('Error in handleTagihan:', error);
+        console.error('Error stack:', error.stack);
+        
+        this.isProcessingBilling = false;
+        alert('Terjadi kesalahan tidak terduga: ' + error.message + '\n\nSilakan periksa console browser untuk detail lengkap.');
+      }
+      
+      console.log('=== DEBUG TAGIHAN END ===');
+    },
+    
+    // Debug tagihan route
+    async debugTagihanRoute() {
+      console.log('=== DEBUGGING ROUTE ===');
+      
+      try {
+        const response = await fetch('/tagihan/create?test=debug', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json'
           }
         });
         
-        console.log('API Response status:', response.status);
+        console.log('Route test - Status:', response.status);
+        console.log('Route test - Headers:', Object.fromEntries(response.headers.entries()));
         
-        if (response.ok) {
-          const data = await response.json();
-          console.log('API Response data:', data);
-          
-          if (data.rekam_medis_id) {
-            rekamMedisId = data.rekam_medis_id;
-            console.log('Found rekam_medis_id:', rekamMedisId);
-          } else {
-            alert('Rekam medis belum dibuat oleh dokter. Silakan hubungi dokter terlebih dahulu.');
-            this.isProcessingBilling = false;
-            return;
-          }
-        } else {
+        if (response.status === 404) {
+          console.error('❌ Route /tagihan/create TIDAK DITEMUKAN');
+          alert('Route /tagihan/create tidak ditemukan!\n\nPeriksa:\n1. web.php - apakah route sudah didefinisikan?\n2. Controller - apakah TagihanController ada?\n3. Method create() - apakah sudah dibuat?');
+          return false;
+        } else if (response.status === 500) {
           const errorText = await response.text();
-          console.error('API Error response:', errorText);
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-      } catch (apiError) {
-        console.error('Error checking rekam medis:', apiError);
-        alert('Tidak dapat mengecek status rekam medis. Error: ' + apiError.message);
-        this.isProcessingBilling = false;
-        return;
-      }
-    }
-    
-    // Validasi final rekam_medis_id
-    if (!rekamMedisId) {
-      alert('Rekam medis ID tidak ditemukan. Tidak dapat membuat tagihan.');
-      this.isProcessingBilling = false;
-      return;
-    }
-    
-    // Buat URL untuk navigasi
-    const patientName = patient.nama_pasien || patient.name || 'Unknown';
-    const noAntrian = patient.no_antrian || patient.queue_number || '';
-    
-    // Gunakan URLSearchParams untuk encoding yang lebih aman
-    const params = new URLSearchParams({
-      rekam_medis_id: rekamMedisId,
-      patient_name: patientName,
-      no_antrian: noAntrian
-    });
-    
-    const url = `/tagihan/create?${params.toString()}`;
-    
-    console.log('Final URL:', url);
-    console.log('=== STARTING NAVIGATION ===');
-    
-    // Navigate dengan error handling yang lebih baik
-    router.visit(url, {
-      method: 'get',
-      preserveScroll: false,
-      preserveState: false,
-      replace: false,
-      onStart: () => {
-        console.log('Navigation started to:', url);
-      },
-      onProgress: (progress) => {
-        console.log('Navigation progress:', progress.percentage + '%');
-      },
-      onSuccess: (page) => {
-        console.log('Navigation successful');
-        console.log('New page component:', page.component);
-        this.isProcessingBilling = false;
-      },
-      onError: (errors) => {
-        console.error('=== NAVIGATION ERROR ===');
-        console.error('Full error object:', errors);
-        
-        // Parse error untuk menampilkan pesan yang lebih jelas
-        let errorMessage = 'Terjadi kesalahan saat mengakses halaman tagihan:\n\n';
-        
-        if (typeof errors === 'object' && errors !== null) {
-          if (errors.message) {
-            errorMessage += 'Pesan: ' + errors.message + '\n';
-          }
-          
-          Object.keys(errors).forEach(key => {
-            if (key !== 'message') {
-              errorMessage += `${key}: ${errors[key]}\n`;
-            }
-          });
-        } else if (typeof errors === 'string') {
-          errorMessage += errors;
+          console.error('❌ Server Error 500:', errorText);
+          alert('Server Error 500 pada route tagihan!\n\nPeriksa:\n1. Log Laravel di storage/logs/\n2. Database connection\n3. Controller TagihanController->create()');
+          return false;
+        } else if (response.status === 200) {
+          console.log('✅ Route /tagihan/create tersedia');
+          alert('✅ Route tagihan tersedia dan berfungsi');
+          return true;
         } else {
-          errorMessage += 'Error tidak diketahui: ' + JSON.stringify(errors);
+          console.log('⚠️ Unexpected status:', response.status);
+          const responseText = await response.text();
+          console.log('Response body:', responseText);
+          return false;
         }
         
-        // Cek apakah ini error 404 (route tidak ditemukan)
-        if (errorMessage.includes('404') || errorMessage.includes('Not Found')) {
-          errorMessage += '\n\nKemungkinan penyebab:\n';
-          errorMessage += '- Route /tagihan/create belum didefinisikan di web.php\n';
-          errorMessage += '- Controller TagihanController tidak ditemukan\n';
-          errorMessage += '- Method create() tidak ada di controller';
-        }
-        
-        // Cek apakah ini error 500 (server error)
-        if (errorMessage.includes('500') || errorMessage.includes('Internal Server Error')) {
-          errorMessage += '\n\nKemungkinan penyebab:\n';
-          errorMessage += '- Error di dalam TagihanController->create()\n';
-          errorMessage += '- Database connection error\n';
-          errorMessage += '- Missing dependencies atau model\n';
-          errorMessage += '- Periksa log Laravel untuk detail lengkap';
-        }
-        
-        alert(errorMessage);
-        this.isProcessingBilling = false;
-      },
-      onFinish: () => {
-        console.log('Navigation finished');
-        // Reset loading state terlepas dari hasil
-        this.isProcessingBilling = false;
+      } catch (error) {
+        console.error('❌ Error testing route:', error);
+        alert('Tidak bisa mengecek route tagihan!\n\nError: ' + error.message + '\n\nKemungkinan:\n1. Server tidak berjalan\n2. CORS issue\n3. Network error');
+        return false;
       }
-    });
+    },
     
-  } catch (error) {
-    console.error('=== UNEXPECTED ERROR ===');
-    console.error('Error in handleTagihan:', error);
-    console.error('Error stack:', error.stack);
-    
-    this.isProcessingBilling = false;
-    alert('Terjadi kesalahan tidak terduga: ' + error.message + '\n\nSilakan periksa console browser untuk detail lengkap.');
-  }
-  
-  console.log('=== DEBUG TAGIHAN END ===');
-},
-
-// Method tambahan untuk debugging route
-async debugTagihanRoute() {
-  console.log('=== DEBUGGING ROUTE ===');
-  
-  try {
-    // Test apakah route /tagihan/create ada
-    const response = await fetch('/tagihan/create?test=debug', {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json'
-      }
-    });
-    
-    console.log('Route test - Status:', response.status);
-    console.log('Route test - Headers:', Object.fromEntries(response.headers.entries()));
-    
-    if (response.status === 404) {
-      console.error('❌ Route /tagihan/create TIDAK DITEMUKAN');
-      alert('Route /tagihan/create tidak ditemukan!\n\nPeriksa:\n1. web.php - apakah route sudah didefinisikan?\n2. Controller - apakah TagihanController ada?\n3. Method create() - apakah sudah dibuat?');
-      return false;
-    } else if (response.status === 500) {
-      const errorText = await response.text();
-      console.error('❌ Server Error 500:', errorText);
-      alert('Server Error 500 pada route tagihan!\n\nPeriksa:\n1. Log Laravel di storage/logs/\n2. Database connection\n3. Controller TagihanController->create()');
-      return false;
-    } else if (response.status === 200) {
-      console.log('✅ Route /tagihan/create tersedia');
-      alert('✅ Route tagihan tersedia dan berfungsi');
-      return true;
-    } else {
-      console.log('⚠️ Unexpected status:', response.status);
-      const responseText = await response.text();
-      console.log('Response body:', responseText);
-      return false;
-    }
-    
-  } catch (error) {
-    console.error('❌ Error testing route:', error);
-    alert('Tidak bisa mengecek route tagihan!\n\nError: ' + error.message + '\n\nKemungkinan:\n1. Server tidak berjalan\n2. CORS issue\n3. Network error');
-    return false;
-  }
-},
-
-    // Method untuk test debugging (bisa dihapus setelah working)
+    // Test tagihan route
     async testTagihanRoute() {
       try {
         const response = await fetch('/tagihan/create?test=true', {
@@ -889,8 +1033,18 @@ async debugTagihanRoute() {
         alert('Tidak bisa mengecek route tagihan: ' + error.message);
       }
     }
-}
-}
+  },
+  // Update chart when data changes
+  updated() {
+    this.initializeWeeklyChart();
+  },
+  // Cleanup Chart.js instance on component unmount
+  beforeUnmount() {
+    if (this.weeklyChart) {
+      this.weeklyChart.destroy();
+    }
+  }
+};
 </script>
 
 

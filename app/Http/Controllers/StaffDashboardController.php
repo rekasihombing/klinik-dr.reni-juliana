@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\RekamMedis;
+use App\Models\Tagihan;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -32,20 +33,21 @@ public function index()
             'statuses' => Appointment::distinct()->pluck('status')->toArray(),
         ]);
 
+        // Modified query to sort by antrian
         $pasienHariIni = Appointment::whereIn('status', ['dikonfirmasi', 'diproses', 'selesai'])
             ->whereDate('tanggal', $today)
             ->whereNotNull('checked_in_at')
             ->with(['pasien' => function($query) {
                 $query->select('id', 'nama_lengkap', 'nik', 'tanggal_lahir', 'jenis_kelamin', 'golongan_darah', 'no_hp', 'alamat');
             }])
-            ->orderBy('jam_konsultasi', 'asc')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('antrian', 'asc') // Sort by queue number
             ->get();
 
         $pasienMenungguKonfirmasi = Appointment::whereNotNull('checked_in_at')
             ->where('dibuat_oleh', 'pasien')
             ->where('status', 'menunggu')
             ->whereDate('tanggal', $today)
+            ->orderBy('antrian', 'asc') // Optional: Sort pending confirmations by antrian
             ->get();
 
         \Log::info('Pasien Menunggu Konfirmasi Debug:', [
@@ -68,35 +70,39 @@ public function index()
             'appointments' => $otherStatusAppointments->pluck('status')->toArray()
         ]);
 
-        $pasienHariIniWithQueue = $pasienHariIni->map(function($appointment) {
-            $rekamMedis = RekamMedis::where('appointment_id', $appointment->id)->first();
-            
-            return [
-                'id' => $appointment->id,
-                'appointment_id' => $appointment->id,
-                'rekam_medis_id' => $rekamMedis ? $rekamMedis->id : null,
-                'has_rekam_medis' => $rekamMedis ? true : false,
-                'no_antrian' => $appointment->getQueueNumber(),
-                'nama_pasien' => $appointment->pasien->nama_lengkap ?? 'N/A',
-                'waktu' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : 
-                           ($appointment->jam_konsultasi ? Carbon::parse($appointment->jam_konsultasi)->format('H.i') : '-'),
-                'checked_in_at' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : 'Belum Check-in',
-                'status' => $appointment->status,
-                'status_display' => $this->getStatusDisplay($appointment->status),
-                'registrasi_number' => 'REG - ' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT),
-                'nik' => $appointment->pasien->nik ?? 'N/A',
-                'tanggal_lahir' => $appointment->pasien->tanggal_lahir ? 
-                    Carbon::parse($appointment->pasien->tanggal_lahir)->format('d - m - Y') : 'N/A',
-                'jenis_kelamin' => $appointment->pasien->jenis_kelamin ?? 'N/A',
-                'golongan_darah' => $appointment->pasien->golongan_darah ?? 'N/A',
-                'nomor_hp' => $appointment->pasien->no_hp ?? 'N/A',
-                'alamat' => $appointment->pasien->alamat ?? 'N/A',
-                'keluhan' => $appointment->keluhan ?? 'N/A',
-                'tanggal_appointment' => $appointment->tanggal,
-                'waktu_appointment' => Carbon::parse($appointment->jam_konsultasi)->format('H.i'),
-                'pasien_id' => $appointment->pasien->id ?? null,
-            ];
-        });
+$pasienHariIniWithQueue = $pasienHariIni->map(function($appointment) {
+    $rekamMedis = RekamMedis::where('appointment_id', $appointment->id)->first();
+    // Check for associated Tagihan
+    $tagihan = $rekamMedis ? Tagihan::where('rekam_medis_id', $rekamMedis->id)->first() : null;
+    
+    return [
+        'id' => $appointment->id,
+        'appointment_id' => $appointment->id,
+        'rekam_medis_id' => $rekamMedis ? $rekamMedis->id : null,
+        'has_rekam_medis' => $rekamMedis ? true : false,
+        'has_tagihan' => $tagihan ? true : false, // Add has_tagihan
+        'is_paid' => $tagihan && $tagihan->status === 'sudah_dibayar' ? true : false, // Add is_paid
+        'no_antrian' => $appointment->getQueueNumber(),
+        'nama_pasien' => $appointment->pasien->nama_lengkap ?? 'N/A',
+        'waktu' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : 
+                   ($appointment->jam_konsultasi ? Carbon::parse($appointment->jam_konsultasi)->format('H.i') : '-'),
+        'checked_in_at' => $appointment->checked_in_at ? Carbon::parse($appointment->checked_in_at)->format('H.i') : 'Belum Check-in',
+        'status' => $appointment->status,
+        'status_display' => $this->getStatusDisplay($appointment->status),
+        'registrasi_number' => 'REG - ' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT),
+        'nik' => $appointment->pasien->nik ?? 'N/A',
+        'tanggal_lahir' => $appointment->pasien->tanggal_lahir ? 
+            Carbon::parse($appointment->pasien->tanggal_lahir)->format('d - m - Y') : 'N/A',
+        'jenis_kelamin' => $appointment->pasien->jenis_kelamin ?? 'N/A',
+        'golongan_darah' => $appointment->pasien->golongan_darah ?? 'N/A',
+        'nomor_hp' => $appointment->pasien->no_hp ?? 'N/A',
+        'alamat' => $appointment->pasien->alamat ?? 'N/A',
+        'keluhan' => $appointment->keluhan ?? 'N/A',
+        'tanggal_appointment' => $appointment->tanggal,
+        'waktu_appointment' => Carbon::parse($appointment->jam_konsultasi)->format('H.i'),
+        'pasien_id' => $appointment->pasien->id ?? null,
+    ];
+});
 
         $aktivitasMingguan = $this->getWeeklyActivity();
 
@@ -105,7 +111,8 @@ public function index()
             'totalPasienHariIni' => $pasienHariIni->count(),
             'totalMenungguKonfirmasi' => $pasienMenungguKonfirmasi->count(),
             'today_string' => $today->toDateString(),
-            'current_time' => Carbon::now()->toDateTimeString()
+            'current_time' => Carbon::now()->toDateTimeString(),
+            'antrian_values' => $pasienHariIni->pluck('antrian')->toArray(), // Log queue numbers
         ]);
 
         return Inertia::render('staff/DashboardStaff', [
@@ -121,6 +128,7 @@ public function index()
                 'all_today_count' => $allAppointmentsToday->count(),
                 'filtered_today_count' => $pasienHariIni->count(),
                 'menunggu_count' => $pasienMenungguKonfirmasi->count(),
+                'antrian_values' => $pasienHariIni->pluck('antrian')->toArray(), // Debug queue numbers
             ]
         ]);
     } catch (\Exception $e) {
@@ -198,51 +206,69 @@ public function index()
         }
     }
 
-    private function getWeeklyActivity()
-    {
-        $weeklyData = [];
-        $startOfWeek = Carbon::now()->startOfWeek();
+private function getWeeklyActivity()
+{
+    $weeklyData = [];
+    $startOfWeek = Carbon::now()->startOfWeek(Carbon::MONDAY);
+    $endOfWeek = Carbon::now()->endOfWeek(Carbon::SUNDAY);
 
-        for ($i = 0; $i < 7; $i++) {
-            $date = $startOfWeek->copy()->addDays($i);
-            $count = Appointment::whereDate('tanggal', $date)
-                ->where('status', '!=', 'dibatalkan')
-                ->count();
+    $appointments = Appointment::whereBetween('tanggal', [$startOfWeek, $endOfWeek])
+        ->where('status', '!=', 'dibatalkan')
+        ->get()
+        ->groupBy(function ($appointment) {
+            return Carbon::parse($appointment->tanggal)->format('Y-m-d');
+        });
 
-            $weeklyData[] = [
-                'day' => $date->isoFormat('dddd'),
-                'date' => $date->format('Y-m-d'),
-                'count' => $count
-            ];
-        }
+    for ($i = 0; $i < 7; $i++) {
+        $date = $startOfWeek->copy()->addDays($i);
+        $dateString = $date->format('Y-m-d');
+        $dayAppointments = $appointments->get($dateString, collect([]));
+        $statusCounts = [
+            'dikonfirmasi' => $dayAppointments->where('status', 'dikonfirmasi')->count(),
+            'diproses' => $dayAppointments->where('status', 'diproses')->count(),
+            'selesai' => $dayAppointments->where('status', 'selesai')->count(),
+        ];
 
-        return $weeklyData;
+        $weeklyData[] = [
+            'day' => $date->locale('id')->isoFormat('dddd'),
+            'date' => $dateString,
+            'total' => $dayAppointments->count(),
+            'status_counts' => $statusCounts,
+            'label' => $date->locale('id')->isoFormat('DD MMM'),
+        ];
     }
 
-    public function updateStatus(Request $request, $appointmentId)
-    {
-        try {
-            $appointment = Appointment::findOrFail($appointmentId);
+    return $weeklyData;
+}
 
-            $appointment->update([
-                'status' => $request->status,
-                'updated_at' => Carbon::now()
-            ]);
+public function updateStatus(Request $request, $appointmentId)
+{
+    try {
+        $request->validate([
+            'status' => 'required|in:menunggu,dikonfirmasi,diproses,selesai,dibatalkan'
+        ]);
 
-            // Regenerasi nomor antrian jika status masih aktif
-            if (in_array($request->status, ['menunggu', 'dikonfirmasi', 'diproses'])) {
-                Appointment::assignQueueNumbers($appointment->dokter_id, $appointment->tanggal);
-            }
+        $appointment = Appointment::findOrFail($appointmentId);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Status pasien berhasil diupdate'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal update status: ' . $e->getMessage()
-            ], 500);
+        $appointment->update([
+            'status' => $request->status,
+            'updated_at' => Carbon::now(),
+        ]);
+
+        // Only reassign queue numbers for new or active appointments without antrian
+        if (in_array($request->status, ['menunggu', 'dikonfirmasi', 'diproses']) && !$appointment->antrian) {
+            Appointment::assignQueueNumbers($appointment->dokter_id, $appointment->tanggal);
         }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pasien berhasil diupdate'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal update status: ' . $e->getMessage()
+        ], 500);
     }
+}
 }

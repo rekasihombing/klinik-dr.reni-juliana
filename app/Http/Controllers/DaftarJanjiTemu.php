@@ -61,7 +61,7 @@ class DaftarJanjiTemu extends Controller
         }
 
         // Order by date and time
-        $query->orderBy('tanggal', 'asc')->orderBy('jam_konsultasi', 'asc');
+        $query->orderBy('tanggal', 'asc')->orderBy('antrian', 'asc');
 
         // Get the results
         $appointments = $query->get();

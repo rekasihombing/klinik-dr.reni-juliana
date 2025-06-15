@@ -14,7 +14,7 @@
 
           <!-- Filter Section with more spacing -->
           <div class="mb-5">
-            <form @submit.prevent="applyFilters" class="flex flex-wrap items-center gap-4">
+            <form @submit.prevent="applyFilters" class="flex flex-wrap items-center gap-4 relative">
               <div class="flex items-center gap-2">
                 <label class="text-sm font-medium text-gray-700">Periode:</label>
                 <div class="flex items-center gap-2">
@@ -68,14 +68,12 @@
           </div>
 
           <!-- Header Section with more spacing -->
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2 text-gray-500">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-              </svg>
-              Total {{ appointments.length }} Pasien
-            </div>
-          </div>
+<div class="flex items-center gap-2 text-gray-500">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+  </svg>
+  Total {{ filteredAppointments.length }} Pasien
+</div>
 
           <!-- Table Card -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -104,11 +102,7 @@
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                  <tr 
-                    v-for="appointment in appointments" 
-                    :key="appointment.id"
-                    class="hover:bg-gray-50 transition-colors duration-150"
-                  >
+<tr v-for="appointment in filteredAppointments" :key="appointment.id" class="hover:bg-gray-50 transition-colors duration-150">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       <div class="flex items-center gap-3">
                         <div>
@@ -309,7 +303,6 @@
 </template>
 
 <script setup>
-// Perbaikan untuk script Vue.js
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-vue3';
@@ -343,13 +336,10 @@ const props = defineProps({
   }
 });
 
-// Reactive data - removed loading state
-const processing = ref(false); // Only for button actions
+// Reactive data
+const processing = ref(false);
 const isDetailVisible = ref(false);
-const isModalVisible = ref(false);
 const selectedAppointment = ref({});
-
-// Form filters
 const filters = ref({
   search: props.filters.search || '',
   date_from: props.filters.date_from || '',
@@ -357,56 +347,78 @@ const filters = ref({
   status: props.filters.status || ''
 });
 
-// Breadcrumb configuration
+// Local filtered appointments
+const localAppointments = ref([...props.appointments]);
+
+// Computed untuk breadcrumb
 const breadcrumbPages = computed(() => props.breadcrumbPages);
 
-// Computed properties
-const appointments = computed(() => props.appointments || []);
+// Computed untuk appointments yang difilter lokal
+const filteredAppointments = computed(() => {
+  let result = [...localAppointments.value];
 
-// Debounce untuk search input
-let searchTimeout;
-const debouncedApplyFilters = () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout);
+  // Filter by search
+  if (filters.value.search.trim()) {
+    const searchTerm = filters.value.search.trim().toLowerCase();
+    result = result.filter(appointment =>
+      appointment.nama?.toLowerCase().includes(searchTerm) ||
+      appointment.keluhan?.toLowerCase().includes(searchTerm) ||
+      appointment.antrian?.toString().includes(searchTerm)
+    );
   }
+
+  // Filter by date range
+  if (filters.value.date_from || filters.value.date_to) {
+    result = result.filter(appointment => {
+      const apptDate = new Date(appointment.tanggal);
+      const fromDate = filters.value.date_from ? new Date(filters.value.date_from) : null;
+      const toDate = filters.value.date_to ? new Date(filters.value.date_to) : null;
+      
+      if (fromDate && toDate) {
+        return apptDate >= fromDate && apptDate <= toDate;
+      } else if (fromDate) {
+        return apptDate >= fromDate;
+      } else if (toDate) {
+        return apptDate <= toDate;
+      }
+      return true;
+    });
+  }
+
+  // Filter by status
+  if (filters.value.status && filters.value.status !== 'all') {
+    result = result.filter(appointment => appointment.status === filters.value.status);
+  }
+
+  return result;
+});
+
+// Debounce untuk server-side sync
+let searchTimeout;
+const debouncedServerSync = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
     applyFilters();
-  }, 300);
+  }, 100); // Kurangi debounce ke 100ms
 };
 
-// Method applyFilters - removed loading state
+// Apply filters ke server
 const applyFilters = () => {
-  console.log('=== APPLYING FILTERS ===');
-  console.log('Current filters:', filters.value);
-  
-  // Build query parameters
+  console.log('=== APPLYING FILTERS ===', filters.value);
   const params = {};
-  
-  if (filters.value.search && filters.value.search.trim() !== '') {
-    params.search = filters.value.search.trim();
-  }
-  
-  if (filters.value.date_from && filters.value.date_from !== '') {
-    params.date_from = filters.value.date_from;
-  }
-  
-  if (filters.value.date_to && filters.value.date_to !== '') {
-    params.date_to = filters.value.date_to;
-  }
-  
-  if (filters.value.status && filters.value.status !== '' && filters.value.status !== 'all') {
-    params.status = filters.value.status;
-  }
-  
-  console.log('Final parameters:', params);
+
+  if (filters.value.search.trim()) params.search = filters.value.search.trim();
+  if (filters.value.date_from) params.date_from = filters.value.date_from;
+  if (filters.value.date_to) params.date_to = filters.value.date_to;
+  if (filters.value.status && filters.value.status !== 'all') params.status = filters.value.status;
 
   Inertia.get(route('staff.appointments.index'), params, {
     preserveState: true,
     preserveScroll: true,
     replace: true,
     onSuccess: (page) => {
-      console.log('Filter applied successfully');
-      console.log('New appointments count:', page.props.appointments?.length);
+      console.log('Filter applied, new appointments:', page.props.appointments?.length);
+      localAppointments.value = [...page.props.appointments]; // Update local data
     },
     onError: (errors) => {
       console.error('Error applying filters:', errors);
@@ -415,42 +427,32 @@ const applyFilters = () => {
   });
 };
 
-// Handle perubahan filter
+// Handle input changes
 const handleSearchChange = () => {
-  debouncedApplyFilters();
+  debouncedServerSync(); // Sync ke server dengan debounce
 };
 
 const handleDateChange = () => {
-  applyFilters();
+  applyFilters(); // Langsung apply untuk date
 };
 
-const handleStatusChange = (event) => {
-  console.log('Status changed to:', event.target.value);
-  filters.value.status = event.target.value;
-  applyFilters();
+const handleStatusChange = () => {
+  applyFilters(); // Langsung apply untuk status
 };
 
-// Method untuk reset filters
+// Reset filters
 const clearFilters = () => {
-  console.log('Clearing filters...');
-  filters.value = {
-    search: '',
-    date_from: '',
-    date_to: '',
-    status: ''
-  };
+  filters.value = { search: '', date_from: '', date_to: '', status: '' };
+  localAppointments.value = [...props.appointments];
   applyFilters();
 };
 
-// Methods untuk appointment actions
+// Appointment actions
 const confirmAppointment = () => {
   if (!selectedAppointment.value.id) return;
-  
   const confirmed = confirm('Apakah Anda yakin ingin mengkonfirmasi janji temu ini?');
   if (!confirmed) return;
-  
   processing.value = true;
-  
   Inertia.patch(route('staff.appointments.confirm', selectedAppointment.value.id), {}, {
     onSuccess: () => {
       closeModal();
@@ -468,12 +470,9 @@ const confirmAppointment = () => {
 
 const completeAppointment = () => {
   if (!selectedAppointment.value.id) return;
-  
   const confirmed = confirm('Apakah Anda yakin ingin menyelesaikan janji temu ini?');
   if (!confirmed) return;
-  
   processing.value = true;
-  
   Inertia.patch(route('staff.appointments.complete', selectedAppointment.value.id), {}, {
     onSuccess: () => {
       closeModal();
@@ -492,23 +491,11 @@ const completeAppointment = () => {
 const showDetail = (appointment) => {
   selectedAppointment.value = appointment;
   isDetailVisible.value = true;
-  isModalVisible.value = true;
 };
 
 const closeModal = () => {
   isDetailVisible.value = false;
-  isModalVisible.value = false;
   selectedAppointment.value = {};
-};
-
-const getInitials = (name) => {
-  if (!name) return 'N/A';
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
 };
 
 const getStatusClass = (status) => {
@@ -533,9 +520,12 @@ const getStatusText = (status) => {
   return statusTexts[status] || 'Tidak Diketahui';
 };
 
-// Watch untuk perubahan props
+// Watch untuk sync props ke localAppointments
+watch(() => props.appointments, (newAppointments) => {
+  localAppointments.value = [...newAppointments];
+}, { immediate: true });
+
 watch(() => props.filters, (newFilters) => {
-  console.log('Props filters changed:', newFilters);
   filters.value = {
     search: newFilters.search || '',
     date_from: newFilters.date_from || '',
@@ -551,20 +541,14 @@ const handleKeydown = (event) => {
   }
 };
 
-// Lifecycle hooks
 onMounted(() => {
-  console.log('Component mounted');
-  console.log('Initial appointments:', appointments.value);
-  console.log('Initial filters:', filters.value);
-  
+  console.log('Component mounted, initial appointments:', props.appointments.length);
   document.addEventListener('keydown', handleKeydown);
 });
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown);
-  if (searchTimeout) {
-    clearTimeout(searchTimeout);
-  }
+  if (searchTimeout) clearTimeout(searchTimeout);
 });
 </script>
 
