@@ -112,7 +112,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       <div class="flex items-center gap-3">
                         <div>
-                          <div class="font-medium text-gray-900">{{ appointment.nama }}</div>
+                          <div class="font-semibold text-gray-900">{{ appointment.nama }}</div>
                           <div class="text-sm text-gray-500">No. {{ appointment.antrian }}</div>
                         </div>
                       </div>
@@ -283,7 +283,7 @@
                 :disabled="processing"
                 class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
                 </svg>
                 {{ processing ? 'Memproses...' : 'Konfirmasi' }}

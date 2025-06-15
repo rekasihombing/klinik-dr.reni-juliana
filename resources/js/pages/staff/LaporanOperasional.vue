@@ -1,240 +1,492 @@
 <template>
-  <Head title="Tambah Obat" />
+  <Head title="Laporan Operasional" />
   
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans text-base text-gray-800 flex">
-    <!-- Sidebar -->
-    <SidebarStaff class="w-64 bg-white shadow-lg" />
+  <div class="bg-[#1B2A4D] min-h-screen flex flex-col">
+    <div class="flex items-center space-x-1 cursor-pointer">
+    </div>
 
-    <!-- Main content -->
-    <main class="flex-1 p-6">
-      <!-- Top bar -->
-      <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+    <!-- Main Container -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Sidebar -->
+      <SidebarStaff />
 
-      <div class="flex-1 p-6">
-        <div class="bg-white shadow-lg rounded-xl p-8">
+      <!-- Main content -->
+      <main class="bg-gray-100 flex-1 p-6 font-sans text-[13px] leading-tight text-black">
+        
+        <!-- Top bar -->
+        <HeaderStaff :breadcrumbPages="breadcrumbPages" />
+
+        <div class="max-w-7xl mx-auto">
           <!-- Header -->
-          <div class="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
-            <h1 class="text-3xl font-bold text-[#2A4482]">Laporan Operasional Klinik</h1>
-            <div class="text-sm text-right text-gray-600">
-              <p class="font-medium">{{ currentDate }}</p>
-              <p class="text-gray-500">{{ currentTime }}</p>
-            </div>
+          <div class="mb-1">
           </div>
 
-          <!-- Statistics Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6 text-center hover:shadow-md transition-shadow">
-              <div class="flex items-center justify-center mb-3">
-                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-              </div>
-              <p class="text-sm text-gray-600 mb-2">Jumlah Pasien Terdaftar</p>
-              <p class="text-4xl font-bold text-[#2A4482]">{{ totalPatients }}</p>
-              <p class="text-xs text-green-600 mt-1">+{{ patientGrowth }}% dari bulan lalu</p>
-            </div>
+          <!-- Content Container with extra spacing -->
+          <div class="p-1 mt-2"></div>
 
-            <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6 text-center hover:shadow-md transition-shadow">
-              <div class="flex items-center justify-center mb-3">
-                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                  </svg>
-                </div>
-              </div>
-              <p class="text-sm text-gray-600 mb-2">Pasien Baru</p>
-              <p class="text-4xl font-bold text-green-600">{{ newPatients }}</p>
-              <p class="text-xs text-blue-600 mt-1">Bulan ini</p>
-            </div>
-
-            <div class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-              <p class="text-sm text-gray-600 mb-4">Frekuensi Kunjungan</p>
-              <div class="flex items-center gap-4">
-                <div class="relative w-24 h-24">
-                  <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
-                    <path class="text-gray-200" stroke="currentColor" stroke-width="3" fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path class="text-purple-500" stroke="currentColor" stroke-width="3" fill="none"
-                      :stroke-dasharray="`${visitFrequency.once}, 100`"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path class="text-purple-400" stroke="currentColor" stroke-width="3" fill="none"
-                      :stroke-dasharray="`${visitFrequency.twoToThree}, 100`"
-                      :stroke-dashoffset="`${-visitFrequency.once}`"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  </svg>
-                </div>
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between w-32">
-                    <div class="flex items-center gap-2">
-                      <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
-                      <span class="text-sm text-black">1x</span>
-                    </div>
-                    <span class="text-sm font-medium text-black">{{ visitFrequency.once }}%</span>
-                  </div>
-                  <div class="flex items-center justify-between w-32">
-                    <div class="flex items-center gap-2">
-                      <div class="w-3 h-3 bg-purple-400 rounded-full"></div>
-                      <span class="text-sm text-black">2-3x</span>
-                    </div>
-                    <span class="text-sm font-medium text-black">{{ visitFrequency.twoToThree }}%</span>
-                  </div>
-                  <div class="flex items-center justify-between w-32">
-                    <div class="flex items-center gap-2">
-                      <div class="w-3 h-3 bg-purple-300 rounded-full"></div>
-                      <span class="text-sm text-black">4+x</span>
-                    </div>
-                    <span class="text-sm font-medium text-black">{{ visitFrequency.more }}%</span>
+          <section class="p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <!-- Total Patients -->
+              <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">Jumlah Pasien Terdaftar</h3>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
                   </div>
                 </div>
+                <div class="text-2xl font-semibold text-gray-900 mb-1">{{ totalPatients }}</div>
+                <div class="text-xs text-green-600">+{{ patientGrowth }}% dari bulan lalu</div>
               </div>
-            </div>
-          </div>
 
-          <!-- Filter Controls -->
-          <div class="flex flex-wrap gap-3 mb-4 p-4 bg-gray-50 rounded-lg text-black">
-            <select v-model="selectedPeriod" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-              <option value="mingguan">Mingguan</option>
-              <option value="bulanan">Bulanan</option>
-              <option value="tahunan">Tahunan</option>
-            </select>
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-700 font-medium">Dari:</label>
-              <input v-model="dateFrom" type="date" class="border border-gray-300 rounded-md px-3 py-2 text-sm" />
-            </div>
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-gray-700 font-medium">Sampai:</label>
-              <input v-model="dateTo" type="date" class="border border-gray-300 rounded-md px-3 py-2 text-sm" />
-            </div>
-            <button @click="applyFilter"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
-              Terapkan
-            </button>
-          </div>
-
-          <!-- Patient Activity Chart -->
-          <div class="bg-white shadow-sm border rounded-xl p-6">
-            <div class="flex justify-between items-center mb-4">
-              <p class="text-sm text-gray-600 font-medium">Jumlah Pasien</p>
-              <div class="text-sm text-gray-500">
-                Rata-rata: {{ averagePatients }} pasien/hari
+              <!-- New Patients -->
+              <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">Pasien Baru</h3>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="text-2xl font-semibold text-gray-900 mb-1">{{ newPatients }}</div>
+                <div class="text-xs text-blue-600">Bulan ini</div>
               </div>
-            </div>
-            <div class="flex items-end gap-3 h-48 mb-4">
-              <div v-for="(day, index) in chartData" :key="index"
-                class="flex-1 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md hover:from-blue-600 hover:to-blue-500 transition-colors duration-200 cursor-pointer relative group"
-                :style="{ height: `${(day.patients / maxPatients) * 100}%` }"
-                :title="`${day.label}: ${day.patients} pasien`">
-                <div
-                  class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  {{ day.patients }}
+
+              <!-- Visit Frequency -->
+              <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-purple-500">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">Frekuensi Kunjungan</h3>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                  </div>
+                </div>
+                
+                <!-- Donut Chart Container -->
+                <div class="flex items-center gap-4">
+                  <!-- Chart -->
+                  <div class="w-24 h-24 relative">
+                    <canvas id="visitFrequencyChart" class="w-full h-full"></canvas>
+                  </div>
+                  
+                  <!-- Legend -->
+                  <div class="space-y-2 flex-1">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                        <span class="text-sm text-gray-600">1x</span>
+                      </div>
+                      <span class="text-sm font-medium text-gray-900">{{ visitFrequency.once }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-purple-400 rounded-full"></div>
+                        <span class="text-sm text-gray-600">2-3x</span>
+                      </div>
+                      <span class="text-sm font-medium text-gray-900">{{ visitFrequency.twoToThree }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-purple-300 rounded-full"></div>
+                        <span class="text-sm text-gray-600">4x+</span>
+                      </div>
+                      <span class="text-sm font-medium text-gray-900">{{ visitFrequency.more }}%</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="flex justify-between text-sm text-gray-600 font-medium">
-              <span v-for="day in chartData" :key="day.label">{{ day.label }}</span>
-            </div>
-          </div>
 
-          <!-- Buttons -->
-          <div class="flex gap-3 mt-6">
-            <button @click="downloadReport"
-              class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition">
-              Unduh Laporan
-            </button>
-            <button @click="printReport"
-              class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition">
-              Cetak
-            </button>
-          </div>
+            <!-- Filter Section -->
+            <div class="flex-1 px-1 pb-6">
+              <form @submit.prevent="applyFilter" class="flex flex-wrap gap-4 items-center">
+                <select v-model="selectedPeriod" class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40 text-gray-700">
+                  <option value="mingguan">Mingguan</option>
+                  <option value="bulanan">Bulanan</option>
+                  <option value="tahunan">Tahunan</option>
+                </select>
+
+                <span class="text-gray-800 text-sm">Dari: </span>
+                
+                <input 
+                  v-model="dateFrom" 
+                  type="date" 
+                  class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40 text-gray-700"
+                  required
+                />
+                
+                <span class="text-gray-800 text-sm">Sampai: </span>
+                
+                <input 
+                  v-model="dateTo" 
+                  type="date" 
+                  class="block w-full pl-3 px-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 w-full sm:w-40 text-gray-700"
+                  required
+                />
+                
+                <button 
+                  type="submit" 
+                  class="bg-[#3F86D0] hover:bg-[#3B59A1] text-white px-6 py-3 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 shadow-md hover:shadow-lg"
+                  :disabled="loading"
+                >
+                  {{ loading ? 'Loading...' : 'Terapkan' }}
+                </button>
+              </form>
+            </div>
+
+            <!-- Chart Section - Full Width -->
+            <div class="mb-6">
+              <div class="bg-white rounded-lg p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="text-lg font-medium text-gray-900">Aktivitas Pasien {{ selectedPeriod }}</h3>
+                  <div class="flex items-center space-x-4 text-sm">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                      <span class="text-gray-600">Jumlah Pasien</span>
+                    </div>
+                    <div class="text-gray-500">
+                      Rata-rata: {{ averagePatients }} pasien/hari
+                    </div>
+                  </div>
+                </div>
+                <div class="h-80">
+                  <canvas id="patientChart" class="w-full h-full"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Download Section -->
+            <div class="px-1 pb-5">
+              <div class="flex items-center justify-between gap-3">
+                <button 
+                  @click="downloadReport" 
+                  class="bg-[#3F86D0] hover:bg-[#3B59A1] shadow-md hover:shadow-lg text-white px-6 py-4 rounded-lg font-medium focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  :disabled="downloadLoading"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <span>{{ downloadLoading ? 'Downloading...' : 'Unduh Laporan' }}</span>
+                </button>
+                
+                <button 
+                  @click="printReport"
+                  class="border border-gray-300 text-gray-700 px-6 py-4 rounded-lg hover:bg-gray-50 transition-colors font-medium flex items-center gap-2"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                  </svg>
+                  <span>Cetak</span>
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   </div>
 </template>
 
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3'
-import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
-import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
-
-const breadcrumbPages = [
-  { label: "Dashboard", href: "/dashboardstaff" },
-  { label: "Daftar Stok Obat", href: "/stok-obat" },
-  { label: "Tambah Obat Baru", href: "/obat/create" },
-]
+import { ref, onMounted, computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import Chart from 'chart.js/auto';
+import SidebarStaff from '@/layouts/staff/SidebarStaff.vue';
+import HeaderStaff from '@/layouts/staff/HeaderStaff.vue';
 
 export default {
   name: 'LaporanOperasional',
   components: {
+    Head,
     SidebarStaff,
+    HeaderStaff,
   },
   props: {
     totalPatients: Number,
     newPatients: Number,
+    patientGrowth: Number,
     visitFrequency: Object,
     weeklyActivity: Array,
     averagePatients: Number,
   },
-  data() {
-    const now = new Date();
-    return {
-      selectedPeriod: 'mingguan',
-      dateFrom: this.formatDate(this.startOfWeek(now)),
-      dateTo: this.formatDate(this.endOfWeek(now)),
-    };
-  },
-  computed: {
-    chartData() {
-      return this.weeklyActivity;
-    },
-    maxPatients() {
-      return this.chartData.length ? Math.max(...this.chartData.map(d => d.patients)) : 0;
-    },
-    currentDate() {
-      return new Date().toLocaleDateString('id-ID', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    },
-    currentTime() {
-      return new Date().toLocaleTimeString('id-ID');
-    },
-  },
-  methods: {
-    applyFilter() {
-      this.$inertia.get('/laporan-operasional', {
-        period: this.selectedPeriod,
-        dateFrom: this.dateFrom,
-        dateTo: this.dateTo,
-      }, {
-        preserveState: true,
-        preserveScroll: true,
-      });
-    },
-    formatDate(date) {
+  setup(props) {
+    const selectedPeriod = ref('mingguan');
+    const dateFrom = ref('');
+    const dateTo = ref('');
+    const loading = ref(false);
+    const downloadLoading = ref(false);
+    let chartInstance = null;
+    let visitFrequencyChartInstance = null;
+
+    // Breadcrumb untuk halaman laporan operasional staff
+    const breadcrumbPages = [
+      { label: "Dashboard", href: "/dashboardstaff" },
+      { label: "Laporan Operasional", href: "/staff/laporan-operasional" },
+    ];
+
+    const chartData = computed(() => {
+      return props.weeklyActivity || [];
+    });
+
+    const maxPatients = computed(() => {
+      return chartData.value.length ? Math.max(...chartData.value.map(d => d.patients)) : 0;
+    });
+
+    // Set default dates
+    onMounted(() => {
+      const now = new Date();
+      dateFrom.value = formatDate(startOfWeek(now));
+      dateTo.value = formatDate(endOfWeek(now));
+      
+      setTimeout(() => {
+        initChart();
+        initVisitFrequencyChart();
+      }, 100);
+    });
+
+    function formatDate(date) {
       return date.toISOString().split('T')[0];
-    },
-    startOfWeek(date) {
+    }
+
+    function startOfWeek(date) {
       const day = date.getDay();
       const diff = date.getDate() - day + (day === 0 ? -6 : 1);
       return new Date(date.setDate(diff));
-    },
-    endOfWeek(date) {
-      const start = this.startOfWeek(new Date(date));
+    }
+
+    function endOfWeek(date) {
+      const start = startOfWeek(new Date(date));
       return new Date(start.setDate(start.getDate() + 6));
-    },
-    downloadReport() {
+    }
+
+    function applyFilter() {
+      if (!dateFrom.value || !dateTo.value) {
+        alert('Mohon pilih tanggal mulai dan tanggal akhir');
+        return;
+      }
+
+      loading.value = true;
+      
+      // Menggunakan Inertia untuk navigasi dengan filter (disesuaikan untuk staff)
+      this.$inertia.get('/staff/laporan-operasional', {
+        period: selectedPeriod.value,
+        dateFrom: dateFrom.value,
+        dateTo: dateTo.value,
+      }, {
+        preserveState: false,
+        replace: true,
+        onFinish: () => {
+          loading.value = false;
+        },
+        onSuccess: () => {
+          setTimeout(() => {
+            if (chartInstance) {
+              updateChart();
+            }
+            if (visitFrequencyChartInstance) {
+              updateVisitFrequencyChart();
+            }
+          }, 100);
+        },
+        onError: (errors) => {
+          console.error('Filter error:', errors);
+        }
+      });
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('patientChart');
+      if (!ctx) return;
+      
+      const data = chartData.value;
+      
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(item => item.label),
+          datasets: [{
+            label: 'Jumlah Pasien',
+            data: data.map(item => item.patients),
+            fill: true,
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointBackgroundColor: '#3B82F6',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointHoverBackgroundColor: '#2563EB',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#3B82F6',
+              borderWidth: 1,
+              cornerRadius: 6,
+              displayColors: false,
+              callbacks: {
+                label: tooltipItem => `${tooltipItem.raw} pasien`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9CA3AF',
+                font: {
+                  size: 11
+                },
+                maxRotation: 45,
+                minRotation: 0
+              }
+            },
+            y: {
+              grid: {
+                color: 'rgba(156, 163, 175, 0.2)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9CA3AF',
+                font: {
+                  size: 11
+                },
+                callback: function(value) {
+                  return Math.floor(value);
+                }
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          }
+        }
+      });
+    }
+
+    function initVisitFrequencyChart() {
+      const ctx = document.getElementById('visitFrequencyChart');
+      if (!ctx || !props.visitFrequency) return;
+
+      const data = [
+        props.visitFrequency.once || 0,
+        props.visitFrequency.twoToThree || 0,
+        props.visitFrequency.more || 0
+      ];
+
+      visitFrequencyChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['1x', '2-3x', '4x+'],
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              '#8B5CF6', // purple-500
+              '#A78BFA', // purple-400
+              '#C4B5FD'  // purple-300
+            ],
+            borderWidth: 0,
+            cutout: '60%'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#8B5CF6',
+              borderWidth: 1,
+              cornerRadius: 6,
+              displayColors: false,
+              callbacks: {
+                label: function(tooltipItem) {
+                  return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                }
+              }
+            }
+          },
+          interaction: {
+            intersect: false
+          }
+        }
+      });
+    }
+
+    function updateChart() {
+      if (chartInstance) {
+        const data = chartData.value;
+        chartInstance.data.labels = data.map(item => item.label);
+        chartInstance.data.datasets[0].data = data.map(item => item.patients);
+        chartInstance.update('active');
+      }
+    }
+
+    function updateVisitFrequencyChart() {
+      if (visitFrequencyChartInstance && props.visitFrequency) {
+        const data = [
+          props.visitFrequency.once || 0,
+          props.visitFrequency.twoToThree || 0,
+          props.visitFrequency.more || 0
+        ];
+        visitFrequencyChartInstance.data.datasets[0].data = data;
+        visitFrequencyChartInstance.update('active');
+      }
+    }
+
+    function downloadReport() {
+      downloadLoading.value = true;
+      
+      setTimeout(() => {
+        window.print();
+        downloadLoading.value = false;
+      }, 1000);
+    }
+
+    function printReport() {
       window.print();
-    },
-    printReport() {
-      window.print();
-    },
+    }
+
+    return {
+      selectedPeriod,
+      dateFrom,
+      dateTo,
+      loading,
+      downloadLoading,
+      breadcrumbPages,
+      chartData,
+      maxPatients,
+      applyFilter,
+      downloadReport,
+      printReport,
+    };
   }
 }
 </script>

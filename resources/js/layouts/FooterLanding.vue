@@ -4,13 +4,14 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
       <!-- Kolom Logo dan Info -->
       <div class="flex flex-col gap-4 text-sm">
-        <div class="w-20 h-8 bg-[#D9D9D9] flex items-center justify-center text-black text-xs font-medium">
-          LOGO
-        </div>
+                <img 
+                  src="/images/logo-klinik.png" 
+                  alt="Logo Klinik" 
+                  class="w-8 h-8 md:w-10 md:h-10 object-contain"
+                />
         <div>
           <p class="font-semibold mb-1">Lokasi Klinik</p>
-          <p>Jl. ABC No 1</p>
-          <p>Kota ABC</p>
+          <p>Jl. Sutomo No.33, Brandan Tim. Baru, Kec. Babalan, Kabupaten Langkat, Sumatera Utara 20881</p>
         </div>
         <div>
           <p class="font-semibold mb-1">Jam Kunjungan</p>
@@ -25,9 +26,9 @@
           <p class="font-semibold mb-3">Layanan</p>
           <ul class="space-y-2">
             <li>Janji Temu</li>
-            <li>Riwayat</li>
-            <li>Pembayaran</li>
-            <li>Kontak</li>
+            <li>Riwayat Janji Temu</li>
+            <li>Riwayat Rekam Medis</li>
+            <li>Jadwal Konsultasi</li>
           </ul>
         </div>
         <div>

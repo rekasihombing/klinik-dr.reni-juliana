@@ -33,7 +33,7 @@
                   <option value="tahunan">Tahunan</option>
                 </select>
 
-                <span class="text-gray-700 text-sm">Dari: </span>
+                <span class="text-gray-800 text-sm">Dari: </span>
                 
                 <input 
                   v-model="startDate" 
@@ -42,7 +42,7 @@
                   required
                 />
                 
-                <span class="text-gray-700 text-sm">Sampai: </span>
+                <span class="text-gray-800 text-sm">Sampai: </span>
                 
                 <input 
                   v-model="endDate" 

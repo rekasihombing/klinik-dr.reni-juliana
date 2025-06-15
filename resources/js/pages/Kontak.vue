@@ -45,14 +45,14 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col items-center bg-[#EFEFEF] p-6 text-[#1b1b18] dark:bg-[#0a0a0a] lg:justify-center lg:p-8">
+  <div class="flex min-h-screen flex-col items-center bg-white p-6 text-[#1b1b18] lg:justify-center lg:p-8">
     <NavbarLandingLayout />
       
-    <main class="flex justify-center px-6 pb-10 pt-6 md:pt-10 lg:pt-12 bg-[#EFEFEF]">
-      <div class="flex flex-col lg:flex-row gap-6 max-w-4xl w-full items-stretch mx-auto" style="margin-left: auto; margin-right: auto;">
+    <main class="flex justify-center px-6 pb-10 pt-6 md:pt-10 lg:pt-12 bg-white w-full">
+      <div class="flex justify-center w-full max-w-6xl mx-auto">
         
-        <section class="bg-white rounded-lg shadow-lg p-8 w-full lg:w-2/3 h-auto lg:h-[600px]" style="box-shadow: 9px 9px 4px 0 rgba(0, 0, 0, 0.25);">
-          <h1 class="text-[#3674B5] font-extrabold text-2xl mb-2">Hubungi Kami</h1>
+        <section class="bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl h-auto lg:h-[600px]">
+          <h1 class="text-[#3B59A1] font-extrabold text-2xl mb-2">Hubungi Kami</h1>
           <p class="text-xs text-black mb-6">
             Silakan isi formulir di bawah ini untuk menghubungi kami atau menyampaikan keluhan dan pertanyaan Anda.
           </p>
@@ -61,71 +61,63 @@ const submitForm = async () => {
             <!-- Nama Lengkap -->
             <div class="flex flex-col lg:flex-row gap-4">
               <div class="flex flex-col w-full lg:w-1/2">
-                <label for="nama" class="font-semibold text-sm text-black mb-1">Nama Lengkap</label>
+                <label for="nama" class="font-medium text-sm text-black mb-1">Nama Lengkap</label>
                 <input v-model="nama" id="nama" type="text" class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
 
               <!-- Nomor Telepon -->
               <div class="flex flex-col w-full lg:w-1/2">
-                <label for="telepon" class="font-semibold text-sm text-black mb-1">Nomor Telepon</label>
+                <label for="telepon" class="font-medium text-sm text-black mb-1">Nomor Telepon</label>
                 <input v-model="telepon" id="telepon" type="tel" class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             </div>
 
             <!-- Email -->
             <div class="flex flex-col">
-              <label for="email" class="font-semibold text-sm text-black mb-1">Email</label>
+              <label for="email" class="font-medium text-sm text-black mb-1">Email</label>
               <input v-model="email" id="email" type="email" class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
 
             <!-- Keluhan -->
             <div class="flex flex-col">
-              <label for="keluhan" class="font-semibold text-sm text-black mb-1">Keluhan</label>
+              <label for="keluhan" class="font-medium text-sm text-black mb-1">Keluhan</label>
               <textarea v-model="keluhan" id="keluhan" rows="5" class="border border-blue-400 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
             </div>
 
             <!-- Tombol Kirim -->
-            <button type="submit" class="bg-[#3674B5] text-white text-sm rounded-md py-2 w-full shadow-md hover:bg-[#25356a] transition-all duration-300 ease-in-out">
+            <button type="submit" class="bg-[#3F86D0] hover:bg-[#3B59A1] text-white text-sm rounded-md py-2 w-full shadow-md transition-all duration-300 ease-in-out">
               Kirim
             </button>
           </form>
 
           <!-- Menampilkan Pesan Sukses -->
-  <div v-if="successMessage" class="mt-6">
-    <div class="max-w-full bg-[#D9F0E3] rounded-xl flex items-center gap-4 p-4 custom-shadow">
-      <i class="fas fa-check-circle text-[#2E7D32] text-2xl flex-shrink-0"></i>
-      <div>
-        <h2 class="text-[#1B365D] font-semibold text-lg leading-tight">Berhasil Mengirim</h2>
-        <p class="text-black text-xs leading-tight max-w-[600px]">
-          Terima kasih telah menghubungi kami. Keluhan dan pernyataan Anda telah berhasil dikirim dan akan segera kami tanggapi
-        </p>
-      </div>
-    </div>
-  </div>
-
+        <div v-if="successMessage" class="mt-6">
+          <div class="max-w-full bg-[#D9F0E3] rounded-xl flex items-center gap-4 p-4">
+            <i class="fas fa-check-circle text-[#2E7D32] text-2xl flex-shrink-0"></i>
+            <div>
+              <h2 class="text-[#1B365D] font-semibold text-lg leading-tight">Berhasil Mengirim</h2>
+              <p class="text-black text-xs leading-tight max-w-[600px]">
+                Terima kasih telah menghubungi kami. Keluhan dan pernyataan Anda telah berhasil dikirim dan akan segera kami tanggapi
+              </p>
+            </div>
+          </div>
+        </div>
 
           <!-- Menampilkan Pesan Error -->
- <div v-if="errorMessage" class="flex items-center gap-4 mt-4 p-4 rounded-md bg-red-50 max-w-full custom-error-shadow">
-    <div class="text-red-600 text-[20px] self-center">
-      <i class="fas fa-exclamation-circle"></i>
-    </div>
-    <div>
-      <h2 class="font-extrabold text-red-700 text-[18px] leading-tight">
-        Gagal Mengirim
-      </h2>
-      <p class="text-[12px] font-normal text-red-700 leading-tight max-w-[700px]">
-        Maaf, terjadi kesalahan saat mengirim data. Silakan coba lagi nanti.
-      </p>
-    </div>
-  </div>
-
-
+        <div v-if="errorMessage" class="flex items-center gap-4 mt-4 p-4 rounded-md bg-red-50 max-w-full custom-error-shadow">
+            <div class="text-red-600 text-[20px] self-center">
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div>
+              <h2 class="font-extrabold text-red-700 text-[18px] leading-tight">
+                Gagal Mengirim
+              </h2>
+              <p class="text-[12px] font-normal text-red-700 leading-tight max-w-[700px]">
+                Maaf, terjadi kesalahan saat mengirim data. Silakan coba lagi nanti.
+              </p>
+            </div>
+          </div>
         </section>
-
-        <aside class="bg-[#82AAE3] rounded-lg w-full lg:w-1/3 h-auto lg:h-[600px] p-6" style="box-shadow: 9px 9px 4px 0 rgba(0, 0, 0, 0.25);">
-          <!-- Sidebar atau elemen tambahan -->
-        </aside>
-
       </div>
     </main>
       

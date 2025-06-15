@@ -169,7 +169,7 @@
       v-if="canCheckInToday"
       @click.stop="handleCheckIn"
       :disabled="checkInLoading"
-      class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+      class="w-full bg-[#00B87A] hover:bg-[#109568] text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
     >
       <i class="fas fa-check-circle"></i>
       {{ checkInLoading ? 'Loading...' : 'Check In' }}

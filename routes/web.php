@@ -94,6 +94,10 @@ Route::get('/kontak', function () {
     return Inertia::render('Kontak');
 })->name('kontak');
 
+Route::get('/tentangkami', function () {
+    return Inertia::render('TentangKami');
+})->name('tentangkami');
+
 Route::post('/kontak', [FaqController::class, 'store']);   
 
 //Staff

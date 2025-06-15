@@ -154,23 +154,9 @@
                 </table>
               </div>
             </div>
-                      <!-- Header Section -->
-            <div class="mt-6 flex justify-start space-x-4">
-              <div class="flex items-center gap-3">
-                <InertiaLink
-                  href="/tambah-tagihan"
-                  class="inline-flex items-center gap-2 bg-[#00B87A] hover:bg-[#109568] shadow-md hover:shadow-lg text-white px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                  Buat Tagihan Baru
-                </InertiaLink>
-              </div>
-            </div>
 
             <!-- Pagination -->
-            <div class="flex items-center justify-between mt-2">
+            <div class="flex items-center justify-between mt-4">
               <div class="text-sm text-gray-600">
                 Menampilkan {{ tagihan?.from || 0 }} - {{ tagihan?.to || 0 }}
                 dari {{ tagihan?.total || 0 }} tagihan

@@ -15,10 +15,16 @@
           <!-- FIXED NAVBAR SAAT BELUM LOGIN -->
           <div class="fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 text-[#3674B5]">
             <div class="flex items-center space-x-4 h-6">
-              <div class="w-6 h-6 bg-[#3674B5] rounded-full"></div>
-              <span class="font-semibold text-sm sm:text-base md:text-lg lg:text-xl tracking-tight leading-none">
-                Klinik Praktek Dr. Reni Juliana Manurung
-              </span>
+              <div class="flex items-center space-x-2 md:space-x-3">
+                <img 
+                  src="/images/logo-klinik.png" 
+                  alt="Logo Klinik" 
+                  class="w-8 h-8 md:w-10 md:h-10 object-contain"
+                />
+                <span class="font-semibold text-[#2D4480] text-sm md:text-base">
+                  Klinik Praktek Dr. Reni Juliana Manurung
+                </span>
+              </div>
             </div>
 
         <div class="flex items-center space-x-6">
@@ -38,16 +44,16 @@
           <!-- NAV MENU DESKTOP, hanya muncul di layar >= sm -->
         <div class="hidden sm:flex items-center justify-between w-full">
           <div class="hidden sm:flex items-center space-x-10">
-            <Link :href="route('home')" class="text-[#3674B5] hover:text-black text-[18px] font-medium">
+            <Link :href="route('home')" class="font-semibold text-[#2D4480] text-sm md:text-base">
               Beranda
             </Link>
-            <Link :href="route('dashboard')" class="text-[#3674B5] hover:text-black text-[18px] font-medium">
+            <button @click="scrollToLayanan" class="font-semibold text-[#2D4480] text-sm md:text-base">
               Layanan
-            </Link>
-            <Link :href="route('dashboard')" class="text-[#3674B5] hover:text-black text-[18px] font-medium">
+            </button>
+            <Link :href="route('tentangkami')" class="font-semibold text-[#2D4480] text-sm md:text-base">
               Tentang Kami
             </Link>
-            <Link :href="route('kontak')" class="text-[#3674B5] hover:text-black text-[18px] font-medium">
+            <Link :href="route('kontak')" class="font-semibold text-[#2D4480] text-sm md:text-base">
               Kontak
             </Link>
           </div>
@@ -57,13 +63,13 @@
           <div class="hidden sm:flex space-x-3">
             <Link
               :href="route('login')"
-              class="text-[#3674B5] border border-[#3674B5] px-4 py-2 min-w-[100px] text-center rounded-lg font-semibold shadow-[4px_4px_4px_rgba(0,0,0,0.25)] bg-transparent hover:text-black transition-all duration-200"
+              class="text-[#3674B5] border border-[#3674B5] hover:bg-gray-200 px-4 py-2 min-w-[100px] text-center rounded-lg font-semibold shadow-[4px_4px_4px_rgba(0,0,0,0.25)] bg-transparent transition-all duration-200"
             >
               Masuk
             </Link>
             <Link
               :href="route('register')"
-              class="text-white border border-[#3674B5] px-4 py-2 min-w-[100px] text-center rounded-lg font-semibold shadow-[4px_4px_4px_rgba(0,0,0,0.25)] bg-[#3674B5] hover:text-black transition-all duration-200"
+              class="text-white border border-[#3674B5] bg-[#3F86D0] hover:bg-[#3B59A1] px-4 py-2 min-w-[100px] text-center rounded-lg font-semibold shadow-[4px_4px_4px_rgba(0,0,0,0.25)] bg-[#3674B5] transition-all duration-200"
             >
               Daftar
             </Link>
@@ -124,6 +130,13 @@ onUnmounted(() => {
 });
 
 const isMobileMenuOpen = ref(false);
+
+const scrollToLayanan = () => {
+  const section = document.getElementById('layanan');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 </script>
 
 <style>
