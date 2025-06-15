@@ -504,5 +504,7 @@ Route::get('/laporan-operasional/print', [LaporanOperasionalController::class, '
 
     // routes/web.php (Laravel)
 Route::get('/obat/{id}/edit', [ObatController::class, 'edit'])->name('obat.edit');
+
+Route::get('/editstaff', [StaffController::class, 'edit'])->name('staff.edit');
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
