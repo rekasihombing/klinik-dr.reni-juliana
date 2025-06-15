@@ -427,7 +427,6 @@
                     <div class="clinic-info">
                         {{ $clinicAddress ?? 'Jl. Kesehatan No. 123, Jakarta Selatan 12345' }}<br>
                         Telp: {{ $clinicPhone ?? '(021) 1234-5678' }} | Fax: (021) 1234-5679<br>
-                        Email: info@kliniksehat.com | Website: www.kliniksehat.com
                     </div>
                 </div>
             </div>

@@ -243,9 +243,9 @@ class LaporanOperasionalController extends Controller
             'reportDate' => $now->format('d F Y'),
             'reportTime' => $now->format('H:i:s'),
             // Info klinik (sesuaikan dengan data klinik Anda)
-            'clinicName' => 'Klinik Sehat Bersama',
-            'clinicAddress' => 'Jl. Kesehatan No. 123, Medan',
-            'clinicPhone' => '(061) 123-4567',
+            'clinicName' => 'Klinik Praktek Dr. Reni Juliana Manurung',
+            'clinicAddress' => 'Jl. Sutomo No.33, Brandan Tim. Baru, Kec. Babalan, Kabupaten Langkat, Sumatera Utara 20881',
+            'clinicPhone' => '0822-7484-9745',
         ];
 
         $pdf = Pdf::loadView('reports.laporan-operasional', $data);
