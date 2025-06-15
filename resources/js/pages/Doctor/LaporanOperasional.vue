@@ -15,14 +15,6 @@
         <HeaderDokter :breadcrumbPages="breadcrumbPages" />
 
         <div class="max-w-7xl mx-auto">
-          <!-- Header with Date/Time -->
-          <div class="mb-6 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-900">Laporan Operasional</h1>
-            <div class="text-sm text-right text-gray-600">
-              <p class="font-medium">{{ currentDate }}</p>
-              <p class="text-gray-500">{{ currentTime }}</p>
-            </div>
-          </div>
 
           <!-- Content Container with extra spacing -->
           <div class="p-1 mt-2"></div>
