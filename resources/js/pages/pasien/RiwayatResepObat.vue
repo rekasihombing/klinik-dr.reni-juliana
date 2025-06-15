@@ -53,15 +53,6 @@
                   <option value="aktif">Sedang Berlangsung</option>
                   <option value="selesai">Selesai</option>
                 </select>
-<<<<<<< HEAD
-                <button 
-                  @click="applyFilter"
-                  class="px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
-                >
-                  <i class="fas fa-search mr-2"></i>Filter
-                </button>
-=======
->>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
               </div>
             </div>
           </div>
@@ -183,12 +174,7 @@
                 <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 flex items-center">
-<<<<<<< HEAD
-                      <i class="fas fa-pills text-blue-500 mr-1"></i>
-                      Resep & Obat Luar
-=======
                       Resep Obat
->>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
                     </span>
                     <span class="flex items-center text-xs text-blue-600 group-hover:text-indigo-700">
                       Lihat Detail
@@ -213,8 +199,6 @@
         </div>
       </main>
     </div>
-<<<<<<< HEAD
-=======
 
     <!-- Updated Modal Detail Resep Obat -->
     <div 
@@ -323,7 +307,6 @@
         </div>
       </div>
     </div>
->>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
   </div>
 </template>
 
