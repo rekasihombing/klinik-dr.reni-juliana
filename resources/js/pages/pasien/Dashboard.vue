@@ -581,19 +581,16 @@
       <!-- Info Singkat -->
       <div class="space-y-2 text-sm text-gray-600">
         <div class="flex items-center space-x-2">
-          <span>{{ lastMedicalRecord.jam_kunjungan }}</span>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span>Antrian: {{ lastMedicalRecord.no_antrian }}</span>
+          <span>jam kunjungan: {{ lastMedicalRecord.jam_kunjungan }}</span>
         </div>
         <div v-if="lastMedicalRecord.keluhan" class="flex items-start space-x-2">
-          <span class="text-gray-700">{{ truncateText(lastMedicalRecord.keluhan, 60) }}</span>
+          <span class="text-gray-700">keluhan: {{ truncateText(lastMedicalRecord.keluhan, 60) }}</span>
         </div>
         <div v-if="lastMedicalRecord.diagnosa" class="flex items-start space-x-2">
-          <span class="text-gray-700 font-medium">{{ truncateText(lastMedicalRecord.diagnosa, 60) }}</span>
+          <span class="text-gray-700 font-medium">diagnosa: {{ truncateText(lastMedicalRecord.diagnosa, 60) }}</span>
         </div>
         <div v-if="lastMedicalRecord.no_rekam_medis" class="flex items-center space-x-2">
-          <span class="text-xs text-gray-500">{{ lastMedicalRecord.no_rekam_medis }}</span>
+          <span class="text-xs text-gray-500">no rekam medis:{{ lastMedicalRecord.no_rekam_medis }}</span>
         </div>
       </div>
     </div>

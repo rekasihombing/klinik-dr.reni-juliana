@@ -17,7 +17,12 @@ class RiwayatRekamMedisController extends Controller
     public function index()
     {
         $user = Auth::user();     
-        $pasien = $user->patient; 
+        $pasien = $user->patient;
+
+if (!$pasien) {
+    return redirect()->route('dashboard')->with('alert', 'Silakan lengkapi data pasien terlebih dahulu sebelum melihat rekam medis.');
+}
+ 
         
         // Karena struktur tabel menggunakan patient_id unique, 
         // kita perlu mengambil semua appointment pasien yang memiliki rekam medis
@@ -70,7 +75,12 @@ class RiwayatRekamMedisController extends Controller
      */
     public function show($id)
     {
-        $pasien = auth()->user();
+        $pasien = $user->patient;
+
+if (!$pasien) {
+    return redirect()->route('dashboard')->with('alert', 'Silakan lengkapi data pasien terlebih dahulu sebelum melihat rekam medis.');
+}
+
         
         // Ambil rekam medis dengan memastikan pasien hanya bisa melihat rekam medis miliknya
         $rekamMedis = RekamMedis::with(['appointment'])

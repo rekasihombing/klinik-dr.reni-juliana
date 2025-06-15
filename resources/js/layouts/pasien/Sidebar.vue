@@ -54,7 +54,7 @@
         <div v-if="isActive('/riwayat-rekam-medis')" class="ml-auto w-2 h-2 bg-white rounded-full"></div>
       </Link>
 
-            <!-- Data Pasien -->
+      <!-- Data Pasien -->
       <Link 
         href="/riwayat-resep-obat" 
         class="group flex items-center space-x-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02]"
@@ -90,10 +90,8 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { defineProps, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
-import { computed } from 'vue'
 
 defineProps({
   patientName: {
@@ -116,8 +114,18 @@ const getInitial = (name) => {
   return name.charAt(0).toUpperCase()
 }
 
+// Logout function menggunakan router.post
 function logout() {
-  Inertia.post('/logout')
+  router.post('/logout', {}, {
+    onSuccess: () => {
+      // Optional: tambahkan loading state atau notification
+      console.log('Logout berhasil')
+    },
+    onError: (errors) => {
+      // Optional: handle error
+      console.error('Logout gagal:', errors)
+    }
+  })
 }
 </script>
 
@@ -162,4 +170,4 @@ nav::-webkit-scrollbar-thumb:hover {
   opacity: 0.8;
   z-index: -1;
 }
-</style>
+</style>  

@@ -483,5 +483,30 @@ Route::middleware('auth')->group(function () {
             ->name('password.update');
     });
 });
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+    // Menyimpan tindakan baru untuk rekam medis tertentu
+    Route::post('/rekam-medis/{rekamMedis}/tindakan', [TindakanController::class, 'store'])->name('tindakan.store');
+
+    // Routes untuk Dokter
+Route::prefix('dokter')->name('dokter.')->group(function () {
+    Route::get('/laporan-operasional', [LaporanOperasionalController::class, 'index'])->name('laporan-operasional');
+    Route::get('/laporan-operasional/download-pdf', [LaporanOperasionalController::class, 'downloadPdf'])->name('laporan-operasional.download-pdf');
+    Route::get('/laporan-operasional/print', [LaporanOperasionalController::class, 'printReport'])->name('laporan-operasional.print');
+});
+
+// Add this route for PDF download
+Route::get('/laporan-operasional/download-pdf', [LaporanOperasionalController::class, 'downloadPdf'])
+    ->name('laporan-operasional.download-pdf');
+
+// Also add the print route if you want to use it
+Route::get('/laporan-operasional/print', [LaporanOperasionalController::class, 'printReport'])
+    ->name('laporan-operasional.print');
+
+    // routes/web.php (Laravel)
+Route::get('/obat/{id}/edit', [ObatController::class, 'edit'])->name('obat.edit');
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

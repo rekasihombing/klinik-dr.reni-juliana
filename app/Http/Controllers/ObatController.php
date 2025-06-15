@@ -58,16 +58,19 @@ class ObatController extends Controller
         ]);
     }
 
-    public function edit(Obat $obat)
+     public function edit(Obat $obat)
     {
-        return Inertia::render('Obat/Edit', [
+        return Inertia::render('staff/EditObat', [
             'obat' => $obat
         ]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Obat $obat)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_obat' => 'required|string|max:255|unique:obat,nama_obat,' . $obat->id,
             'jenis_obat' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string',
@@ -76,28 +79,23 @@ class ObatController extends Controller
         ], [
             'nama_obat.required' => 'Nama obat harus diisi',
             'nama_obat.unique' => 'Nama obat sudah ada dalam database',
+            'nama_obat.max' => 'Nama obat maksimal 255 karakter',
+            'jenis_obat.max' => 'Jenis obat maksimal 255 karakter',
             'harga.numeric' => 'Harga harus berupa angka',
             'harga.min' => 'Harga tidak boleh negatif',
-            'satuan.required' => 'Satuan harus diisi'
+            'satuan.required' => 'Satuan harus diisi',
+            'satuan.max' => 'Satuan maksimal 50 karakter'
         ]);
 
-        $obat->update($request->all());
+        try {
+            $obat->update($validated);
 
-        return Redirect::route('obat.index')
-            ->with('success', 'Data obat berhasil diperbarui');
-    }
-
-    public function destroy(Obat $obat)
-    {
-        // Cek apakah obat masih memiliki stok
-        if ($obat->stokObat()->count() > 0) {
+            return Redirect::route('obat.index')
+                ->with('success', 'Data obat berhasil diperbarui');
+        } catch (\Exception $e) {
             return Redirect::back()
-                ->with('error', 'Tidak dapat menghapus obat yang masih memiliki stok');
+                ->withErrors(['error' => 'Gagal memperbarui data obat: ' . $e->getMessage()])
+                ->withInput();
         }
-
-        $obat->delete();
-
-        return Redirect::route('obat.index')
-            ->with('success', 'Data obat berhasil dihapus');
     }
 }

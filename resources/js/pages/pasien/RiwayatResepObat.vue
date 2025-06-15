@@ -1,22 +1,22 @@
 <template>
   <div class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
-  <header class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-4 md:px-6 py-3 md:py-4 text-[#1B2A4D] text-xs md:text-sm font-sans border-b border-white/20 sticky top-0 z-40">
-    <div class="flex items-center space-x-2 md:space-x-3">
-      <img 
-        src="/images/logo-klinik.png" 
-        alt="Logo Klinik" 
-        class="w-8 h-8 md:w-10 md:h-10 object-contain"
-      />
-      <div class="font-semibold text-[#2D4480] text-sm md:text-base">{{ clinicName }}</div>
-    </div>
-    <div class="flex items-center space-x-1 md:space-x-2 cursor-pointer hover:bg-blue-50 px-2 md:px-4 py-1 md:py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
-      <span class="font-medium text-xs md:text-sm hidden sm:inline">{{ patientName }}</span>
-      <span class="font-medium text-xs md:text-sm sm:hidden">{{ patientName.split(' ')[0] }}</span>
-      <div class="w-6 h-6 md:w-8 md:h-8 bg-blue-700 rounded-full flex items-center justify-center">
-        <i class="fas fa-user text-white text-xs md:text-sm"></i>
+    <header class="bg-white/80 backdrop-blur-md shadow-sm flex justify-between items-center px-4 md:px-6 py-3 md:py-4 text-[#1B2A4D] text-xs md:text-sm font-sans border-b border-white/20 sticky top-0 z-40">
+      <div class="flex items-center space-x-2 md:space-x-3">
+        <img 
+          src="/images/logo-klinik.png" 
+          alt="Logo Klinik" 
+          class="w-8 h-8 md:w-10 md:h-10 object-contain"
+        />
+        <div class="font-semibold text-[#2D4480] text-sm md:text-base">{{ clinicName }}</div>
       </div>
-    </div>
-  </header>
+      <div class="flex items-center space-x-1 md:space-x-2 cursor-pointer hover:bg-blue-50 px-2 md:px-4 py-1 md:py-2 rounded-xl transition-all duration-200 shadow-sm bg-white/50" @click.stop="router.visit('/profilpasien')">
+        <span class="font-medium text-xs md:text-sm hidden sm:inline">{{ patientName }}</span>
+        <span class="font-medium text-xs md:text-sm sm:hidden">{{ patientName.split(' ')[0] }}</span>
+        <div class="w-6 h-6 md:w-8 md:h-8 bg-blue-700 rounded-full flex items-center justify-center">
+          <i class="fas fa-user text-white text-xs md:text-sm"></i>
+        </div>
+      </div>
+    </header>
 
     <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar -->
@@ -24,6 +24,14 @@
 
       <main class="bg-gradient-to-br from-[#f8fafc] to-[#f1f5f9] flex-1 p-4 md:p-6 lg:p-10">
         <div class="max-w-6xl mx-auto">
+          <!-- Debug Info (hapus setelah testing) -->
+          <div v-if="showDebugInfo" class="mb-4 p-4 bg-yellow-100 rounded-lg border border-yellow-300">
+            <h4 class="font-semibold text-yellow-800 mb-2">Debug Info:</h4>
+            <pre class="text-xs text-yellow-700">{{ JSON.stringify(resepObat.slice(0, 2), null, 2) }}</pre>
+            <button @click="showDebugInfo = false" class="mt-2 text-xs text-yellow-600 underline">Sembunyikan</button>
+          </div>
+          <button v-else @click="showDebugInfo = true" class="mb-4 text-xs text-gray-500 underline">Show Debug Info</button>
+
           <!-- Search and Filter Bar -->
           <div class="mb-8">
             <div class="flex flex-col md:flex-row gap-4 items-center">
@@ -45,6 +53,15 @@
                   <option value="aktif">Sedang Berlangsung</option>
                   <option value="selesai">Selesai</option>
                 </select>
+<<<<<<< HEAD
+                <button 
+                  @click="applyFilter"
+                  class="px-6 py-3 bg-[#3F86D0] hover:bg-[#3B59A1] text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <i class="fas fa-search mr-2"></i>Filter
+                </button>
+=======
+>>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
               </div>
             </div>
           </div>
@@ -52,11 +69,11 @@
           <!-- Resep Obat Cards - Grid Layout (2 per row) -->
           <div v-if="filteredResepObat.length > 0">
             <TransitionGroup name="card" tag="div" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div 
+              <Link 
                 v-for="(resep, index) in filteredResepObat" 
                 :key="resep.rekam_medis_id"
-                class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group cursor-pointer"
-                @click="viewDetail(resep)"
+                :href="`/riwayat-resep-obat/${resep.rekam_medis_id}`"
+                class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group cursor-pointer block"
               >
                 <!-- Card Header -->
                 <div class="bg-gradient-to-r from-blue-100 to-indigo-100 p-3">
@@ -104,18 +121,60 @@
                   </div>
 
                   <!-- Info Obat -->
-                  <div class="flex items-center gap-4 text-sm">
-                    <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span class="text-gray-600">
-                        <span class="font-medium text-gray-900">{{ resep.total_obat }}</span> jenis obat
-                      </span>
+                  <div class="space-y-2">
+                    <!-- Obat Resep Dokter -->
+                    <div class="flex items-center gap-4 text-sm">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span class="text-gray-600">
+                          <span class="font-medium text-gray-900">{{ safeNumber(resep.total_obat) }}</span> obat resep
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span class="text-gray-600">
+                          Berakhir: <span class="font-medium text-gray-900">{{ formatDate(resep.tanggal_terakhir) }}</span>
+                        </span>
+                      </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    
+                    <!-- Obat Luar (jika ada) -->
+                    <div v-if="resep.has_obat_luar || safeNumber(resep.total_obat_luar) > 0" class="flex items-center gap-2 text-sm">
+                      <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
                       <span class="text-gray-600">
-                        Berakhir: <span class="font-medium text-gray-900">{{ formatDate(resep.tanggal_terakhir) }}</span>
+                        <span class="font-medium text-gray-900">{{ safeNumber(resep.total_obat_luar) }}</span> obat luar
                       </span>
+                      <!-- Debug indicator -->
+                      <span v-if="resep.obat_luar_preview && resep.obat_luar_preview.length > 0" class="text-xs text-green-600">✓</span>
+                      <span v-else class="text-xs text-red-600">✗</span>
+                    </div>
+
+                    <!-- Total Obat -->
+                    <div class="bg-gray-50 rounded-lg p-2 mt-2">
+                      <div class="flex items-center gap-2 text-sm">
+                        <i class="fas fa-pills text-indigo-500"></i>
+                        <span class="text-gray-600">
+                          Total: <span class="font-semibold text-indigo-700">{{ safeNumber(resep.total_semua_obat) }} jenis obat</span>
+                        </span>
+                        <!-- Debug info -->
+                        <span class="text-xs text-gray-400 ml-2">
+                          ({{ safeNumber(resep.total_obat) }}+{{ safeNumber(resep.total_obat_luar) }})
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Debug Preview Obat Luar -->
+                    <div v-if="resep.obat_luar_preview && resep.obat_luar_preview.length > 0" class="bg-purple-50 rounded-lg p-2 text-xs">
+                      <div class="font-medium text-purple-700 mb-1">Preview Obat Luar:</div>
+                      <div class="space-y-1">
+                        <div v-for="(obat, idx) in resep.obat_luar_preview.slice(0, 2)" :key="idx" class="text-purple-600">
+                          • {{ obat.nama || obat.nama_obat || 'Nama tidak tersedia' }}
+                          <span v-if="obat.dosis"> - {{ obat.dosis }}</span>
+                        </div>
+                        <div v-if="resep.obat_luar_preview.length > 2" class="text-purple-500">
+                          ... dan {{ resep.obat_luar_preview.length - 2 }} lainnya
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -124,7 +183,12 @@
                 <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 flex items-center">
+<<<<<<< HEAD
+                      <i class="fas fa-pills text-blue-500 mr-1"></i>
+                      Resep & Obat Luar
+=======
                       Resep Obat
+>>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
                     </span>
                     <span class="flex items-center text-xs text-blue-600 group-hover:text-indigo-700">
                       Lihat Detail
@@ -132,7 +196,7 @@
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             </TransitionGroup>
           </div>
 
@@ -149,6 +213,8 @@
         </div>
       </main>
     </div>
+<<<<<<< HEAD
+=======
 
     <!-- Updated Modal Detail Resep Obat -->
     <div 
@@ -257,19 +323,29 @@
         </div>
       </div>
     </div>
+>>>>>>> f8d3295e90a3a7c54f294474387f91977a4df25e
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Sidebar from '../../layouts/pasien/Sidebar.vue'
 import { router, Link } from '@inertiajs/vue3'
 
 // Props
 const props = defineProps({
-  resepObat: Array,
-  patientName: String,
-  clinicName: String
+  resepObat: {
+    type: Array,
+    default: () => []
+  },
+  patientName: {
+    type: String,
+    default: ''
+  },
+  clinicName: {
+    type: String,
+    default: 'Klinik Praktek Dr. Reni Juliana Manurung'
+  }
 })
 
 // Reactive data
@@ -277,26 +353,43 @@ const searchQuery = ref('')
 const statusFilter = ref('')
 const showModal = ref(false)
 const selectedResep = ref(null)
+const showDebugInfo = ref(false)
+const showDebugModal = ref(false)
 
-// Computed
+// Helper function untuk memastikan angka valid
+const safeNumber = (value) => {
+  if (value === null || value === undefined || value === '' || isNaN(value)) {
+    return 0
+  }
+  return parseInt(value) || 0
+}
+
+// Computed properties
 const filteredResepObat = computed(() => {
-  let filtered = props.resepObat || []
+  if (!props.resepObat) return []
+  
+  let filtered = [...props.resepObat]
 
-  // Filter berdasarkan pencarian
+  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(resep =>
-      resep.tanggal_kunjungan.toLowerCase().includes(query) ||
-      (resep.diagnosa && resep.diagnosa.toLowerCase().includes(query)) ||
-      resep.no_rekam_medis.toLowerCase().includes(query)
-    )
+    filtered = filtered.filter(resep => {
+      return (
+        resep.tanggal_kunjungan?.toLowerCase().includes(query) ||
+        resep.diagnosa?.toLowerCase().includes(query) ||
+        resep.no_rekam_medis?.toLowerCase().includes(query)
+      )
+    })
   }
 
-  // Filter berdasarkan status
+  // Filter by status
   if (statusFilter.value) {
     filtered = filtered.filter(resep => {
-      if (statusFilter.value === 'aktif') return resep.status_aktif
-      if (statusFilter.value === 'selesai') return !resep.status_aktif
+      if (statusFilter.value === 'aktif') {
+        return resep.status_aktif
+      } else if (statusFilter.value === 'selesai') {
+        return !resep.status_aktif
+      }
       return true
     })
   }
@@ -307,33 +400,83 @@ const filteredResepObat = computed(() => {
 // Methods
 const formatDate = (dateString) => {
   if (!dateString) return '-'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  })
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+  } catch (error) {
+    return dateString
+  }
 }
 
-// Function to handle view detail button click
 const viewDetail = (resep) => {
   selectedResep.value = resep
   showModal.value = true
+  showDebugModal.value = false // Reset debug modal
 }
 
 const closeModal = () => {
   showModal.value = false
   selectedResep.value = null
+  showDebugModal.value = false
 }
+
+const applyFilter = () => {
+  // The filtering is already reactive through computed property
+  // This method can be used for additional actions if needed
+  console.log('Filter applied:', { 
+    searchQuery: searchQuery.value, 
+    statusFilter: statusFilter.value,
+    totalResep: filteredResepObat.value.length 
+  })
+}
+
+// Handle escape key to close modal
+const handleEscapeKey = (event) => {
+  if (event.key === 'Escape' && showModal.value) {
+    closeModal()
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('keydown', handleEscapeKey)
+  
+  // Log data yang diterima untuk debugging
+  console.log('RiwayatResepObat Props:', {
+    resepObatCount: props.resepObat?.length || 0,
+    resepObatSample: props.resepObat?.slice(0, 2) || [],
+    patientName: props.patientName,
+    clinicName: props.clinicName
+  })
+})
+
+// Cleanup event listener
+import { onUnmounted } from 'vue'
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEscapeKey)
+})
 </script>
 
 <style scoped>
-/* Line clamp utility for text truncation */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Animation for card transitions */
+.card-enter-active,
+.card-leave-active {
+  transition: all 0.3s ease;
+}
+
+.card-enter-from,
+.card-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.card-move {
+  transition: transform 0.3s ease;
 }
 
 /* Animation for modal */
@@ -352,51 +495,30 @@ const closeModal = () => {
   }
 }
 
-/* Smooth transitions */
-.card-enter-active,
-.card-leave-active {
-  transition: all 0.3s ease;
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.card-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.card-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
-}
-
-/* Custom scrollbar */
+/* Scrollbar styling */
 .overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3b82f6, #6366f1);
-  border-radius: 3px;
+  background: #c1c1c1;
+  border-radius: 10px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #2563eb, #4f46e5);
+  background: #a8a8a8;
 }
-
-/* Focus styles */
-input:focus,
-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Animation delays for staggered effect */
-.card-enter-active:nth-child(1) { transition-delay: 0s; }
-.card-enter-active:nth-child(2) { transition-delay: 0.1s; }
-.card-enter-active:nth-child(3) { transition-delay: 0.2s; }
-.card-enter-active:nth-child(4) { transition-delay: 0.3s; }
 </style>

@@ -40,15 +40,15 @@
         </div>
 
         <!-- Add Button -->
-      <Link
-        :href="route('obat.create')"
-        class="ml-4 bg-[#3F86D0] hover:bg-[#3B59A1] text-white font-medium py-3 px-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Tambah Obat
-      </Link>
+        <Link
+          :href="route('obat.create')"
+          class="ml-4 bg-[#3F86D0] hover:bg-[#3B59A1] text-white font-medium py-3 px-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Tambah Obat
+        </Link>
       </div>
 
       <!-- Table Card -->
@@ -111,7 +111,7 @@
                       </svg>
                     </button>
 
-                    <!-- Edit Button -->
+                    <!-- Edit Button - FIXED -->
                     <button
                       @click="editObat(item)"
                       class="w-8 h-8 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
@@ -186,8 +186,8 @@
 
     <!-- Modal Overlay -->
     <div v-if="isModalVisible" 
-    class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
-    style="background-color: rgba(0, 0, 0, 0.15);"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
+      style="background-color: rgba(0, 0, 0, 0.15);"
     ></div>
 
     <!-- Modal Detail Obat -->
@@ -196,7 +196,6 @@
       class="fixed inset-0 flex items-center justify-center z-50 p-4"
       @click.self="closeModal"
     >
-    
       <div class="w-full max-w-md bg-white rounded-xl shadow-2xl transform transition-all duration-300">
         <!-- Modal Header -->
         <div class="bg-[#3674B5] text-white text-center py-4 rounded-t-xl">
@@ -240,11 +239,16 @@
 
           <!-- Modal Actions -->
           <div class="mt-8 flex justify-center gap-3">
+            <!-- Edit Button in Modal - FIXED -->
             <button
               @click="editObat(selectedObat)"
-              class="shadow-md hover:shadow-lg bg-[#3F86D0] hover:bg-[#3B59A1] text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors duration-200"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+              title="Edit Obat"
             >
-              Edit Obat
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+              Edit
             </button>
             <button
               @click="closeModal"
@@ -257,8 +261,8 @@
       </div>
     </div>
 
-        <!-- Confirmation Modal -->
-        <div 
+    <!-- Confirmation Modal -->
+    <div 
       v-if="showDeleteConfirm" 
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       @click.self="closeDeleteConfirm"
@@ -294,13 +298,23 @@
 </template>
 
 <script>
-import { Inertia } from '@inertiajs/inertia';
+// Import untuk Inertia v1.x (terbaru)
+import { router } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+
+// Jika masih menggunakan v0.6.x, gunakan ini:
+// import { Inertia } from '@inertiajs/inertia';
+
 import SidebarStaff from "../../layouts/staff/SidebarStaff.vue";
 import HeaderStaff from "../../layouts/staff/HeaderStaff.vue";
 
 export default {
   name: "DataObatStaff",
-  components: { SidebarStaff, HeaderStaff },
+  components: { 
+    SidebarStaff, 
+    HeaderStaff,
+    Link 
+  },
   props: {
     obat: {
       type: Object,
@@ -371,18 +385,43 @@ export default {
     },
     
     tambahObat() {
-      Inertia.visit('/obat/create');
+      // Untuk Inertia v1.x
+      router.visit('/obat/create');
+      
+      // Jika masih menggunakan v0.6.x, uncomment baris ini:
+      // Inertia.visit('/obat/create');
     },
     
     editObat(obat) {
+      // Debug logging
+      console.log('Edit button clicked for:', obat);
+      console.log('Obat ID:', obat.id);
+      
+      // Close modal if open
       this.closeModal();
-      Inertia.visit(`/obat/${obat.id}/edit`);
+      
+      // Navigate to edit page
+      if (obat && obat.id) {
+        // Untuk Inertia v1.x
+        router.visit(`/obat/${obat.id}/edit`);
+        
+        // Jika masih menggunakan v0.6.x, uncomment baris ini:
+        // Inertia.visit(`/obat/${obat.id}/edit`);
+      } else {
+        console.error('Invalid obat object or missing ID:', obat);
+        alert('Error: Data obat tidak valid');
+      }
     },
     
     confirmDelete(item) {
       this.deleteItem = item;
       this.showDeleteConfirm = true;
       this.closeModal();
+    },
+    
+    closeDeleteConfirm() {
+      this.showDeleteConfirm = false;
+      this.deleteItem = null;
     },
     
     cancelDelete() {
@@ -392,6 +431,21 @@ export default {
     
     executeDelete() {
       if (this.deleteItem) {
+        // Untuk Inertia v1.x
+        router.delete(`/obat/${this.deleteItem.id}`, {
+          onSuccess: () => {
+            this.showDeleteConfirm = false;
+            this.deleteItem = null;
+          },
+          onError: () => {
+            alert('Gagal menghapus obat.');
+            this.showDeleteConfirm = false;
+            this.deleteItem = null;
+          },
+        });
+        
+        // Jika masih menggunakan v0.6.x, uncomment baris ini:
+        /*
         Inertia.delete(`/obat/${this.deleteItem.id}`, {
           onSuccess: () => {
             this.showDeleteConfirm = false;
@@ -403,19 +457,28 @@ export default {
             this.deleteItem = null;
           },
         });
+        */
       }
     },
     
     goToPage(page) {
-      Inertia.get('/obat', { 
+      // Untuk Inertia v1.x
+      router.get('/obat', { 
         page: page
       });
+      
+      // Jika masih menggunakan v0.6.x, uncomment baris ini:
+      // Inertia.get('/obat', { page: page });
     },
   },
   
   mounted() {
     // Store original data for filtering
     this.originalObatData = [...this.obat.data];
+    
+    // Debug logging
+    console.log('Component mounted, obat data:', this.obat);
+    console.log('Sample obat item:', this.obat.data[0]);
   },
   
   beforeUnmount() {

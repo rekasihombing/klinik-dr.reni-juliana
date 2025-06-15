@@ -15,8 +15,13 @@
         <HeaderDokter :breadcrumbPages="breadcrumbPages" />
 
         <div class="max-w-7xl mx-auto">
-          <!-- Header -->
-          <div class="mb-1">
+          <!-- Header with Date/Time -->
+          <div class="mb-6 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">Laporan Operasional</h1>
+            <div class="text-sm text-right text-gray-600">
+              <p class="font-medium">{{ currentDate }}</p>
+              <p class="text-gray-500">{{ currentTime }}</p>
+            </div>
           </div>
 
           <!-- Content Container with extra spacing -->
@@ -171,7 +176,7 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
-                  <span>{{ downloadLoading ? 'Downloading...' : 'Unduh Laporan' }}</span>
+                  <span>{{ downloadLoading ? 'Downloading...' : 'Unduh PDF' }}</span>
                 </button>
                 
                 <button 
@@ -218,6 +223,8 @@ export default {
     const dateTo = ref('');
     const loading = ref(false);
     const downloadLoading = ref(false);
+    const currentDate = ref('');
+    const currentTime = ref('');
     let chartInstance = null;
     let visitFrequencyChartInstance = null;
 
@@ -235,11 +242,27 @@ export default {
       return chartData.value.length ? Math.max(...chartData.value.map(d => d.patients)) : 0;
     });
 
-    // Set default dates
+    // Function to update current date and time
+    const updateDateTime = () => {
+      const now = new Date();
+      currentDate.value = now.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      currentTime.value = now.toLocaleTimeString('id-ID');
+    };
+
+    // Set default dates and update date/time
     onMounted(() => {
       const now = new Date();
       dateFrom.value = formatDate(startOfWeek(now));
       dateTo.value = formatDate(endOfWeek(now));
+      
+      // Update date/time immediately and then every second
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
       
       setTimeout(() => {
         initChart();
@@ -293,6 +316,7 @@ export default {
         },
         onError: (errors) => {
           console.error('Filter error:', errors);
+          alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
         }
       });
     }
@@ -460,14 +484,43 @@ export default {
     function downloadReport() {
       downloadLoading.value = true;
       
-      setTimeout(() => {
-        window.print();
+      try {
+        // Buat URL dengan parameter filter saat ini
+        const params = new URLSearchParams({
+          period: selectedPeriod.value,
+          dateFrom: dateFrom.value,
+          dateTo: dateTo.value,
+        });
+        
+        // Redirect ke endpoint download PDF
+        window.location.href = `/laporan-operasional/download-pdf?${params.toString()}`;
+        
+        // Reset loading state after a delay
+        setTimeout(() => {
+          downloadLoading.value = false;
+        }, 2000);
+      } catch (error) {
+        console.error('Download error:', error);
+        alert('Terjadi kesalahan saat mengunduh laporan. Silakan coba lagi.');
         downloadLoading.value = false;
-      }, 1000);
+      }
     }
 
     function printReport() {
-      window.print();
+      try {
+        // Buat URL dengan parameter filter saat ini
+        const params = new URLSearchParams({
+          period: selectedPeriod.value,
+          dateFrom: dateFrom.value,
+          dateTo: dateTo.value,
+        });
+        
+        // Buka window baru untuk print
+        window.open(`/laporan-operasional/print?${params.toString()}`, '_blank');
+      } catch (error) {
+        console.error('Print error:', error);
+        alert('Terjadi kesalahan saat mencetak laporan. Silakan coba lagi.');
+      }
     }
 
     return {
@@ -476,6 +529,8 @@ export default {
       dateTo,
       loading,
       downloadLoading,
+      currentDate,
+      currentTime,
       breadcrumbPages,
       chartData,
       maxPatients,
