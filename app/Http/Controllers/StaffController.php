@@ -65,6 +65,21 @@ class StaffController extends Controller
         }
     }
 
+ public function edit(Request $request)
+{
+    $staff = [
+        'id' => $request->input('staff_id'),
+        'nama_lengkap' => $request->input('nama_lengkap'),
+        'email' => $request->input('email'),
+        'telepon' => $request->input('telepon'),
+        'user_id' => $request->input('user_id'),
+    ];
+
+    return Inertia::render('Doctor/EditStaff', [
+        'staff' => $staff
+    ]);
+}
+
     public function update(Request $request, Staff $staff)
     {
         $validated = $request->validate([
@@ -98,7 +113,8 @@ class StaffController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Staff berhasil diperbarui!');
+            return redirect()->route('staff.index')
+                         ->with('success', 'Staff berhasil diperbarui!');
 
         } catch (\Exception $e) {
             DB::rollBack();

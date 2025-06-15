@@ -176,60 +176,105 @@
                     </button>
                   </td>
 
-              <!-- Improved button template with better error handling and loading state -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div v-if="patient.status === 'selesai'">
-                    <button
-                      @click="handleTagihan(patient)"
-                      :disabled="isProcessingBilling"
-                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200"
-                      :class="[
-                        isProcessingBilling 
-                          ? 'bg-gray-400 text-white cursor-not-allowed' 
-                          : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md active:scale-95'
-                      ]"
-                    >
-                      <!-- Loading spinner -->
-                      <svg 
-                        v-if="isProcessingBilling" 
-                        class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        fill="none" 
-                        viewBox="0 0 24 24"
-                      >
-                        <circle 
-                          class="opacity-25" 
-                          cx="12" 
-                          cy="12" 
-                          r="10" 
-                          stroke="currentColor" 
-                          stroke-width="4"
-                        ></circle>
-                        <path 
-                          class="opacity-75" 
-                          fill="currentColor" 
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      
-                      <!-- Button text -->
-                      <span v-if="!isProcessingBilling">Buat Tagihan</span>
-                      <span v-else>Processing...</span>
-                    </button>
-                  </div>
-                  
-                  <div v-else-if="patient.status === 'dalam_pemeriksaan'">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      Dalam Pemeriksaan
-                    </span>
-                  </div>
-                  
-                  <div v-else-if="patient.status === 'menunggu'">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Menunggu
-                    </span>
-                  </div>
-                </td>
+<td class="px-6 py-4 whitespace-nowrap" @click.stop>
+  <div v-if="patient.status === 'selesai'">
+    <!-- Button untuk yang belum ada tagihan atau belum bayar -->
+    <button
+      v-if="!patient.has_tagihan || !patient.is_paid"
+      @click="handleTagihan(patient)"
+      :disabled="isProcessingBilling"
+      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200"
+      :class="[
+        isProcessingBilling 
+          ? 'bg-gray-400 text-white cursor-not-allowed' 
+          : 'bg-green-600 text-white hover:bg-green-700 hover:shadow-md active:scale-95 cursor-pointer'
+      ]"
+    >
+      <!-- Loading spinner -->
+      <svg 
+        v-if="isProcessingBilling" 
+        class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24"
+      >
+        <circle 
+          class="opacity-25" 
+          cx="12" 
+          cy="12" 
+          r="10" 
+          stroke="currentColor" 
+          stroke-width="4"
+        ></circle>
+        <path 
+          class="opacity-75" 
+          fill="currentColor" 
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      
+      <!-- Button text -->
+      <span v-if="!isProcessingBilling">Buat Tagihan</span>
+      <span v-else>Processing...</span>
+    </button>
+    
+    <!-- Button untuk yang sudah bayar -->
+    <button
+      v-else
+      @click="handleTagihan(patient)"
+      :disabled="isProcessingBilling"
+      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200"
+      :class="[
+        isProcessingBilling 
+          ? 'bg-gray-400 text-white cursor-not-allowed' 
+          : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md active:scale-95 cursor-pointer'
+      ]"
+    >
+      <!-- Loading spinner -->
+      <svg 
+        v-if="isProcessingBilling" 
+        class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24"
+      >
+        <circle 
+          class="opacity-25" 
+          cx="12" 
+          cy="12" 
+          r="10" 
+          stroke="currentColor" 
+          stroke-width="4"
+        ></circle>
+        <path 
+          class="opacity-75" 
+          fill="currentColor" 
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      
+      <!-- Success icon -->
+      <svg 
+        v-if="!isProcessingBilling" 
+        class="w-3 h-3 mr-1" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+      
+      <!-- Button text -->
+      <span v-if="!isProcessingBilling">Pembayaran Berhasil</span>
+      <span v-else>Processing...</span>
+    </button>
+  </div>
+</td>
                 </tr>
                 <tr v-if="!pasienHariIni || pasienHariIni.length === 0">
                   <td colspan="5" class="px-6 py-12 text-center">
@@ -383,7 +428,8 @@ export default {
       address: '',
       isProcessingBilling: false,
       complaint: '',
-      weeklyChart: null // Store Chart.js instance
+      weeklyChart: null, // Store Chart.js instance
+      isProcessingBilling: false
     };
   },
   mounted() {

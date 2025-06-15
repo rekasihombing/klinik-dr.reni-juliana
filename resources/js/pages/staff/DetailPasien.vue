@@ -298,6 +298,7 @@ export default {
       type: Array,
       default: () => ([
         { label: 'Dashboard', href: '/dashboardstaff' },
+        { label: 'Daftar Pasien', href: '/staff.Pasien' },
         { label: 'Detail Pasien', href: '/DetailPasien' }
       ])
     }
