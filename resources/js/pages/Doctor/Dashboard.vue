@@ -32,10 +32,10 @@
         
         <div class="relative z-10 text-right text-sm text-[#2A4482] mt-4 md:mt-0 bg-white/20 rounded-xl p-4 backdrop-blur-sm">
           <div class="flex items-center space-x-2 mb-2">
-            <p class="font-medium">{{ getCurrentDate() }}</p>
+            <p class="font-medium">{{ currentDate }}</p>
           </div>
           <div class="flex items-center space-x-2">
-            <p class="font-mono font-bold">{{ getCurrentTime() }}</p>
+            <p class="font-mono font-bold">{{ currentTime }}</p>
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted, ref, computed } from "vue";
+import { defineProps, onMounted, onUnmounted, ref, computed } from "vue";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Sidebar from "../../layouts/dokter/SidebarDokter.vue";
@@ -205,6 +205,11 @@ const props = defineProps({
 
 const showInfoModal = ref(false);
 
+// Reactive variables for real-time updates
+const currentTime = ref('');
+const currentDate = ref('');
+let timeInterval = null;
+
 // Gunakan data todayAppointments langsung dari props (sudah difilter di backend)
 const displayAppointments = computed(() => {
   console.log('Props todayAppointments:', props.todayAppointments);
@@ -212,7 +217,33 @@ const displayAppointments = computed(() => {
   return props.todayAppointments || [];
 });
 
+// Function to update current time and date
+function updateDateTime() {
+  const now = new Date();
+  
+  // Update time
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  currentTime.value = `${hours} : ${minutes} : ${seconds}`;
+  
+  // Update date
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  currentDate.value = now.toLocaleDateString('id-ID', options);
+}
+
 onMounted(() => {
+  // Initialize date and time immediately
+  updateDateTime();
+  
+  // Set up interval to update every second
+  timeInterval = setInterval(updateDateTime, 1000);
+
   flatpickr("#calendar", {
     inline: true,
     locale: {
@@ -243,6 +274,14 @@ onMounted(() => {
   });
 });
 
+// Clean up interval when component is unmounted
+onUnmounted(() => {
+  if (timeInterval) {
+    clearInterval(timeInterval);
+  }
+});
+
+// Keep the old functions for backward compatibility (can be removed if not used elsewhere)
 function getCurrentDate() {
   const today = new Date();
   const options = {

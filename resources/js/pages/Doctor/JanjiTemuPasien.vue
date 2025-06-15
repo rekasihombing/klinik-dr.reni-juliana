@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#FFFF] flex">
     <!-- Sidebar -->
-    <Sidebar :patient-name="patientData.nama || patientName" />
+    <Sidebar :patient-name="patientData.nama_lengkap || patientName" />
 
     <!-- Main Content -->
     <main class="bg-gray-100 flex-1 p-6">
@@ -60,7 +60,7 @@
                     :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
                     class="border-b border-gray-200 hover:bg-blue-50 transition-colors"
                   >
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-900">{{ appointment.pasien_id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-900">{{ appointment.nama_lengkap }}</td>
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-700">{{ appointment.tanggal }}</td>
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-800">{{ appointment.jam_konsultasi }}</td>
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-sm text-gray-600">{{ appointment.keluhan }}</td>
@@ -112,7 +112,7 @@
             <div class="space-y-4">
               <div>
                 <label class="text-sm font-semibold text-gray-700">Nama Pasien</label>
-                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.pasien_id }}</p>
+                <p class="text-sm text-gray-900 bg-gray-50 rounded-lg px-3 py-2 mt-1">{{ selectedAppointment?.nama_lengkap }}</p>
               </div>
               <div>
                 <label class="text-sm font-semibold text-gray-700">Tanggal</label>
@@ -170,7 +170,7 @@ export default {
     patientName: String,
     patientData: {
       type: Object,
-      default: () => ({ nama: '' })
+      default: () => ({ nama_lengkap: '' })
     }
   },
   data() {
@@ -191,7 +191,7 @@ export default {
       let filtered = this.appointments;
       if (this.searchQuery) {
         filtered = filtered.filter(appointment => 
-          appointment.nama_pasien?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          appointment.nama_lengkap?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           appointment.keluhan?.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       }
